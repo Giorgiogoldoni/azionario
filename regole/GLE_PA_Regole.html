@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  body{font-family:'Segoe UI',sans-serif;max-width:680px;margin:40px auto;color:#212529;font-size:13px;line-height:1.6;background:#ffffff}
+  h1{color:#1971c2;font-size:22px;border-bottom:3px solid #1971c2;padding-bottom:8px;margin-bottom:20px}
+  h2{color:#495057;font-size:15px;margin:24px 0 8px;padding-left:10px;border-left:3px solid #1971c2}
+  table{width:100%;border-collapse:collapse;margin:10px 0 20px;font-size:12px}
+  thead th{background:#212529;color:#fff;padding:7px 10px;text-align:left;font-weight:700}
+  tbody tr{border-bottom:1px solid #dee2e6}
+  tbody tr:nth-child(even){background:#f8f9fa}
+  td{padding:6px 10px}
+  .buy3{color:#2f9e44;font-weight:700} .buy2{color:#1971c2;font-weight:700}
+  .sell{color:#c92a2a;font-weight:700} .warn{color:#e67700;font-weight:700}
+  .box{background:#fff9db;border:1px solid #ffd43b;border-radius:5px;padding:12px 16px;margin:12px 0;font-size:12px;color:#7a5c00}
+  .stato{background:#f8f9fa;border-radius:5px;padding:12px 16px;margin:12px 0;font-size:12px}
+  .footer{margin-top:40px;padding-top:12px;border-top:1px solid #dee2e6;font-size:10px;color:#868e96}
+</style></head><body>
+
+<h1>📊 Société Générale — Regole Operative AZIONARIO</h1>
+<p style="color:#868e96;font-size:11px">Generato il 23/07/2026, 17:25:31 · GLE.PA · Dati aggiornati al 2026-07-23</p>
+
+<div class="stato">
+  <strong>📊 Stato attuale</strong><br>
+  Prezzo: <strong>75.7600</strong> · KAMA Fast: 75.9810 · KAMA Slow: 75.2367<br>
+  RSI14: 51.6 · RSI5: 47.6 · AO: 0.5464<br>
+  Zona: <strong>NEUTRA</strong> · Segnale: <strong>HOLD</strong> · Rating: <strong>Neutro</strong> · Score: 53
+</div>
+
+<h2>🟢 BUY3 — Entrata confermata</h2>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
+<tr><td>Zona</td><td class="buy3">LONG_CONF</td><td>Prezzo &gt; KAMA Fast &gt; KAMA Slow</td></tr>
+<tr><td>AO (EMA3−EMA13)</td><td class="buy3">&gt; 0</td><td>Momentum positivo</td></tr>
+<tr><td>Volume Ratio</td><td class="buy3">≥ 2.0x</td><td>Interesse reale del mercato</td></tr>
+<tr><td>Baff (barre sopra KAMA)</td><td class="buy3">≥ 3</td><td>Momentum continuativo</td></tr>
+<tr><td>ER (Efficiency Ratio)</td><td class="buy3">≥ 0.35</td><td>Mercato direzionale, non laterale</td></tr>
+<tr><td>Gap KAMA Fast/Slow</td><td class="buy3">≥ 0.3%</td><td>Evita falsi crossover marginali</td></tr>
+<tr><td>SAR</td><td class="buy3">Rialzista</td><td>Prezzo sopra il Parabolic SAR</td></tr>
+</tbody></table>
+
+<h2>🔵 BUY2 — Entrata anticipata</h2>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
+<tr><td>Zona</td><td class="buy2">LONG_EARLY</td><td>Prezzo &gt; KAMA Fast ma sotto KAMA Slow</td></tr>
+<tr><td>AO</td><td class="buy2">&gt; 0</td><td>Momentum positivo</td></tr>
+<tr><td>Volume Ratio</td><td class="buy2">≥ 1.5x</td><td>Soglia ridotta rispetto a BUY3</td></tr>
+<tr><td>Baff</td><td class="buy2">≥ 3</td><td>Barre consecutive sopra KAMA</td></tr>
+<tr><td>ER</td><td class="buy2">≥ 0.35</td><td>Mercato direzionale</td></tr>
+</tbody></table>
+
+<h2>🔴 SELL — Uscita</h2>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Azione</th></tr></thead><tbody>
+<tr><td>Zona USCITA</td><td class="sell">Prezzo &lt; KAMA Slow (&lt;2%)</td><td>Valutare uscita</td></tr>
+<tr><td>Zona STOP</td><td class="sell">Prezzo &gt;2% sotto KAMA Slow</td><td>Uscita immediata</td></tr>
+</tbody></table>
+
+<h2>⚡ RSI Cross — Filtro qualità</h2>
+<table><thead><tr><th>Segnale</th><th>Condizione</th></tr></thead><tbody>
+<tr><td class="buy3">↑ Bull Cross</td><td>RSI5 supera RSI14 dal basso</td></tr>
+<tr><td class="sell">↓ Bear Cross</td><td>RSI5 scende sotto RSI14</td></tr>
+</tbody></table>
+
+<h2>🚀 Super Best Buy — Flip SAR</h2>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
+<tr><td>Primo pallino SAR</td><td class="buy3">Flip entro 2 barre</td><td>Cambio di direzione recente del SAR</td></tr>
+<tr><td>AO</td><td class="buy3">&gt; 0 e in miglioramento (3 barre)</td><td>Momentum in accelerazione</td></tr>
+<tr><td>Volume Ratio</td><td class="buy3">≥ 1.5x</td><td>Filtro alleggerito rispetto a Best Buy standard</td></tr>
+<tr><td>Movimento giornaliero</td><td class="warn">entro ±4%</td><td>Sanità — evita ingressi dopo spike già avvenuto</td></tr>
+</tbody></table>
+
+<div class="box">
+  <strong>⚠️ Avvertenza:</strong> Le regole sopra sono indicazioni tecniche generate automaticamente,
+  non consigli di investimento. Verificare sempre il contesto di mercato prima di operare.
+</div>
+
+<div class="footer">AZIONARIO · giorgiogoldoni.github.io/azionario · Solo uso educativo — verificare sempre prima di operare</div>
+</body></html>
