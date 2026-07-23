@@ -1,0 +1,3747 @@
+[
+ [
+  "3I Group",
+  "III.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "A2A",
+  "A2A.MI",
+  "Utilities",
+  "IT",
+  false
+ ],
+ [
+  "AAK",
+  "AAK.ST",
+  "Consumer Staples",
+  "SE",
+  false
+ ],
+ [
+  "Aalberts Industries",
+  "AALB.AS",
+  "Industrials",
+  "NL",
+  false
+ ],
+ [
+  "ABB",
+  "ABBN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Aberdeen (abrdn)",
+  "ABDN.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "ABN AMRO",
+  "ABN.AS",
+  "Financials",
+  "NL",
+  false
+ ],
+ [
+  "Accor",
+  "AC.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Ackermans van Haaren",
+  "ACKB.BR",
+  "Financials",
+  "BE",
+  false
+ ],
+ [
+  "ACS",
+  "ACS.MC",
+  "Industrials",
+  "ES",
+  false
+ ],
+ [
+  "Adecco N",
+  "ADEN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Adidas",
+  "ADS.DE",
+  "Consumer Disc.",
+  "DE",
+  true
+ ],
+ [
+  "Adler Group",
+  "ADJ.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Admiral Group",
+  "ADM.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Adyen",
+  "ADYEN.AS",
+  "Info Technology",
+  "NL",
+  true
+ ],
+ [
+  "Aedifica",
+  "AED.BR",
+  "Real Estate",
+  "BE",
+  false
+ ],
+ [
+  "Aegon NV",
+  "AGN.AS",
+  "Financials",
+  "NL",
+  false
+ ],
+ [
+  "Aena",
+  "AENA.MC",
+  "Industrials",
+  "ES",
+  false
+ ],
+ [
+  "Aeroports Paris",
+  "ADP.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Afry AB",
+  "AFRY.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Ageas SA",
+  "AGS.BR",
+  "Financials",
+  "BE",
+  false
+ ],
+ [
+  "Ahold Delhaize",
+  "AD.AS",
+  "Consumer Staples",
+  "NL",
+  true
+ ],
+ [
+  "AIB Group",
+  "A5G.IR",
+  "Financials",
+  "IE",
+  false
+ ],
+ [
+  "Air France KLM",
+  "AF.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Air Liquide",
+  "AI.PA",
+  "Materials",
+  "FR",
+  true
+ ],
+ [
+  "Airbus Group",
+  "AIR.PA",
+  "Industrials",
+  "FR",
+  true
+ ],
+ [
+  "Aker BP",
+  "AKRBP.OL",
+  "Energy",
+  "NO",
+  false
+ ],
+ [
+  "Akzo Nobel",
+  "AKZA.AS",
+  "Materials",
+  "NL",
+  false
+ ],
+ [
+  "Alcon",
+  "ALC.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "Alfa Laval",
+  "ALFA.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Allegro",
+  "ALE.WA",
+  "Consumer Disc.",
+  "PL",
+  false
+ ],
+ [
+  "Allianz",
+  "ALV.DE",
+  "Financials",
+  "DE",
+  true
+ ],
+ [
+  "Allreal Holding",
+  "ALLN.SW",
+  "Real Estate",
+  "CH",
+  false
+ ],
+ [
+  "Alstom",
+  "ALO.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Alten",
+  "ATE.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Amadeus IT",
+  "AMS.MC",
+  "Info Technology",
+  "ES",
+  false
+ ],
+ [
+  "Ambu B",
+  "AMBU-B.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "Amplifon",
+  "AMP.MI",
+  "Health Care",
+  "IT",
+  false
+ ],
+ [
+  "ams OSRAM",
+  "AMS.SW",
+  "Info Technology",
+  "CH",
+  false
+ ],
+ [
+  "Amundi",
+  "AMUN.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "Andritz",
+  "ANDR.VI",
+  "Industrials",
+  "AT",
+  false
+ ],
+ [
+  "Anglo American",
+  "AAL.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "Anheuser-Busch InBev",
+  "ABI.BR",
+  "Consumer Staples",
+  "BE",
+  true
+ ],
+ [
+  "Antofagasta",
+  "ANTO.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "ArcelorMittal",
+  "MT.AS",
+  "Materials",
+  "LU",
+  false
+ ],
+ [
+  "argenx",
+  "ARGX.BR",
+  "Health Care",
+  "BE",
+  false
+ ],
+ [
+  "Arkema",
+  "AKE.PA",
+  "Materials",
+  "FR",
+  false
+ ],
+ [
+  "Aroundtown",
+  "AT1.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Ashmore",
+  "ASHM.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "ASM International",
+  "ASMI.AS",
+  "Info Technology",
+  "NL",
+  false
+ ],
+ [
+  "ASML Holding",
+  "ASML.AS",
+  "Info Technology",
+  "NL",
+  true
+ ],
+ [
+  "ASR Nederland",
+  "ASRNL.AS",
+  "Financials",
+  "NL",
+  false
+ ],
+ [
+  "Assa Abloy",
+  "ASSA-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Assicurazioni Generali",
+  "G.MI",
+  "Financials",
+  "IT",
+  false
+ ],
+ [
+  "Associated British Foods",
+  "ABF.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "AstraZeneca",
+  "AZN.L",
+  "Health Care",
+  "GB",
+  false
+ ],
+ [
+  "Atlas Copco A",
+  "ATCO-A.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Atos",
+  "ATO.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Auto Trader Group",
+  "AUTO.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "Aviva",
+  "AV.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Avolta",
+  "AVOL.SW",
+  "Consumer Disc.",
+  "CH",
+  false
+ ],
+ [
+  "Axa",
+  "CS.PA",
+  "Financials",
+  "FR",
+  true
+ ],
+ [
+  "B&M European Value",
+  "BME.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "BAE Systems",
+  "BA.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Banco BPM",
+  "BAMI.MI",
+  "Financials",
+  "IT",
+  false
+ ],
+ [
+  "Banco Sabadell",
+  "SAB.MC",
+  "Financials",
+  "ES",
+  false
+ ],
+ [
+  "Bank of Ireland",
+  "BIR.IR",
+  "Financials",
+  "IE",
+  false
+ ],
+ [
+  "Bank Pekao",
+  "PEO.WA",
+  "Financials",
+  "PL",
+  false
+ ],
+ [
+  "Bankinter",
+  "BKT.MC",
+  "Financials",
+  "ES",
+  false
+ ],
+ [
+  "Barclays",
+  "BARC.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Barratt Redrow",
+  "BTRW.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Barry Callebaut",
+  "BARN.SW",
+  "Consumer Staples",
+  "CH",
+  false
+ ],
+ [
+  "BASF",
+  "BAS.DE",
+  "Materials",
+  "DE",
+  true
+ ],
+ [
+  "Bayer",
+  "BAYN.DE",
+  "Health Care",
+  "DE",
+  true
+ ],
+ [
+  "BBVA",
+  "BBVA.MC",
+  "Financials",
+  "ES",
+  true
+ ],
+ [
+  "Beazley",
+  "BEZ.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Bechtle",
+  "BC8.DE",
+  "Info Technology",
+  "DE",
+  false
+ ],
+ [
+  "Beiersdorf",
+  "BEI.DE",
+  "Consumer Staples",
+  "DE",
+  false
+ ],
+ [
+  "Beijer Ref",
+  "BEIJB.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Belimo Holding",
+  "BEAN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Bellway",
+  "BWY.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Berkeley Group",
+  "BKG.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "BHP Group",
+  "BHP.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "bioMérieux",
+  "BIM.PA",
+  "Health Care",
+  "FR",
+  false
+ ],
+ [
+  "BMW",
+  "BMW.DE",
+  "Consumer Disc.",
+  "DE",
+  true
+ ],
+ [
+  "BNP Paribas",
+  "BNP.PA",
+  "Financials",
+  "FR",
+  true
+ ],
+ [
+  "Boliden",
+  "BOL.ST",
+  "Materials",
+  "SE",
+  false
+ ],
+ [
+  "Bolloré",
+  "BOL.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Bouygues",
+  "EN.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "BP",
+  "BP.L",
+  "Energy",
+  "GB",
+  false
+ ],
+ [
+  "Brenntag",
+  "BNR.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "British American Tobacco",
+  "BATS.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "British Land",
+  "BLND.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "BT Group",
+  "BT-A.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "Bunzl",
+  "BNZL.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Burberry Group",
+  "BRBY.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Bureau Veritas",
+  "BVI.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "CaixaBank",
+  "CABK.MC",
+  "Financials",
+  "ES",
+  false
+ ],
+ [
+  "Campari",
+  "CPR.MI",
+  "Consumer Staples",
+  "IT",
+  false
+ ],
+ [
+  "Capgemini",
+  "CAP.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Capita",
+  "CPI.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Carl Zeiss Meditec",
+  "AFX.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "Carlsberg B",
+  "CARL-B.CO",
+  "Consumer Staples",
+  "DK",
+  false
+ ],
+ [
+  "Carnival",
+  "CCL.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Carrefour",
+  "CA.PA",
+  "Consumer Staples",
+  "FR",
+  false
+ ],
+ [
+  "Casino Guichard",
+  "CO.PA",
+  "Consumer Staples",
+  "FR",
+  false
+ ],
+ [
+  "Castellum",
+  "CAST.ST",
+  "Real Estate",
+  "SE",
+  false
+ ],
+ [
+  "CD Projekt",
+  "CDR.WA",
+  "Comm. Services",
+  "PL",
+  false
+ ],
+ [
+  "Cellnex Telecom",
+  "CLNX.MC",
+  "Comm. Services",
+  "ES",
+  false
+ ],
+ [
+  "Cembra Money Bank",
+  "CMBN.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "Centrica",
+  "CNA.L",
+  "Utilities",
+  "GB",
+  false
+ ],
+ [
+  "Clariant",
+  "CLN.SW",
+  "Materials",
+  "CH",
+  false
+ ],
+ [
+  "Close Brothers",
+  "CBG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "CNH Industrial",
+  "CNHI.MI",
+  "Industrials",
+  "IT",
+  false
+ ],
+ [
+  "Coca-Cola HBC",
+  "CCH.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Cofinimmo",
+  "COFB.BR",
+  "Real Estate",
+  "BE",
+  false
+ ],
+ [
+  "Coloplast B",
+  "COLO-B.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "Commerzbank",
+  "CBK.DE",
+  "Financials",
+  "DE",
+  false
+ ],
+ [
+  "Compass Group",
+  "CPG.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Continental",
+  "CON.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "ConvaTec Group",
+  "CTEC.L",
+  "Health Care",
+  "GB",
+  false
+ ],
+ [
+  "Corbion",
+  "CRBN.AS",
+  "Materials",
+  "NL",
+  false
+ ],
+ [
+  "Covestro",
+  "1COV.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "Covivio",
+  "COV.PA",
+  "Real Estate",
+  "FR",
+  false
+ ],
+ [
+  "CPI Property Group",
+  "CPIPG.PR",
+  "Real Estate",
+  "CZ",
+  false
+ ],
+ [
+  "Crédit Agricole",
+  "ACA.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "CRH",
+  "CRH.L",
+  "Materials",
+  "IE",
+  false
+ ],
+ [
+  "Croda International",
+  "CRDA.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "CTS Eventim",
+  "EVD.DE",
+  "Comm. Services",
+  "DE",
+  false
+ ],
+ [
+  "Danone",
+  "BN.PA",
+  "Consumer Staples",
+  "FR",
+  true
+ ],
+ [
+  "Danske Bank",
+  "DANSKE.CO",
+  "Financials",
+  "DK",
+  false
+ ],
+ [
+  "Dassault Aviation",
+  "AM.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Dassault Systèmes",
+  "DSY.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "DCC",
+  "DCC.L",
+  "Industrials",
+  "IE",
+  false
+ ],
+ [
+  "Delivery Hero",
+  "DHER.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "Demant",
+  "DEMANT.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "Derwent London",
+  "DLN.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "Deutsche Bank",
+  "DBK.DE",
+  "Financials",
+  "DE",
+  false
+ ],
+ [
+  "Deutsche Börse",
+  "DB1.DE",
+  "Financials",
+  "DE",
+  true
+ ],
+ [
+  "DHL Group",
+  "DPW.DE",
+  "Industrials",
+  "DE",
+  true
+ ],
+ [
+  "Deutsche Telekom",
+  "DTE.DE",
+  "Comm. Services",
+  "DE",
+  true
+ ],
+ [
+  "Deutsche Wohnen",
+  "DWNI.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Diageo",
+  "DGE.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "DiaSorin",
+  "DIA.MI",
+  "Health Care",
+  "IT",
+  false
+ ],
+ [
+  "Dino Polska",
+  "DNP.WA",
+  "Consumer Staples",
+  "PL",
+  false
+ ],
+ [
+  "DNB Bank",
+  "DNB.OL",
+  "Financials",
+  "NO",
+  false
+ ],
+ [
+  "Dometic Group",
+  "DOMETIC.ST",
+  "Consumer Disc.",
+  "SE",
+  false
+ ],
+ [
+  "DSV",
+  "DSV.CO",
+  "Industrials",
+  "DK",
+  false
+ ],
+ [
+  "E.ON",
+  "EOAN.DE",
+  "Utilities",
+  "DE",
+  false
+ ],
+ [
+  "Edenred",
+  "EDEN.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "EDP",
+  "EDP.LS",
+  "Utilities",
+  "PT",
+  false
+ ],
+ [
+  "Eiffage",
+  "FGR.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Electrolux B",
+  "ELECTB.ST",
+  "Consumer Disc.",
+  "SE",
+  false
+ ],
+ [
+  "Elekta",
+  "EKTA-B.ST",
+  "Health Care",
+  "SE",
+  false
+ ],
+ [
+  "Elia System Op.",
+  "ELI.BR",
+  "Utilities",
+  "BE",
+  false
+ ],
+ [
+  "Elis Services",
+  "ELIS.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Elisa",
+  "ELISA.HE",
+  "Comm. Services",
+  "FI",
+  false
+ ],
+ [
+  "Emeis (Orpea)",
+  "EMEIS.PA",
+  "Health Care",
+  "FR",
+  false
+ ],
+ [
+  "EMS-Chemie",
+  "EMSN.SW",
+  "Materials",
+  "CH",
+  false
+ ],
+ [
+  "Enagas",
+  "ENG.MC",
+  "Utilities",
+  "ES",
+  false
+ ],
+ [
+  "Endesa",
+  "ELE.MC",
+  "Utilities",
+  "ES",
+  false
+ ],
+ [
+  "Enel",
+  "ENEL.MI",
+  "Utilities",
+  "IT",
+  true
+ ],
+ [
+  "Engie",
+  "ENGI.PA",
+  "Utilities",
+  "FR",
+  false
+ ],
+ [
+  "Eni",
+  "ENI.MI",
+  "Energy",
+  "IT",
+  true
+ ],
+ [
+  "Entain",
+  "ENT.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Epiroc A",
+  "EPIROC-A.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "EQT AB",
+  "EQT.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "Equinor",
+  "EQNR.OL",
+  "Energy",
+  "NO",
+  false
+ ],
+ [
+  "Erste Group Bank",
+  "EBS.VI",
+  "Financials",
+  "AT",
+  false
+ ],
+ [
+  "EssilorLuxottica",
+  "EL.PA",
+  "Health Care",
+  "FR",
+  true
+ ],
+ [
+  "Essity B",
+  "ESSITY-B.ST",
+  "Consumer Staples",
+  "SE",
+  false
+ ],
+ [
+  "Colruyt",
+  "COLR.BR",
+  "Consumer Staples",
+  "BE",
+  false
+ ],
+ [
+  "Eurazeo",
+  "RF.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "Eurofins Scientific",
+  "ERF.PA",
+  "Health Care",
+  "LU",
+  false
+ ],
+ [
+  "Euronext",
+  "ENX.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "Eutelsat",
+  "ETL.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "Evolution AB",
+  "EVO.ST",
+  "Consumer Disc.",
+  "SE",
+  false
+ ],
+ [
+  "Evonik",
+  "EVK.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "Evotec",
+  "EVT.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "Experian",
+  "EXPN.L",
+  "Industrials",
+  "IE",
+  false
+ ],
+ [
+  "Fabege",
+  "FABG.ST",
+  "Real Estate",
+  "SE",
+  false
+ ],
+ [
+  "Balder B",
+  "BALDER-B.ST",
+  "Real Estate",
+  "SE",
+  false
+ ],
+ [
+  "Ferguson",
+  "FERG.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Ferrari",
+  "RACE.MI",
+  "Consumer Disc.",
+  "IT",
+  true
+ ],
+ [
+  "Ferrovial",
+  "FER.MC",
+  "Industrials",
+  "ES",
+  false
+ ],
+ [
+  "FinecoBank",
+  "FBK.MI",
+  "Financials",
+  "IT",
+  false
+ ],
+ [
+  "Flughafen Zürich",
+  "FHZN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Flutter Entertainment",
+  "FLTR.L",
+  "Consumer Disc.",
+  "IE",
+  true
+ ],
+ [
+  "Fortum",
+  "FORTUM.HE",
+  "Utilities",
+  "FI",
+  false
+ ],
+ [
+  "Forvia (Faurecia)",
+  "EO.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Freenet",
+  "FNTN.DE",
+  "Comm. Services",
+  "DE",
+  false
+ ],
+ [
+  "Fresenius Medical Care",
+  "FME.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "Fresenius SE",
+  "FRE.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "Fresnillo",
+  "FRES.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "Fuchs SE Pref",
+  "FPE3.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "Galapagos",
+  "GLPG.BR",
+  "Health Care",
+  "BE",
+  false
+ ],
+ [
+  "Galenica",
+  "GALE.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "Galp Energia",
+  "GALP.LS",
+  "Energy",
+  "PT",
+  false
+ ],
+ [
+  "GBL",
+  "GBLB.BR",
+  "Financials",
+  "BE",
+  false
+ ],
+ [
+  "GEA Group",
+  "G1A.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "Geberit",
+  "GEBN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Gecina",
+  "GFC.PA",
+  "Real Estate",
+  "FR",
+  false
+ ],
+ [
+  "Genmab",
+  "GMAB.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "Georg Fischer",
+  "GF.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Getinge",
+  "GETI-B.ST",
+  "Health Care",
+  "SE",
+  false
+ ],
+ [
+  "Getlink",
+  "GET.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Givaudan",
+  "GIVN.SW",
+  "Materials",
+  "CH",
+  false
+ ],
+ [
+  "Gjensidige Forsikring",
+  "GJF.OL",
+  "Financials",
+  "NO",
+  false
+ ],
+ [
+  "Glanbia",
+  "GL9.IR",
+  "Consumer Staples",
+  "IE",
+  false
+ ],
+ [
+  "Glencore",
+  "GLEN.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "GN Store Nord",
+  "GN.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "Grand City Properties",
+  "GYC.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Grenke",
+  "GLJ.DE",
+  "Financials",
+  "DE",
+  false
+ ],
+ [
+  "Grifols",
+  "GRF.MC",
+  "Health Care",
+  "ES",
+  false
+ ],
+ [
+  "Groupe SEB",
+  "SK.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "GSK",
+  "GSK.L",
+  "Health Care",
+  "GB",
+  false
+ ],
+ [
+  "Halma",
+  "HLMA.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Hammerson",
+  "HMSO.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "Hannover Re",
+  "HNR1.DE",
+  "Financials",
+  "DE",
+  false
+ ],
+ [
+  "Hays",
+  "HAS.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Heidelberg Materials",
+  "HEIG.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "Heineken",
+  "HEIA.AS",
+  "Consumer Staples",
+  "NL",
+  false
+ ],
+ [
+  "Heineken Holding",
+  "HEIO.AS",
+  "Consumer Staples",
+  "NL",
+  false
+ ],
+ [
+  "Hella",
+  "HLE.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "HelloFresh",
+  "HFG.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "Helvetia",
+  "HELN.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "Henkel",
+  "HEN3.DE",
+  "Consumer Staples",
+  "DE",
+  false
+ ],
+ [
+  "H&M B",
+  "HM-B.ST",
+  "Consumer Disc.",
+  "SE",
+  false
+ ],
+ [
+  "Hera",
+  "HER.MI",
+  "Utilities",
+  "IT",
+  false
+ ],
+ [
+  "Hermès International",
+  "RMS.PA",
+  "Consumer Disc.",
+  "FR",
+  true
+ ],
+ [
+  "Hexagon",
+  "HEXA-B.ST",
+  "Info Technology",
+  "SE",
+  false
+ ],
+ [
+  "Hexpol B",
+  "HEXPOL-B.ST",
+  "Materials",
+  "SE",
+  false
+ ],
+ [
+  "Hikma Pharma",
+  "HIK.L",
+  "Health Care",
+  "GB",
+  false
+ ],
+ [
+  "Hiscox",
+  "HSX.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Holcim",
+  "HOLN.SW",
+  "Materials",
+  "CH",
+  false
+ ],
+ [
+  "Holmen B",
+  "HOLM-B.ST",
+  "Materials",
+  "SE",
+  false
+ ],
+ [
+  "Howden Joinery",
+  "HWDN.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "HSBC",
+  "HSBA.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Hugo Boss",
+  "BOSS.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "Huhtamäki",
+  "HUH1V.HE",
+  "Materials",
+  "FI",
+  false
+ ],
+ [
+  "Husqvarna B",
+  "HUSQ-B.ST",
+  "Consumer Disc.",
+  "SE",
+  false
+ ],
+ [
+  "IAG",
+  "IAG.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Iberdrola",
+  "IBE.MC",
+  "Utilities",
+  "ES",
+  true
+ ],
+ [
+  "Icade",
+  "ICAD.PA",
+  "Real Estate",
+  "FR",
+  false
+ ],
+ [
+  "ICG",
+  "ICG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "IG Group",
+  "IGG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "IMCD",
+  "IMCD.AS",
+  "Materials",
+  "NL",
+  false
+ ],
+ [
+  "IMI",
+  "IMI.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Imperial Brands",
+  "IMB.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Inchcape",
+  "INCH.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Inditex",
+  "ITX.MC",
+  "Consumer Disc.",
+  "ES",
+  true
+ ],
+ [
+  "Industrivärden A",
+  "INDU-A.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "Indutrade",
+  "INDT.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Infineon",
+  "IFX.DE",
+  "Info Technology",
+  "DE",
+  true
+ ],
+ [
+  "Informa",
+  "INF.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "ING Groep",
+  "INGA.AS",
+  "Financials",
+  "NL",
+  true
+ ],
+ [
+  "Inmobiliaria Colonial",
+  "COL.MC",
+  "Real Estate",
+  "ES",
+  false
+ ],
+ [
+  "InterContinental Hotels",
+  "IHG.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "IWG",
+  "IWG.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "Interpump Group",
+  "IP.MI",
+  "Industrials",
+  "IT",
+  false
+ ],
+ [
+  "Intertek",
+  "ITRK.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Intesa Sanpaolo",
+  "ISP.MI",
+  "Financials",
+  "IT",
+  true
+ ],
+ [
+  "Investec",
+  "INVP.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Investor B",
+  "INVE-B.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "Inwit",
+  "INW.MI",
+  "Comm. Services",
+  "IT",
+  false
+ ],
+ [
+  "Ipsen",
+  "IPN.PA",
+  "Health Care",
+  "FR",
+  false
+ ],
+ [
+  "ISS",
+  "ISS.CO",
+  "Industrials",
+  "DK",
+  false
+ ],
+ [
+  "Italgas",
+  "IG.MI",
+  "Utilities",
+  "IT",
+  false
+ ],
+ [
+  "ITV",
+  "ITV.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "J Sainsbury",
+  "SBRY.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "JCDecaux",
+  "DEC.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "JD Sports Fashion",
+  "JD.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "JDE Peet's",
+  "JDEP.AS",
+  "Consumer Staples",
+  "NL",
+  false
+ ],
+ [
+  "Jerónimo Martins",
+  "JMT.LS",
+  "Consumer Staples",
+  "PT",
+  false
+ ],
+ [
+  "Johnson Matthey",
+  "JMAT.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "Julius Bär",
+  "BAER.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "Jupiter Fund Management",
+  "JUP.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "K+S",
+  "SDC.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "KBC Groep",
+  "KBC.BR",
+  "Financials",
+  "BE",
+  false
+ ],
+ [
+  "Kering",
+  "KER.PA",
+  "Consumer Disc.",
+  "FR",
+  true
+ ],
+ [
+  "Kerry Group",
+  "KYG.IR",
+  "Consumer Staples",
+  "IE",
+  false
+ ],
+ [
+  "Kesko",
+  "KESKOB.HE",
+  "Consumer Staples",
+  "FI",
+  false
+ ],
+ [
+  "KGHM Polska Miedz",
+  "KGH.WA",
+  "Materials",
+  "PL",
+  false
+ ],
+ [
+  "Kingfisher",
+  "KGF.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Kingspan",
+  "KRX.IR",
+  "Industrials",
+  "IE",
+  false
+ ],
+ [
+  "Kinnevik B",
+  "KINV-B.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "Kion Group",
+  "KGX.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "Klépierre",
+  "LI.PA",
+  "Real Estate",
+  "FR",
+  false
+ ],
+ [
+  "Knorr-Bremse",
+  "KBX.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "Kone",
+  "KNEBV.HE",
+  "Industrials",
+  "FI",
+  true
+ ],
+ [
+  "Koninklijke KPN",
+  "KPN.AS",
+  "Comm. Services",
+  "NL",
+  false
+ ],
+ [
+  "Kuehne+Nagel",
+  "KNIN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Lagardère",
+  "MMB.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "Land Securities",
+  "LAND.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "Lanxess",
+  "LXS.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "LEG Immobilien",
+  "LEG.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Legal & General",
+  "LGEN.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Legrand",
+  "LR.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Leonardo",
+  "LDO.MI",
+  "Industrials",
+  "IT",
+  false
+ ],
+ [
+  "Lindt & Sprüngli N",
+  "LISP.SW",
+  "Consumer Staples",
+  "CH",
+  false
+ ],
+ [
+  "Lloyds Banking Group",
+  "LLOY.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Ericsson B",
+  "ERIC-B.ST",
+  "Info Technology",
+  "SE",
+  false
+ ],
+ [
+  "Logitech",
+  "LOGN.SW",
+  "Info Technology",
+  "CH",
+  false
+ ],
+ [
+  "London Stock Exchange",
+  "LSEG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "LondonMetric Property",
+  "LMP.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "Lonza Group",
+  "LONN.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "L'Oréal",
+  "OR.PA",
+  "Consumer Staples",
+  "FR",
+  true
+ ],
+ [
+  "LVMH",
+  "MC.PA",
+  "Consumer Disc.",
+  "FR",
+  true
+ ],
+ [
+  "Lufthansa",
+  "LHA.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "Lundbergs B",
+  "LUND-B.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "M&G",
+  "MNG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Man Group",
+  "EMG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Marks & Spencer",
+  "MKS.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Mediobanca",
+  "MB.MI",
+  "Financials",
+  "IT",
+  false
+ ],
+ [
+  "Melrose Industries",
+  "MRO.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Mercedes-Benz",
+  "MBG.DE",
+  "Consumer Disc.",
+  "DE",
+  true
+ ],
+ [
+  "Merck KGaA",
+  "MRK.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "Merlin Properties",
+  "MRL.MC",
+  "Real Estate",
+  "ES",
+  false
+ ],
+ [
+  "Michelin",
+  "ML.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Maersk B",
+  "MAERSK-B.CO",
+  "Industrials",
+  "DK",
+  false
+ ],
+ [
+  "Moncler",
+  "MONC.MI",
+  "Consumer Disc.",
+  "IT",
+  false
+ ],
+ [
+  "Mondi",
+  "MNDI.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "Mowi",
+  "MOWI.OL",
+  "Consumer Staples",
+  "NO",
+  false
+ ],
+ [
+  "MTU Aero Engines",
+  "MTX.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "Munich Re",
+  "MUV2.DE",
+  "Financials",
+  "DE",
+  true
+ ],
+ [
+  "National Grid",
+  "NG.L",
+  "Utilities",
+  "GB",
+  false
+ ],
+ [
+  "Naturgy Energy",
+  "NTGY.MC",
+  "Utilities",
+  "ES",
+  false
+ ],
+ [
+  "NatWest Group",
+  "NWG.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Nel",
+  "NEL.OL",
+  "Industrials",
+  "NO",
+  false
+ ],
+ [
+  "Nemetschek",
+  "NEM.DE",
+  "Info Technology",
+  "DE",
+  false
+ ],
+ [
+  "Neste",
+  "NESTE.HE",
+  "Energy",
+  "FI",
+  false
+ ],
+ [
+  "Nestlé",
+  "NESN.SW",
+  "Consumer Staples",
+  "CH",
+  false
+ ],
+ [
+  "Nexi",
+  "NEXI.MI",
+  "Info Technology",
+  "IT",
+  false
+ ],
+ [
+  "Next",
+  "NXT.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Nibe Industrier B",
+  "NIBE-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "NN Group",
+  "NN.AS",
+  "Financials",
+  "NL",
+  false
+ ],
+ [
+  "Nokia",
+  "NOKIA.HE",
+  "Info Technology",
+  "FI",
+  false
+ ],
+ [
+  "Nokian Tyres",
+  "TYRES.HE",
+  "Consumer Disc.",
+  "FI",
+  false
+ ],
+ [
+  "Nordea Bank",
+  "NDA-FI.HE",
+  "Financials",
+  "FI",
+  false
+ ],
+ [
+  "Norsk Hydro",
+  "NHY.OL",
+  "Materials",
+  "NO",
+  false
+ ],
+ [
+  "Novartis",
+  "NOVN.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "Novo Nordisk B",
+  "NOVO-B.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "Novonesis",
+  "NZYM-B.CO",
+  "Health Care",
+  "DK",
+  false
+ ],
+ [
+  "OC Oerlikon",
+  "OERL.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Ocado",
+  "OCDO.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Ørsted",
+  "ORSTED.CO",
+  "Utilities",
+  "DK",
+  false
+ ],
+ [
+  "OMV",
+  "OMV.VI",
+  "Energy",
+  "AT",
+  false
+ ],
+ [
+  "Orange",
+  "ORA.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "Orion B",
+  "ORNBV.HE",
+  "Health Care",
+  "FI",
+  false
+ ],
+ [
+  "Orkla",
+  "ORK.OL",
+  "Consumer Staples",
+  "NO",
+  false
+ ],
+ [
+  "Orron Energy",
+  "ORRON.ST",
+  "Energy",
+  "SE",
+  false
+ ],
+ [
+  "Pandora",
+  "PNDORA.CO",
+  "Consumer Disc.",
+  "DK",
+  false
+ ],
+ [
+  "Partners Group",
+  "PGHN.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "Pearson",
+  "PSON.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "Pennon Group",
+  "PNN.L",
+  "Utilities",
+  "GB",
+  false
+ ],
+ [
+  "Pernod Ricard",
+  "RI.PA",
+  "Consumer Staples",
+  "FR",
+  true
+ ],
+ [
+  "Persimmon",
+  "PSN.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Philips",
+  "PHIA.AS",
+  "Health Care",
+  "NL",
+  true
+ ],
+ [
+  "Pirelli",
+  "PIRC.MI",
+  "Consumer Disc.",
+  "IT",
+  false
+ ],
+ [
+  "PKN Orlen",
+  "PKN.WA",
+  "Energy",
+  "PL",
+  false
+ ],
+ [
+  "PKO Bank Polski",
+  "PKO.WA",
+  "Financials",
+  "PL",
+  false
+ ],
+ [
+  "Porsche Auto Holding",
+  "PAH3.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "Poste Italiane",
+  "PST.MI",
+  "Financials",
+  "IT",
+  false
+ ],
+ [
+  "ProSieben",
+  "PSM.DE",
+  "Comm. Services",
+  "DE",
+  false
+ ],
+ [
+  "Prosus",
+  "PRX.AS",
+  "Info Technology",
+  "NL",
+  true
+ ],
+ [
+  "Proximus",
+  "PROX.BR",
+  "Comm. Services",
+  "BE",
+  false
+ ],
+ [
+  "Prudential",
+  "PRU.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Prysmian",
+  "PRY.MI",
+  "Industrials",
+  "IT",
+  false
+ ],
+ [
+  "PSP Swiss Property",
+  "PSPN.SW",
+  "Real Estate",
+  "CH",
+  false
+ ],
+ [
+  "Publicis",
+  "PUB.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "Puma",
+  "PUM.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "PZU",
+  "PZU.WA",
+  "Financials",
+  "PL",
+  false
+ ],
+ [
+  "Qiagen",
+  "QIA.DE",
+  "Health Care",
+  "NL",
+  false
+ ],
+ [
+  "Quilter",
+  "QLT.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Raiffeisen Bank Intl",
+  "RBI.VI",
+  "Financials",
+  "AT",
+  false
+ ],
+ [
+  "Randstad",
+  "RAND.AS",
+  "Industrials",
+  "NL",
+  false
+ ],
+ [
+  "Reckitt Benckiser",
+  "RKT.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Recordati",
+  "REC.MI",
+  "Health Care",
+  "IT",
+  false
+ ],
+ [
+  "Redeia (Red Electrica)",
+  "REE.MC",
+  "Utilities",
+  "ES",
+  false
+ ],
+ [
+  "RELX",
+  "REL.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Rémy Cointreau",
+  "RCO.PA",
+  "Consumer Staples",
+  "FR",
+  false
+ ],
+ [
+  "Renault",
+  "RNO.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Rentokil Initial",
+  "RTO.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Repsol",
+  "REP.MC",
+  "Energy",
+  "ES",
+  false
+ ],
+ [
+  "Rexel",
+  "RXL.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Rheinmetall",
+  "RHM.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "Richemont",
+  "CFR.SW",
+  "Consumer Disc.",
+  "CH",
+  false
+ ],
+ [
+  "Rightmove",
+  "RMV.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "Rio Tinto",
+  "RIO.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "Roche Holding",
+  "ROG.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "Rolls-Royce",
+  "RR.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Rotork",
+  "ROR.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Royal Unibrew",
+  "RBREW.CO",
+  "Consumer Staples",
+  "DK",
+  false
+ ],
+ [
+  "RS Group",
+  "RS1.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Rubis",
+  "RUI.PA",
+  "Energy",
+  "FR",
+  false
+ ],
+ [
+  "RWE",
+  "RWE.DE",
+  "Utilities",
+  "DE",
+  false
+ ],
+ [
+  "S.e.b / SEB (Electro)",
+  "SK.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Saab B",
+  "SAAB-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Safran",
+  "SAF.PA",
+  "Industrials",
+  "FR",
+  true
+ ],
+ [
+  "Sagax B",
+  "SAGA-B.ST",
+  "Real Estate",
+  "SE",
+  false
+ ],
+ [
+  "Sage Group",
+  "SGE.L",
+  "Info Technology",
+  "GB",
+  false
+ ],
+ [
+  "Saint-Gobain",
+  "SGO.PA",
+  "Materials",
+  "FR",
+  false
+ ],
+ [
+  "Saipem",
+  "SPM.MI",
+  "Energy",
+  "IT",
+  false
+ ],
+ [
+  "SalMar",
+  "SALM.OL",
+  "Consumer Staples",
+  "NO",
+  false
+ ],
+ [
+  "Sampo",
+  "SAMPO.HE",
+  "Financials",
+  "FI",
+  false
+ ],
+ [
+  "Sandvik",
+  "SAND.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Sanofi",
+  "SAN.PA",
+  "Health Care",
+  "FR",
+  true
+ ],
+ [
+  "Santander",
+  "SAN.MC",
+  "Financials",
+  "ES",
+  true
+ ],
+ [
+  "Santander Bank Polska",
+  "SPL.WA",
+  "Financials",
+  "PL",
+  false
+ ],
+ [
+  "SAP",
+  "SAP.DE",
+  "Info Technology",
+  "DE",
+  true
+ ],
+ [
+  "Sartorius AG Vz",
+  "SRT3.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "Sartorius Stedim",
+  "DIM.PA",
+  "Health Care",
+  "FR",
+  false
+ ],
+ [
+  "SBM Offshore",
+  "SBMO.AS",
+  "Energy",
+  "NL",
+  false
+ ],
+ [
+  "Scatec",
+  "SCATC.OL",
+  "Utilities",
+  "NO",
+  false
+ ],
+ [
+  "Schindler PS",
+  "SCHP.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Schneider Electric",
+  "SU.PA",
+  "Industrials",
+  "FR",
+  true
+ ],
+ [
+  "Schroders",
+  "SDR.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "SCOR",
+  "SCR.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "Scout24",
+  "G24.DE",
+  "Comm. Services",
+  "DE",
+  false
+ ],
+ [
+  "Securitas B",
+  "SECU-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Segro",
+  "SGRO.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "SES",
+  "SESG.PA",
+  "Comm. Services",
+  "LU",
+  false
+ ],
+ [
+  "Severn Trent",
+  "SVT.L",
+  "Utilities",
+  "GB",
+  false
+ ],
+ [
+  "SGS",
+  "SGSN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Shell",
+  "SHEL.L",
+  "Energy",
+  "GB",
+  false
+ ],
+ [
+  "Siemens",
+  "SIE.DE",
+  "Industrials",
+  "DE",
+  true
+ ],
+ [
+  "Siemens Healthineers",
+  "SHL.DE",
+  "Health Care",
+  "DE",
+  false
+ ],
+ [
+  "SIG Group",
+  "SIGN.SW",
+  "Materials",
+  "CH",
+  false
+ ],
+ [
+  "Signify",
+  "LIGHT.AS",
+  "Consumer Disc.",
+  "NL",
+  false
+ ],
+ [
+  "Sika",
+  "SIKA.SW",
+  "Materials",
+  "CH",
+  false
+ ],
+ [
+  "Siltronic",
+  "WAF.DE",
+  "Info Technology",
+  "DE",
+  false
+ ],
+ [
+  "Skanska B",
+  "SKA-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "SKF B",
+  "SKF-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Smith & Nephew",
+  "SN.L",
+  "Health Care",
+  "GB",
+  false
+ ],
+ [
+  "Smiths Group",
+  "SMIN.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Smurfit Westrock",
+  "SW.L",
+  "Materials",
+  "IE",
+  false
+ ],
+ [
+  "Snam",
+  "SRG.MI",
+  "Utilities",
+  "IT",
+  false
+ ],
+ [
+  "Société Générale",
+  "GLE.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "Sodexo",
+  "SW.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Sofina",
+  "SOF.BR",
+  "Financials",
+  "BE",
+  false
+ ],
+ [
+  "SoftwareOne",
+  "SWO.SW",
+  "Info Technology",
+  "CH",
+  false
+ ],
+ [
+  "Soitec",
+  "SOI.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Solvay",
+  "SOLB.BR",
+  "Materials",
+  "BE",
+  false
+ ],
+ [
+  "Sonova",
+  "SOON.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "Sopra Steria",
+  "SOP.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Spie",
+  "SPIE.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "Spirax Group",
+  "SPX.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "SSE",
+  "SSE.L",
+  "Utilities",
+  "GB",
+  false
+ ],
+ [
+  "SSP Group",
+  "SSPG.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "St. James's Place",
+  "STJ.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Stadler Rail",
+  "SRAIL.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Standard Chartered",
+  "STAN.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Standard Life Aberdeen",
+  "ABDN.L",
+  "Financials",
+  "GB",
+  false
+ ],
+ [
+  "Stellantis",
+  "STLAM.MI",
+  "Consumer Disc.",
+  "IT",
+  true
+ ],
+ [
+  "STMicroelectronics",
+  "STM.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Stora Enso",
+  "STERV.HE",
+  "Materials",
+  "FI",
+  false
+ ],
+ [
+  "Storebrand",
+  "STB.OL",
+  "Financials",
+  "NO",
+  false
+ ],
+ [
+  "Straumann Holding",
+  "STMN.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "Subsea 7",
+  "SUBC.OL",
+  "Energy",
+  "LU",
+  false
+ ],
+ [
+  "Svenska Cellulosa B",
+  "SCA-B.ST",
+  "Materials",
+  "SE",
+  false
+ ],
+ [
+  "Svenska Handelsbanken A",
+  "SHB-A.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "Swatch Group",
+  "UHR.SW",
+  "Consumer Disc.",
+  "CH",
+  false
+ ],
+ [
+  "Swedbank A",
+  "SWED-A.ST",
+  "Financials",
+  "SE",
+  false
+ ],
+ [
+  "Swedish Orphan Biovitrum",
+  "SOBI.ST",
+  "Health Care",
+  "SE",
+  false
+ ],
+ [
+  "Swiss Life Holding",
+  "SLHN.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "Swiss Prime Site",
+  "SPSN.SW",
+  "Real Estate",
+  "CH",
+  false
+ ],
+ [
+  "Swiss Re",
+  "SREN.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "Swisscom",
+  "SCMN.SW",
+  "Comm. Services",
+  "CH",
+  false
+ ],
+ [
+  "Symrise",
+  "SY1.DE",
+  "Materials",
+  "DE",
+  false
+ ],
+ [
+  "TAG Immobilien",
+  "TEG.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Tate & Lyle",
+  "TATE.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Taylor Wimpey",
+  "TW.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Tecan Group",
+  "TECN.SW",
+  "Health Care",
+  "CH",
+  false
+ ],
+ [
+  "TechnipFMC",
+  "FTI.PA",
+  "Energy",
+  "FR",
+  false
+ ],
+ [
+  "Tele2 B",
+  "TEL2-B.ST",
+  "Comm. Services",
+  "SE",
+  false
+ ],
+ [
+  "Telecom Italia",
+  "TIT.MI",
+  "Comm. Services",
+  "IT",
+  false
+ ],
+ [
+  "Telefónica",
+  "TEF.MC",
+  "Comm. Services",
+  "ES",
+  false
+ ],
+ [
+  "Telenor",
+  "TEL.OL",
+  "Comm. Services",
+  "NO",
+  false
+ ],
+ [
+  "Teleperformance",
+  "TEP.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "Telia Company",
+  "TELIA.ST",
+  "Comm. Services",
+  "SE",
+  false
+ ],
+ [
+  "Temenos",
+  "TEMN.SW",
+  "Info Technology",
+  "CH",
+  false
+ ],
+ [
+  "Tenaris",
+  "TEN.MI",
+  "Energy",
+  "IT",
+  false
+ ],
+ [
+  "Terna",
+  "TRN.MI",
+  "Utilities",
+  "IT",
+  false
+ ],
+ [
+  "Tesco",
+  "TSCO.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Thales",
+  "HO.PA",
+  "Industrials",
+  "FR",
+  false
+ ],
+ [
+  "THG Holdings",
+  "THG.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "ThyssenKrupp",
+  "TKA.DE",
+  "Industrials",
+  "DE",
+  false
+ ],
+ [
+  "TOMRA Systems",
+  "TOM.OL",
+  "Industrials",
+  "NO",
+  false
+ ],
+ [
+  "TotalEnergies",
+  "TTE.PA",
+  "Energy",
+  "FR",
+  true
+ ],
+ [
+  "Travis Perkins",
+  "TPK.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Trelleborg B",
+  "TREL-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Tritax Big Box",
+  "BBOX.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "Tryg",
+  "TRYG.CO",
+  "Financials",
+  "DK",
+  false
+ ],
+ [
+  "Tullow Oil",
+  "TLW.L",
+  "Energy",
+  "GB",
+  false
+ ],
+ [
+  "Ubisoft",
+  "UBI.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "UBS Group",
+  "UBSG.SW",
+  "Financials",
+  "CH",
+  false
+ ],
+ [
+  "UCB",
+  "UCB.BR",
+  "Health Care",
+  "BE",
+  false
+ ],
+ [
+  "Umicore",
+  "UMI.BR",
+  "Materials",
+  "BE",
+  false
+ ],
+ [
+  "Unibail-Rodamco-Westfield",
+  "URW.PA",
+  "Real Estate",
+  "FR",
+  false
+ ],
+ [
+  "UniCredit",
+  "UCG.MI",
+  "Financials",
+  "IT",
+  false
+ ],
+ [
+  "Unilever",
+  "ULVR.L",
+  "Consumer Staples",
+  "GB",
+  false
+ ],
+ [
+  "Uniper",
+  "UN01.DE",
+  "Utilities",
+  "DE",
+  false
+ ],
+ [
+  "Unite Group",
+  "UTG.L",
+  "Real Estate",
+  "GB",
+  false
+ ],
+ [
+  "United Internet",
+  "UTDI.DE",
+  "Comm. Services",
+  "DE",
+  false
+ ],
+ [
+  "United Utilities",
+  "UU.L",
+  "Utilities",
+  "GB",
+  false
+ ],
+ [
+  "UPM-Kymmene",
+  "UPM.HE",
+  "Materials",
+  "FI",
+  false
+ ],
+ [
+  "Valeo",
+  "FR.PA",
+  "Consumer Disc.",
+  "FR",
+  false
+ ],
+ [
+  "Valmet",
+  "VALMT.HE",
+  "Industrials",
+  "FI",
+  false
+ ],
+ [
+  "VAT Group",
+  "VACN.SW",
+  "Industrials",
+  "CH",
+  false
+ ],
+ [
+  "Veolia",
+  "VIE.PA",
+  "Utilities",
+  "FR",
+  false
+ ],
+ [
+  "Verbund",
+  "VER.VI",
+  "Utilities",
+  "AT",
+  false
+ ],
+ [
+  "Vestas Wind",
+  "VWS.CO",
+  "Industrials",
+  "DK",
+  false
+ ],
+ [
+  "Viaplay Group",
+  "VPLAY-B.ST",
+  "Comm. Services",
+  "SE",
+  false
+ ],
+ [
+  "Victrex",
+  "VCT.L",
+  "Materials",
+  "GB",
+  false
+ ],
+ [
+  "Vinci",
+  "DG.PA",
+  "Industrials",
+  "FR",
+  true
+ ],
+ [
+  "Vivendi",
+  "VIV.PA",
+  "Comm. Services",
+  "FR",
+  false
+ ],
+ [
+  "Vodafone",
+  "VOD.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "voestalpine",
+  "VOE.VI",
+  "Materials",
+  "AT",
+  false
+ ],
+ [
+  "Volkswagen VZO",
+  "VOW3.DE",
+  "Consumer Disc.",
+  "DE",
+  true
+ ],
+ [
+  "Volvo B",
+  "VOLV-B.ST",
+  "Industrials",
+  "SE",
+  false
+ ],
+ [
+  "Vonovia",
+  "VNA.DE",
+  "Real Estate",
+  "DE",
+  false
+ ],
+ [
+  "Vopak",
+  "VPK.AS",
+  "Industrials",
+  "NL",
+  false
+ ],
+ [
+  "WDP (Warehouses de Pauw)",
+  "WDP.BR",
+  "Real Estate",
+  "BE",
+  false
+ ],
+ [
+  "Wärtsilä",
+  "WRT1V.HE",
+  "Industrials",
+  "FI",
+  false
+ ],
+ [
+  "Weir Group",
+  "WEIR.L",
+  "Industrials",
+  "GB",
+  false
+ ],
+ [
+  "Wendel",
+  "MF.PA",
+  "Financials",
+  "FR",
+  false
+ ],
+ [
+  "WH Smith",
+  "SMWH.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Whitbread",
+  "WTB.L",
+  "Consumer Disc.",
+  "GB",
+  false
+ ],
+ [
+  "Wienerberger",
+  "WIE.VI",
+  "Materials",
+  "AT",
+  false
+ ],
+ [
+  "Wolters Kluwer",
+  "WKL.AS",
+  "Info Technology",
+  "NL",
+  false
+ ],
+ [
+  "Worldline",
+  "WLN.PA",
+  "Info Technology",
+  "FR",
+  false
+ ],
+ [
+  "WPP",
+  "WPP.L",
+  "Comm. Services",
+  "GB",
+  false
+ ],
+ [
+  "Yara International",
+  "YAR.OL",
+  "Materials",
+  "NO",
+  false
+ ],
+ [
+  "Zalando",
+  "ZAL.DE",
+  "Consumer Disc.",
+  "DE",
+  false
+ ],
+ [
+  "Zurich Insurance",
+  "ZURN.SW",
+  "Financials",
+  "CH",
+  false
+ ]
+]
