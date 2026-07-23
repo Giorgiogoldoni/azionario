@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📈 AZIONARIO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--bg3:#f1f3f5;
+  --border:#dee2e6;--border2:#ced4da;
+  --text:#212529;--text2:#495057;--text3:#868e96;
+  --accent:#1971c2;
+  --lc:#2f9e44;--le:#1971c2;--gr:#e67700;--ex:#c92a2a;--st:#862e2e;
+  --font-mono:'Space Mono',monospace;
+  --font-cond:'Barlow Condensed',sans-serif;
+  --font-body:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:13px}
+
+.topbar{background:var(--bg);border-bottom:2px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;position:sticky;top:0;z-index:100}
+.logo{font-family:var(--font-cond);font-weight:800;font-size:22px;letter-spacing:3px;color:var(--accent)}
+.logo span{color:var(--text3);font-weight:300}
+.spacer{flex:1}
+.meta{font-size:10px;color:var(--text3);font-family:var(--font-cond);letter-spacing:.5px}
+.btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--font-cond);font-weight:700;letter-spacing:.5px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{opacity:.9;color:#fff}
+
+.controls{display:flex;align-items:center;gap:8px;padding:8px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.ctrl-label{font-size:10px;color:var(--text3);font-family:var(--font-cond);letter-spacing:.5px;font-weight:600}
+select,input[type=text]{background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:4px 8px;border-radius:4px;font-size:11px;font-family:var(--font-body)}
+select:focus,input:focus{outline:none;border-color:var(--accent)}
+.count-badge{background:var(--accent);color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;font-family:var(--font-mono)}
+
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);padding:0 20px;background:var(--bg)}
+.tab{padding:10px 20px;font-family:var(--font-cond);font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--text3);transition:all .12s;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--text)}
+.tab.act{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-cnt{background:var(--bg3);color:var(--text3);padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700}
+.tab.act .tab-cnt{background:var(--accent);color:#fff}
+
+.table-wrap{overflow-x:auto;padding:0 20px 40px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:0}
+thead th{position:sticky;top:0;background:var(--bg2);border-bottom:2px solid var(--border);padding:7px 8px;text-align:left;font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--text2);white-space:nowrap;cursor:pointer;user-select:none;z-index:10}
+thead th:hover{color:var(--accent)}
+thead th.sort-asc::after{content:' ↑'}
+thead th.sort-desc::after{content:' ↓'}
+tbody tr{border-bottom:1px solid var(--bg3);transition:background .08s}
+tbody tr:hover{background:var(--bg2)}
+tbody tr.hidden{display:none}
+td{padding:6px 8px;vertical-align:middle;white-space:nowrap}
+td.nome{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);font-size:11px}
+td.ticker{font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;color:var(--accent)}
+td.ticker:hover{text-decoration:underline}
+td.num{font-family:var(--font-mono);font-size:11px;text-align:right}
+td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:right}
+
+.pill{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;font-family:var(--font-cond);letter-spacing:.5px;white-space:nowrap}
+.pill-lc{background:#d3f9d8;color:var(--lc)}
+.pill-le{background:#dbe4ff;color:var(--le)}
+.pill-gr{background:#fff3bf;color:var(--gr)}
+.pill-ex{background:#ffe3e3;color:var(--ex)}
+.pill-st{background:#ffe3e3;color:var(--st);border:1px solid #fca5a5}
+.pill-hold{background:var(--bg3);color:var(--text3)}
+.sbb-flag{color:#e67700;font-weight:700;font-size:10px;font-family:var(--font-cond)}
+
+.rowbtn{background:none;border:1px solid var(--border2);color:var(--text3);padding:2px 6px;border-radius:3px;font-size:10px;cursor:pointer;margin-right:2px}
+.rowbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* MODAL GRAFICO */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(33,37,41,.5);z-index:200;align-items:flex-start;justify-content:center;padding:30px 12px;overflow:auto}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg);border-radius:8px;max-width:920px;width:100%;padding:20px;position:relative}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3)}
+.modal-close:hover{color:var(--ex)}
+.modal-header{display:flex;gap:20px;flex-wrap:wrap;align-items:baseline;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.modal-header h2{font-family:var(--font-cond);font-size:20px;letter-spacing:.5px}
+.kv{font-family:var(--font-mono);font-size:12px}
+.kv b{font-family:var(--font-cond);font-weight:700;color:var(--text3);font-size:10px;letter-spacing:.5px;margin-right:4px}
+.kv.green{color:var(--lc)}.kv.red{color:var(--ex)}.kv.blue{color:var(--le)}.kv.orange{color:var(--gr)}
+.chart-panel{margin:10px 0}
+.chart-panel-title{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);margin-bottom:4px}
+.modal-actions{display:flex;gap:8px;margin-top:14px}
+.loading{padding:40px;text-align:center;color:var(--text3);font-family:var(--font-cond)}
+
+@media (max-width:700px){
+  .modal{padding:14px}
+  td,thead th{padding:5px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">AZIONARIO<span> · STOXX600 + S&amp;P500</span></div>
+  <div class="spacer"></div>
+  <div class="meta" id="lastUpdate">—</div>
+  <button class="btn primary" id="btnExcel">⬇ Excel</button>
+</div>
+
+<div class="tabs">
+  <div class="tab act" data-tab="EU">🇪🇺 Europa <span class="tab-cnt" id="cntEU">–</span></div>
+  <div class="tab" data-tab="US">🇺🇸 USA <span class="tab-cnt" id="cntUS">–</span></div>
+</div>
+
+<div class="controls">
+  <span class="ctrl-label">Cerca</span>
+  <input type="text" id="search" placeholder="nome o ticker...">
+  <span class="ctrl-label">Settore</span>
+  <select id="filterSettore"><option value="">Tutti</option></select>
+  <span class="ctrl-label">Segnale</span>
+  <select id="filterSegnale">
+    <option value="">Tutti</option>
+    <option value="BUY3">BUY3</option>
+    <option value="BUY2">BUY2</option>
+    <option value="HOLD">HOLD</option>
+    <option value="SELL">SELL</option>
+    <option value="STOP">STOP</option>
+  </select>
+  <label class="ctrl-label" style="display:flex;align-items:center;gap:4px;cursor:pointer">
+    <input type="checkbox" id="filterSBB"> Solo Super Best Buy
+  </label>
+  <span class="spacer"></span>
+  <span class="count-badge" id="rowCount">0</span>
+</div>
+
+<div class="table-wrap">
+<table id="tbl">
+  <thead>
+    <tr>
+      <th data-k="nome">Nome</th>
+      <th data-k="ticker">Ticker</th>
+      <th data-k="settore">Settore</th>
+      <th data-k="prezzo">Prezzo</th>
+      <th data-k="perf_oggi">Oggi%</th>
+      <th data-k="perf_1m">Mese%</th>
+      <th data-k="perf_6m">6M%</th>
+      <th data-k="zona">Zona</th>
+      <th data-k="segnale">Segnale</th>
+      <th data-k="sar_bullish">SAR</th>
+      <th data-k="rsi14">RSI14</th>
+      <th data-k="adx">ADX</th>
+      <th data-k="score">Score</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<!-- MODAL GRAFICO -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalContent"><div class="loading">Caricamento...</div></div>
+  </div>
+</div>
+
+<script>
+const DATA_URL = 'azionario.json';
+const CHART_BASE = 'data/charts/';
+let ALL = [];
+let currentTab = 'EU';
+let sortKey = 'score', sortDir = -1;
+
+const zonaPill = z => ({
+  LONG_CONF:'<span class="pill pill-lc">LONG CONF</span>',
+  LONG_EARLY:'<span class="pill pill-le">LONG EARLY</span>',
+  USCITA:'<span class="pill pill-gr">USCITA</span>',
+  STOP:'<span class="pill pill-ex">STOP</span>',
+  NEUTRA:'<span class="pill pill-hold">NEUTRA</span>',
+}[z] || `<span class="pill pill-hold">${z}</span>`);
+
+const segnalePill = s => ({
+  BUY3:'<span class="pill pill-lc">BUY3</span>',
+  BUY2:'<span class="pill pill-le">BUY2</span>',
+  SELL:'<span class="pill pill-gr">SELL</span>',
+  STOP:'<span class="pill pill-ex">STOP</span>',
+  HOLD:'<span class="pill pill-hold">HOLD</span>',
+}[s] || `<span class="pill pill-hold">${s}</span>`);
+
+const pct = v => v==null ? '—' : `<span style="color:${v>=0?'var(--lc)':'var(--ex)'}">${v>=0?'+':''}${v.toFixed(2)}%</span>`;
+const fileFor = t => t.replace(/\./g,'_').replace(/-/g,'_');
+
+async function load(){
+  const r = await fetch(DATA_URL + '?t=' + Date.now());
+  const json = await r.json();
+  ALL = json.titoli || [];
+  document.getElementById('lastUpdate').textContent = 'Aggiornato: ' + (json.generato||'').replace('T',' ').slice(0,16);
+  document.getElementById('cntEU').textContent = ALL.filter(x=>x.regione==='EU').length;
+  document.getElementById('cntUS').textContent = ALL.filter(x=>x.regione==='US').length;
+  populateSettori();
+  render();
+}
+
+function populateSettori(){
+  const sel = document.getElementById('filterSettore');
+  const settori = [...new Set(ALL.map(x=>x.settore))].sort();
+  settori.forEach(s=>{
+    const o = document.createElement('option');
+    o.value = s; o.textContent = s;
+    sel.appendChild(o);
+  });
+}
+
+function currentRows(){
+  let rows = ALL.filter(x=>x.regione===currentTab);
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  if(q) rows = rows.filter(x=>x.nome.toLowerCase().includes(q) || x.ticker.toLowerCase().includes(q));
+  const settore = document.getElementById('filterSettore').value;
+  if(settore) rows = rows.filter(x=>x.settore===settore);
+  const segnale = document.getElementById('filterSegnale').value;
+  if(segnale) rows = rows.filter(x=>x.segnale===segnale);
+  if(document.getElementById('filterSBB').checked) rows = rows.filter(x=>x.super_best_buy);
+  rows.sort((a,b)=>{
+    let va=a[sortKey], vb=b[sortKey];
+    if(typeof va==='string') return sortDir*va.localeCompare(vb);
+    return sortDir*((va??-Infinity)-(vb??-Infinity));
+  });
+  return rows;
+}
+
+function render(){
+  const rows = currentRows();
+  document.getElementById('rowCount').textContent = rows.length;
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = rows.map(r=>`
+    <tr>
+      <td class="nome" title="${r.nome}">${r.nome}</td>
+      <td class="ticker" onclick="openChart('${r.ticker}')">${r.ticker}${r.super_best_buy?' <span class="sbb-flag">🚀SBB</span>':''}</td>
+      <td>${r.settore}</td>
+      <td class="num">${r.prezzo?.toFixed(2)}</td>
+      <td class="num">${pct(r.perf_oggi)}</td>
+      <td class="num">${pct(r.perf_1m)}</td>
+      <td class="num">${pct(r.perf_6m)}</td>
+      <td>${zonaPill(r.zona)}</td>
+      <td>${segnalePill(r.segnale)}</td>
+      <td class="num" style="color:${r.sar_bullish?'var(--lc)':'var(--ex)'};font-weight:700" title="${r.bars_since_flip} barre dal flip">${r.sar_bullish?'▲':'▼'} ${r.bars_since_flip}</td>
+      <td class="num">${r.rsi14?.toFixed(1)}</td>
+      <td class="num">${r.adx?.toFixed(1)}</td>
+      <td class="score">${r.score?.toFixed(0)}</td>
+      <td>
+        <button class="rowbtn" onclick="openChart('${r.ticker}')" title="Grafico">📈</button>
+        <button class="rowbtn" onclick="openRegole('${r.ticker}')" title="Regole PDF">📄</button>
+        <button class="rowbtn" onclick="window.open('https://www.tradingview.com/chart/?symbol=${encodeURIComponent(r.tv_symbol)}','_blank')" title="TradingView">TV</button>
+      </td>
+    </tr>`).join('');
+}
+
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('act'));
+  t.classList.add('act');
+  currentTab = t.dataset.tab;
+  render();
+}));
+
+['search','filterSettore','filterSegnale','filterSBB'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+
+document.querySelectorAll('thead th[data-k]').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const k = th.dataset.k;
+    if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=-1; }
+    document.querySelectorAll('thead th').forEach(x=>x.classList.remove('sort-asc','sort-desc'));
+    th.classList.add(sortDir===1?'sort-asc':'sort-desc');
+    render();
+  });
+});
+
+function openRegole(ticker){
+  window.open(`regole/${fileFor(ticker)}_Regole.html`, '_blank');
+}
+
+async function openChart(ticker){
+  const bg = document.getElementById('modalBg');
+  const content = document.getElementById('modalContent');
+  bg.classList.add('open');
+  content.innerHTML = '<div class="loading">Caricamento grafico...</div>';
+  const row = ALL.find(x=>x.ticker===ticker);
+  try{
+    const chart = await fetch(CHART_BASE + fileFor(ticker) + '.json?t=' + Date.now()).then(r=>r.json());
+    content.innerHTML = buildChartHTML(row, chart);
+  }catch(e){
+    content.innerHTML = '<div class="loading">Dati grafico non disponibili per ' + ticker + '</div>';
+  }
+}
+
+document.getElementById('modalClose').addEventListener('click', ()=>document.getElementById('modalBg').classList.remove('open'));
+document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target.id==='modalBg') e.currentTarget.classList.remove('open'); });
+
+function buildChartHTML(row, chart){
+  const n = chart.date.length;
+  const W = 860, H = 260;
+  const closes = chart.close, kf = chart.kama_fast, ks = chart.kama_slow, sar = chart.sar, sarT = chart.sar_trend;
+  const lo = Math.min(...chart.low.filter(v=>v!=null), ...sar);
+  const hi = Math.max(...chart.high.filter(v=>v!=null), ...sar);
+  const x = i => 10 + i*(W-20)/(n-1);
+  const y = v => H-10 - (v-lo)/(hi-lo)*(H-20);
+
+  const candles = chart.date.map((d,i)=>{
+    const o=chart.open[i], c=closes[i], h=chart.high[i], l=chart.low[i];
+    const up = c>=o;
+    const cx = x(i);
+    const bw = Math.max(1.2, (W-20)/n*0.6);
+    return `<line x1="${cx}" y1="${y(h)}" x2="${cx}" y2="${y(l)}" stroke="${up?'#2f9e44':'#c92a2a'}" stroke-width="1"/>
+      <rect x="${cx-bw/2}" y="${y(Math.max(o,c))}" width="${bw}" height="${Math.max(1,Math.abs(y(o)-y(c)))}" fill="${up?'#2f9e44':'#c92a2a'}"/>`;
+  }).join('');
+
+  const linePath = arr => arr.map((v,i)=> v==null? '' : `${i===0||arr[i-1]==null?'M':'L'}${x(i)},${y(v)}`).join(' ');
+  const sarDots = chart.date.map((d,i)=>{
+    if(i===0 || sarT[i]===sarT[i-1]) return `<circle cx="${x(i)}" cy="${y(sar[i])}" r="1.3" fill="${sarT[i]===1?'#2f9e44':'#c92a2a'}" opacity="0.6"/>`;
+    return `<circle cx="${x(i)}" cy="${y(sar[i])}" r="2.6" fill="${sarT[i]===1?'#2f9e44':'#c92a2a'}"/>`;
+  }).join('');
+
+  // AO panel
+  const aoH = 60;
+  const aoMax = Math.max(...chart.ao.map(Math.abs), 0.01);
+  const aoY = v => aoH/2 - v/aoMax*(aoH/2-4);
+  const aoBars = chart.ao.map((v,i)=>{
+    const cx = x(i);
+    const barH = Math.abs(aoY(v)-aoH/2);
+    return `<rect x="${cx-1}" y="${Math.min(aoY(v),aoH/2)}" width="2" height="${Math.max(1,barH)}" fill="${v>=0?'#2f9e44':'#c92a2a'}"/>`;
+  }).join('');
+
+  // RSI panel
+  const rsiH = 60;
+  const rsiY = v => rsiH - v/100*rsiH;
+  const rsiPath = chart.rsi14.map((v,i)=> `${i===0?'M':'L'}${x(i)},${rsiY(v)}`).join(' ');
+
+  return `
+    <div class="modal-header">
+      <h2>${row.nome} <span style="color:var(--text3);font-family:var(--font-mono);font-size:13px">${row.ticker}</span></h2>
+      <div class="kv"><b>PREZZO</b>${row.prezzo.toFixed(2)}</div>
+      <div class="kv ${row.perf_oggi>=0?'green':'red'}"><b>OGGI</b>${row.perf_oggi>=0?'+':''}${row.perf_oggi.toFixed(2)}%</div>
+      <div class="kv blue"><b>SEGNALE</b>${row.segnale}</div>
+      <div class="kv"><b>RATING</b>${row.rating}</div>
+      <div class="kv"><b>SCORE</b>${row.score.toFixed(0)}</div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-panel-title">PREZZO · KAMA FAST/SLOW · SAR</div>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">
+        <path d="${linePath(ks)}" stroke="var(--gr)" stroke-width="1.4" fill="none"/>
+        <path d="${linePath(kf)}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>
+        ${candles}
+        ${sarDots}
+      </svg>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-panel-title">AO — AWESOME OSCILLATOR</div>
+      <svg viewBox="0 0 ${W} ${aoH}" width="100%" height="${aoH}">${aoBars}</svg>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-panel-title">RSI14</div>
+      <svg viewBox="0 0 ${W} ${rsiH}" width="100%" height="${rsiH}">
+        <line x1="0" y1="${rsiY(70)}" x2="${W}" y2="${rsiY(70)}" stroke="var(--border)" stroke-dasharray="3,3"/>
+        <line x1="0" y1="${rsiY(30)}" x2="${W}" y2="${rsiY(30)}" stroke="var(--border)" stroke-dasharray="3,3"/>
+        <path d="${rsiPath}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>
+      </svg>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="openRegole('${row.ticker}')">📄 Regole operative</button>
+      <button class="btn" onclick="window.open('https://www.tradingview.com/chart/?symbol=${encodeURIComponent(row.tv_symbol)}','_blank')">↗ Apri su TradingView</button>
+    </div>`;
+}
+
+document.getElementById('btnExcel').addEventListener('click', ()=>{
+  const rows = currentRows().map(r=>({
+    Nome:r.nome, Ticker:r.ticker, Settore:r.settore, Regione:r.regione,
+    Prezzo:r.prezzo, 'Oggi%':r.perf_oggi, 'Mese%':r.perf_1m, '3M%':r.perf_3m, '6M%':r.perf_6m,
+    Zona:r.zona, Segnale:r.segnale, Rating:r.rating, Score:r.score,
+    RSI14:r.rsi14, RSI5:r.rsi5, ADX:r.adx, AO:r.ao, ER:r.er,
+    'KAMA Fast':r.kama_fast, 'KAMA Slow':r.kama_slow, SAR:r.sar,
+    'Super Best Buy':r.super_best_buy?'SI':'NO'
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, currentTab);
+  XLSX.writeFile(wb, `azionario_${currentTab}_${new Date().toISOString().slice(0,10)}.xlsx`);
+});
+
+load();
+</script>
+</body>
+</html>
