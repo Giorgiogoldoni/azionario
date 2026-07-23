@@ -239,10 +239,12 @@ def baff_count(price_above_kama: pd.Series) -> int:
 # ---------------------------------------------------------------------------
 
 def compute_indicators(df: pd.DataFrame) -> dict | None:
-    if df is None or len(df) < KAMA_SLOW_N + 5:
+    if df is None or len(df) == 0:
         return None
 
     df = df.dropna(subset=["Open", "High", "Low", "Close"]).copy()
+    if len(df) < KAMA_SLOW_N + 5:
+        return None
     close, open_, high, low, vol = df["Close"], df["Open"], df["High"], df["Low"], df["Volume"]
 
     er = efficiency_ratio(close, ER_N)
@@ -278,7 +280,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     baff = baff_count(price_above_kf)
     sar_v = float(sar.iloc[i])
     sar_bullish = price > sar_v
-    bars_since_flip = bars_since(sar_flip)
+    bars_since_flip = int(bars_since(sar_flip))
 
     gap_pct = (kf - ks) / ks * 100 if ks else 0
     perf_oggi = float((close.iloc[i] / close.iloc[i - 1] - 1) * 100) if len(close) > 1 else 0
