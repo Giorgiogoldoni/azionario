@@ -1,0 +1,3523 @@
+[
+ [
+  "3M",
+  "MMM",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "A. O. Smith",
+  "AOS",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Abbott Laboratories",
+  "ABT",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "AbbVie",
+  "ABBV",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Accenture",
+  "ACN",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Adobe Inc.",
+  "ADBE",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Advanced Micro Devices",
+  "AMD",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "AES Corporation",
+  "AES",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Aflac",
+  "AFL",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Agilent Technologies",
+  "A",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Air Products",
+  "APD",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Airbnb",
+  "ABNB",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Akamai Technologies",
+  "AKAM",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Albemarle Corporation",
+  "ALB",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Alexandria Real Estate Equities",
+  "ARE",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Align Technology",
+  "ALGN",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Allegion",
+  "ALLE",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Alliant Energy",
+  "LNT",
+  "Utilities",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Allstate",
+  "ALL",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Alphabet Inc. (Class A)",
+  "GOOGL",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Alphabet Inc. (Class C)",
+  "GOOG",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Altria",
+  "MO",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Amazon",
+  "AMZN",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Amcor",
+  "AMCR",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Ameren",
+  "AEE",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "American Electric Power",
+  "AEP",
+  "Utilities",
+  "NASDAQ",
+  false
+ ],
+ [
+  "American Express",
+  "AXP",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "American International Group",
+  "AIG",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "American Tower",
+  "AMT",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "American Water Works",
+  "AWK",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Ameriprise Financial",
+  "AMP",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Ametek",
+  "AME",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Amgen",
+  "AMGN",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Amphenol",
+  "APH",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Analog Devices",
+  "ADI",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Aon plc",
+  "AON",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "APA Corporation",
+  "APA",
+  "Energy",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Apollo Global Management",
+  "APO",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Apple Inc.",
+  "AAPL",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Applied Materials",
+  "AMAT",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "AppLovin",
+  "APP",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Aptiv",
+  "APTV",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Arch Capital Group",
+  "ACGL",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Archer Daniels Midland",
+  "ADM",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Ares Management",
+  "ARES",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Arista Networks",
+  "ANET",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Arthur J. Gallagher & Co.",
+  "AJG",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Assurant",
+  "AIZ",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "AT&T",
+  "T",
+  "Communication Services",
+  "NYSE",
+  false
+ ],
+ [
+  "Atmos Energy",
+  "ATO",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Autodesk",
+  "ADSK",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Automatic Data Processing",
+  "ADP",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "AutoZone",
+  "AZO",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "AvalonBay Communities",
+  "AVB",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Avery Dennison",
+  "AVY",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Axon Enterprise",
+  "AXON",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Baker Hughes",
+  "BKR",
+  "Energy",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Ball Corporation",
+  "BALL",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Bank of America",
+  "BAC",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Baxter International",
+  "BAX",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Becton Dickinson",
+  "BDX",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Berkshire Hathaway",
+  "BRK-B",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Best Buy",
+  "BBY",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Bio-Techne",
+  "TECH",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Biogen",
+  "BIIB",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "BlackRock",
+  "BLK",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Blackstone Inc.",
+  "BX",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Block, Inc.",
+  "XYZ",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "BNY Mellon",
+  "BNY",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Boeing",
+  "BA",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Booking Holdings",
+  "BKNG",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Boston Scientific",
+  "BSX",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Bristol Myers Squibb",
+  "BMY",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Broadcom",
+  "AVGO",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Broadridge Financial Solutions",
+  "BR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Brown & Brown",
+  "BRO",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Brown–Forman",
+  "BF-B",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Builders FirstSource",
+  "BLDR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Bunge Global",
+  "BG",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "BXP, Inc.",
+  "BXP",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "C.H. Robinson",
+  "CHRW",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Cadence Design Systems",
+  "CDNS",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Camden Property Trust",
+  "CPT",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Capital One",
+  "COF",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Cardinal Health",
+  "CAH",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Carnival Corporation",
+  "CCL",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Carrier Global",
+  "CARR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Carvana",
+  "CVNA",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Casey's",
+  "CASY",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Caterpillar Inc.",
+  "CAT",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Cboe Global Markets",
+  "CBOE",
+  "Financials",
+  "BATS",
+  false
+ ],
+ [
+  "CBRE Group",
+  "CBRE",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "CDW Corporation",
+  "CDW",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Cencora",
+  "COR",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Centene Corporation",
+  "CNC",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "CenterPoint Energy",
+  "CNP",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "CF Industries",
+  "CF",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Charles River Laboratories",
+  "CRL",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Charles Schwab Corporation",
+  "SCHW",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Charter Communications",
+  "CHTR",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Chevron Corporation",
+  "CVX",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Chipotle Mexican Grill",
+  "CMG",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Chubb Limited",
+  "CB",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Church & Dwight",
+  "CHD",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Ciena",
+  "CIEN",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Cigna",
+  "CI",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Cincinnati Financial",
+  "CINF",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Cintas",
+  "CTAS",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Cisco",
+  "CSCO",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Citigroup",
+  "C",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Citizens Financial Group",
+  "CFG",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Clorox",
+  "CLX",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "CME Group",
+  "CME",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "CMS Energy",
+  "CMS",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Coca-Cola Company (The)",
+  "KO",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Cognizant",
+  "CTSH",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Coherent Corp.",
+  "COHR",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Coinbase",
+  "COIN",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Colgate-Palmolive",
+  "CL",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Comcast",
+  "CMCSA",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Comfort Systems USA",
+  "FIX",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "ConocoPhillips",
+  "COP",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Consolidated Edison",
+  "ED",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Constellation Brands",
+  "STZ",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Constellation Energy",
+  "CEG",
+  "Utilities",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Cooper Companies (The)",
+  "COO",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Copart",
+  "CPRT",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Corning Inc.",
+  "GLW",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Corpay",
+  "CPAY",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Corteva",
+  "CTVA",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "CoStar Group",
+  "CSGP",
+  "Real Estate",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Costco",
+  "COST",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "CRH plc",
+  "CRH",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "CrowdStrike",
+  "CRWD",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Crown Castle",
+  "CCI",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "CSX Corporation",
+  "CSX",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Cummins",
+  "CMI",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "CVS Health",
+  "CVS",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Danaher Corporation",
+  "DHR",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Darden Restaurants",
+  "DRI",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Datadog",
+  "DDOG",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "DaVita",
+  "DVA",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Deckers Brands",
+  "DECK",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Deere & Company",
+  "DE",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Dell Technologies",
+  "DELL",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Delta Air Lines",
+  "DAL",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Devon Energy",
+  "DVN",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Dexcom",
+  "DXCM",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Diamondback Energy",
+  "FANG",
+  "Energy",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Digital Realty",
+  "DLR",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Dollar General",
+  "DG",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Dollar Tree",
+  "DLTR",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Dominion Energy",
+  "D",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Domino's",
+  "DPZ",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "DoorDash",
+  "DASH",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Dover Corporation",
+  "DOV",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Dow Inc.",
+  "DOW",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "D. R. Horton",
+  "DHI",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "DTE Energy",
+  "DTE",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Duke Energy",
+  "DUK",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "DuPont",
+  "DD",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Eaton Corporation",
+  "ETN",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "eBay Inc.",
+  "EBAY",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "EchoStar",
+  "ECHO",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Ecolab",
+  "ECL",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Edison International",
+  "EIX",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Edwards Lifesciences",
+  "EW",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Electronic Arts",
+  "EA",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Elevance Health",
+  "ELV",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Emcor",
+  "EME",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Emerson Electric",
+  "EMR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Entergy",
+  "ETR",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "EOG Resources",
+  "EOG",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "EQT Corporation",
+  "EQT",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Equifax",
+  "EFX",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Equinix",
+  "EQIX",
+  "Real Estate",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Equity Residential",
+  "EQR",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Erie Indemnity",
+  "ERIE",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Essex Property Trust",
+  "ESS",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Estée Lauder Companies (The)",
+  "EL",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Everest Group",
+  "EG",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Evergy",
+  "EVRG",
+  "Utilities",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Eversource Energy",
+  "ES",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Exelon",
+  "EXC",
+  "Utilities",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Expand Energy",
+  "EXE",
+  "Energy",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Expedia Group",
+  "EXPE",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Expeditors International",
+  "EXPD",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Extra Space Storage",
+  "EXR",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "ExxonMobil",
+  "XOM",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "F5, Inc.",
+  "FFIV",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "FactSet",
+  "FDS",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Fair Isaac",
+  "FICO",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Fastenal",
+  "FAST",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Federal Realty Investment Trust",
+  "FRT",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "FedEx",
+  "FDX",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "FedEx Freight",
+  "FDXF",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Fidelity National Information Services",
+  "FIS",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Fifth Third Bancorp",
+  "FITB",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "First Solar",
+  "FSLR",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "FirstEnergy",
+  "FE",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Fiserv",
+  "FISV",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Flex Ltd.",
+  "FLEX",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Ford Motor Company",
+  "F",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Fortinet",
+  "FTNT",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Fortive",
+  "FTV",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Fox Corporation (Class A)",
+  "FOXA",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Fox Corporation (Class B)",
+  "FOX",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Franklin Resources",
+  "BEN",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Freeport-McMoRan",
+  "FCX",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Garmin",
+  "GRMN",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Gartner",
+  "IT",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "GE Aerospace",
+  "GE",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "GE HealthCare",
+  "GEHC",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "GE Vernova",
+  "GEV",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Gen Digital",
+  "GEN",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Generac",
+  "GNRC",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "General Dynamics",
+  "GD",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "General Mills",
+  "GIS",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "General Motors",
+  "GM",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Genuine Parts Company",
+  "GPC",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Gilead Sciences",
+  "GILD",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Global Payments",
+  "GPN",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Globe Life",
+  "GL",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "GoDaddy",
+  "GDDY",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Goldman Sachs",
+  "GS",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Halliburton",
+  "HAL",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Hartford (The)",
+  "HIG",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Hasbro",
+  "HAS",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "HCA Healthcare",
+  "HCA",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Healthpeak Properties",
+  "DOC",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Henry Schein",
+  "HSIC",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Hershey Company (The)",
+  "HSY",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Hewlett Packard Enterprise",
+  "HPE",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Hilton Worldwide",
+  "HLT",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Home Depot (The)",
+  "HD",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Honeywell Aerospace",
+  "HONA",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Honeywell Technologies",
+  "HON",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Hormel Foods",
+  "HRL",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Host Hotels & Resorts",
+  "HST",
+  "Real Estate",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Howmet Aerospace",
+  "HWM",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "HP Inc.",
+  "HPQ",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Hubbell Incorporated",
+  "HUBB",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Humana",
+  "HUM",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Huntington Bancshares",
+  "HBAN",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Huntington Ingalls Industries",
+  "HII",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "IBM",
+  "IBM",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "IDEX Corporation",
+  "IEX",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Idexx Laboratories",
+  "IDXX",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Illinois Tool Works",
+  "ITW",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Incyte",
+  "INCY",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Ingersoll Rand",
+  "IR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Insulet Corporation",
+  "PODD",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Intel",
+  "INTC",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Interactive Brokers",
+  "IBKR",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Intercontinental Exchange",
+  "ICE",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "International Flavors & Fragrances",
+  "IFF",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "International Paper",
+  "IP",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Intuit",
+  "INTU",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Intuitive Surgical",
+  "ISRG",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Invesco",
+  "IVZ",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Invitation Homes",
+  "INVH",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "IQVIA",
+  "IQV",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Iron Mountain",
+  "IRM",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "J.B. Hunt",
+  "JBHT",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Jabil",
+  "JBL",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Jack Henry & Associates",
+  "JKHY",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Jacobs Solutions",
+  "J",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Johnson & Johnson",
+  "JNJ",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Johnson Controls",
+  "JCI",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "JPMorgan Chase",
+  "JPM",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Kenvue",
+  "KVUE",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Keurig Dr Pepper",
+  "KDP",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "KeyCorp",
+  "KEY",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Keysight Technologies",
+  "KEYS",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Kimberly-Clark",
+  "KMB",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Kimco Realty",
+  "KIM",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Kinder Morgan",
+  "KMI",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "KKR & Co.",
+  "KKR",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "KLA Corporation",
+  "KLAC",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Kraft Heinz",
+  "KHC",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Kroger",
+  "KR",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "L3Harris",
+  "LHX",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Labcorp",
+  "LH",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Lam Research",
+  "LRCX",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Las Vegas Sands",
+  "LVS",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Leidos",
+  "LDOS",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Lennar",
+  "LEN",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Lennox International",
+  "LII",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Lilly (Eli)",
+  "LLY",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Linde plc",
+  "LIN",
+  "Materials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Live Nation Entertainment",
+  "LYV",
+  "Communication Services",
+  "NYSE",
+  false
+ ],
+ [
+  "Lockheed Martin",
+  "LMT",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Loews Corporation",
+  "L",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Lowe's",
+  "LOW",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Lululemon Athletica",
+  "LULU",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Lumentum",
+  "LITE",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "LyondellBasell",
+  "LYB",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "M&T Bank",
+  "MTB",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Marathon Petroleum",
+  "MPC",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Marriott International",
+  "MAR",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Marsh McLennan",
+  "MRSH",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Martin Marietta Materials",
+  "MLM",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Marvell Technology",
+  "MRVL",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Masco",
+  "MAS",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Mastercard",
+  "MA",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "McCormick & Company",
+  "MKC",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "McDonald's",
+  "MCD",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "McKesson Corporation",
+  "MCK",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Medtronic",
+  "MDT",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Merck & Co.",
+  "MRK",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Meta Platforms",
+  "META",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "MetLife",
+  "MET",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Mettler Toledo",
+  "MTD",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "MGM Resorts",
+  "MGM",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Microchip Technology",
+  "MCHP",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Micron Technology",
+  "MU",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Microsoft",
+  "MSFT",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Mid-America Apartment Communities",
+  "MAA",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Moderna",
+  "MRNA",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Molson Coors Beverage Company",
+  "TAP",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Mondelez International",
+  "MDLZ",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Monolithic Power Systems",
+  "MPWR",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Monster Beverage",
+  "MNST",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Moody's Corporation",
+  "MCO",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Morgan Stanley",
+  "MS",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Mosaic Company (The)",
+  "MOS",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Motorola Solutions",
+  "MSI",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "MSCI Inc.",
+  "MSCI",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Nasdaq, Inc.",
+  "NDAQ",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "NetApp",
+  "NTAP",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Netflix",
+  "NFLX",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Newmont",
+  "NEM",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "News Corp (Class A)",
+  "NWSA",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "News Corp (Class B)",
+  "NWS",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "NextEra Energy",
+  "NEE",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Nike, Inc.",
+  "NKE",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "NiSource",
+  "NI",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Nordson Corporation",
+  "NDSN",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Norfolk Southern",
+  "NSC",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Northern Trust",
+  "NTRS",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Northrop Grumman",
+  "NOC",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Norwegian Cruise Line Holdings",
+  "NCLH",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "NRG Energy",
+  "NRG",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Nucor",
+  "NUE",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Nvidia",
+  "NVDA",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "NVR, Inc.",
+  "NVR",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "NXP Semiconductors",
+  "NXPI",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "O’Reilly Automotive",
+  "ORLY",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Occidental Petroleum",
+  "OXY",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Old Dominion",
+  "ODFL",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Omnicom Group",
+  "OMC",
+  "Communication Services",
+  "NYSE",
+  false
+ ],
+ [
+  "ON Semiconductor",
+  "ON",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Oneok",
+  "OKE",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Oracle Corporation",
+  "ORCL",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Otis Worldwide",
+  "OTIS",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Paccar",
+  "PCAR",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Packaging Corporation of America",
+  "PKG",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Palantir Technologies",
+  "PLTR",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Palo Alto Networks",
+  "PANW",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Paramount Skydance Corporation",
+  "PSKY",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Parker Hannifin",
+  "PH",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Paychex",
+  "PAYX",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "PayPal",
+  "PYPL",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Pentair",
+  "PNR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "PepsiCo",
+  "PEP",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Pfizer",
+  "PFE",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "PG&E Corporation",
+  "PCG",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Philip Morris International",
+  "PM",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Phillips 66",
+  "PSX",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Pinnacle West Capital",
+  "PNW",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "PNC Financial Services",
+  "PNC",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "PPG Industries",
+  "PPG",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "PPL Corporation",
+  "PPL",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Principal Financial Group",
+  "PFG",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Procter & Gamble",
+  "PG",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Progressive Corporation",
+  "PGR",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Prologis",
+  "PLD",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Prudential Financial",
+  "PRU",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Public Service Enterprise Group",
+  "PEG",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "PTC Inc.",
+  "PTC",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Public Storage",
+  "PSA",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "PulteGroup",
+  "PHM",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Quanta Services",
+  "PWR",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Qualcomm",
+  "QCOM",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Quest Diagnostics",
+  "DGX",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Qnity Electronics",
+  "Q",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Ralph Lauren Corporation",
+  "RL",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Raymond James Financial",
+  "RJF",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "RTX Corporation",
+  "RTX",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Realty Income",
+  "O",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Regency Centers",
+  "REG",
+  "Real Estate",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Regeneron Pharmaceuticals",
+  "REGN",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Regions Financial Corporation",
+  "RF",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Republic Services",
+  "RSG",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "ResMed",
+  "RMD",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Revvity",
+  "RVTY",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Robinhood Markets",
+  "HOOD",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Rockwell Automation",
+  "ROK",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Rollins, Inc.",
+  "ROL",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Roper Technologies",
+  "ROP",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Ross Stores",
+  "ROST",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Royal Caribbean Group",
+  "RCL",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "S&P Global",
+  "SPGI",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Salesforce",
+  "CRM",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Sandisk",
+  "SNDK",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "SBA Communications",
+  "SBAC",
+  "Real Estate",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Schlumberger",
+  "SLB",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Seagate Technology",
+  "STX",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Sempra",
+  "SRE",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "ServiceNow",
+  "NOW",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Sherwin-Williams",
+  "SHW",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Simon Property Group",
+  "SPG",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Skyworks Solutions",
+  "SWKS",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "J.M. Smucker Company (The)",
+  "SJM",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "Smurfit Westrock",
+  "SW",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "Snap-on",
+  "SNA",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Solventum",
+  "SOLV",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Southern Company",
+  "SO",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Southwest Airlines",
+  "LUV",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Stanley Black & Decker",
+  "SWK",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Starbucks",
+  "SBUX",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "State Street Corporation",
+  "STT",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Steel Dynamics",
+  "STLD",
+  "Materials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Steris",
+  "STE",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Stryker Corporation",
+  "SYK",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Supermicro",
+  "SMCI",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Synchrony Financial",
+  "SYF",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Synopsys",
+  "SNPS",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Sysco",
+  "SYY",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "T-Mobile US",
+  "TMUS",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "T. Rowe Price",
+  "TROW",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Take-Two Interactive",
+  "TTWO",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Tapestry, Inc.",
+  "TPR",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Targa Resources",
+  "TRGP",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Target Corporation",
+  "TGT",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "TE Connectivity",
+  "TEL",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Teledyne Technologies",
+  "TDY",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Teradyne",
+  "TER",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Tesla, Inc.",
+  "TSLA",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Texas Instruments",
+  "TXN",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Texas Pacific Land Corporation",
+  "TPL",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Textron",
+  "TXT",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Thermo Fisher Scientific",
+  "TMO",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "TJX Companies",
+  "TJX",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "TKO Group Holdings",
+  "TKO",
+  "Communication Services",
+  "NYSE",
+  false
+ ],
+ [
+  "Trade Desk (The)",
+  "TTD",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Tractor Supply",
+  "TSCO",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Trane Technologies",
+  "TT",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "TransDigm Group",
+  "TDG",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Travelers Companies (The)",
+  "TRV",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Trimble Inc.",
+  "TRMB",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Truist Financial",
+  "TFC",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Tyler Technologies",
+  "TYL",
+  "Information Technology",
+  "NYSE",
+  false
+ ],
+ [
+  "Tyson Foods",
+  "TSN",
+  "Consumer Staples",
+  "NYSE",
+  false
+ ],
+ [
+  "U.S. Bancorp",
+  "USB",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Uber",
+  "UBER",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "UDR, Inc.",
+  "UDR",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Ulta Beauty",
+  "ULTA",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Union Pacific Corporation",
+  "UNP",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "United Airlines Holdings",
+  "UAL",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "United Parcel Service",
+  "UPS",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "United Rentals",
+  "URI",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "UnitedHealth Group",
+  "UNH",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Universal Health Services",
+  "UHS",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Valero Energy",
+  "VLO",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Veeva Systems",
+  "VEEV",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Ventas",
+  "VTR",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Veralto",
+  "VLTO",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Verisign",
+  "VRSN",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Verisk Analytics",
+  "VRSK",
+  "Industrials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Verizon",
+  "VZ",
+  "Communication Services",
+  "NYSE",
+  false
+ ],
+ [
+  "Vertex Pharmaceuticals",
+  "VRTX",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Vertiv",
+  "VRT",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Viatris",
+  "VTRS",
+  "Health Care",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Vici Properties",
+  "VICI",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Visa Inc.",
+  "V",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Vistra Corp.",
+  "VST",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Vulcan Materials Company",
+  "VMC",
+  "Materials",
+  "NYSE",
+  false
+ ],
+ [
+  "W. R. Berkley Corporation",
+  "WRB",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "W. W. Grainger",
+  "GWW",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Wabtec",
+  "WAB",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Walmart",
+  "WMT",
+  "Consumer Staples",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Walt Disney Company (The)",
+  "DIS",
+  "Communication Services",
+  "NYSE",
+  false
+ ],
+ [
+  "Warner Bros. Discovery",
+  "WBD",
+  "Communication Services",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Waste Management",
+  "WM",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Waters Corporation",
+  "WAT",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "WEC Energy Group",
+  "WEC",
+  "Utilities",
+  "NYSE",
+  false
+ ],
+ [
+  "Wells Fargo",
+  "WFC",
+  "Financials",
+  "NYSE",
+  false
+ ],
+ [
+  "Welltower",
+  "WELL",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "West Pharmaceutical Services",
+  "WST",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Western Digital",
+  "WDC",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Weyerhaeuser",
+  "WY",
+  "Real Estate",
+  "NYSE",
+  false
+ ],
+ [
+  "Williams-Sonoma, Inc.",
+  "WSM",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Williams Companies",
+  "WMB",
+  "Energy",
+  "NYSE",
+  false
+ ],
+ [
+  "Willis Towers Watson",
+  "WTW",
+  "Financials",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Workday, Inc.",
+  "WDAY",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Wynn Resorts",
+  "WYNN",
+  "Consumer Discretionary",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Xcel Energy",
+  "XEL",
+  "Utilities",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Xylem Inc.",
+  "XYL",
+  "Industrials",
+  "NYSE",
+  false
+ ],
+ [
+  "Yum! Brands",
+  "YUM",
+  "Consumer Discretionary",
+  "NYSE",
+  false
+ ],
+ [
+  "Zebra Technologies",
+  "ZBRA",
+  "Information Technology",
+  "NASDAQ",
+  false
+ ],
+ [
+  "Zimmer Biomet",
+  "ZBH",
+  "Health Care",
+  "NYSE",
+  false
+ ],
+ [
+  "Zoetis",
+  "ZTS",
+  "Health Care",
+  "NYSE",
+  false
+ ]
+]
