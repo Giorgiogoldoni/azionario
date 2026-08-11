@@ -270,7 +270,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
 
     er_v = float(er.iloc[i])
     ao_v = float(ao.iloc[i])
-    ao_prev3 = ao.iloc[i - 3:i]
+    ao_prev3 = ao.iloc[i - 2:] if i == -1 else ao.iloc[i - 2:i + 1]
     ao_improving = bool(len(ao_prev3) == 3 and all(np.diff(ao_prev3.values) > 0))
     rvi_val = float(rvi_v.iloc[i])
     rsi5_v = float(rsi5.iloc[i])
