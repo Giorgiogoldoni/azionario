@@ -448,6 +448,7 @@ def build_regole_html(nome: str, ticker: str, ind: dict) -> str:
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
+    italia = json.loads((ROOT / "tickers_italia.json").read_text(encoding="utf-8"))
     universe = []
     for nome, ticker, settore, paese_o_exch, _ in stoxx:
         universe.append({"regione": "EU", "nome": nome, "ticker": ticker,
@@ -455,6 +456,9 @@ def load_universe():
     for nome, ticker, settore, exch, _ in sp500:
         universe.append({"regione": "US", "nome": nome, "ticker": ticker,
                           "settore": settore, "paese": "US", "exchange": exch})
+    for nome, ticker, settore, paese_o_exch, _ in italia:
+        universe.append({"regione": "IT", "nome": nome, "ticker": ticker,
+                          "settore": settore, "paese": paese_o_exch, "exchange": None})
     return universe
 
 
