@@ -105,6 +105,7 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
 <div class="tabs">
   <div class="tab act" data-tab="EU">🇪🇺 Europa <span class="tab-cnt" id="cntEU">–</span></div>
   <div class="tab" data-tab="US">🇺🇸 USA <span class="tab-cnt" id="cntUS">–</span></div>
+  <div class="tab" data-tab="IT">🇮🇹 Italia <span class="tab-cnt" id="cntIT">–</span></div>
 </div>
 
 <div class="controls">
@@ -193,6 +194,7 @@ async function load(){
   document.getElementById('lastUpdate').textContent = 'Aggiornato: ' + (json.generato||'').replace('T',' ').slice(0,16);
   document.getElementById('cntEU').textContent = ALL.filter(x=>x.regione==='EU').length;
   document.getElementById('cntUS').textContent = ALL.filter(x=>x.regione==='US').length;
+  document.getElementById('cntIT').textContent = ALL.filter(x=>x.regione==='IT').length;
   populateSettori();
   render();
 }
