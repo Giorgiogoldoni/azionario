@@ -87,6 +87,35 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
 .modal-actions{display:flex;gap:8px;margin-top:14px}
 .loading{padding:40px;text-align:center;color:var(--text3);font-family:var(--font-cond)}
 
+/* GRIGLIA INDICATORI (standard scannerv2) */
+.modal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin:14px 0}
+.modal-stat{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:8px 10px}
+.modal-stat .ms-label{font-family:var(--font-cond);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:3px}
+.modal-stat .ms-val{font-family:var(--font-mono);font-size:14px;font-weight:700}
+.green{color:var(--lc)}.red{color:var(--ex)}
+
+/* REGIME DI MERCATO */
+.regime-block{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 14px;margin-bottom:14px}
+.regime-block .rb-title{font-family:var(--font-cond);font-size:10px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:10px}
+.regime-block .rb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rb-lbl{font-family:var(--font-cond);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:3px}
+.rb-val{font-family:var(--font-mono);font-size:14px;font-weight:700}
+.rb-bar{height:4px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden}
+.rb-bar-fill{height:100%;border-radius:2px}
+.rb-sub{font-size:9px;color:var(--text3);margin-top:2px;font-family:var(--font-cond)}
+.regime-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-cond);letter-spacing:.5px}
+.regime-SLANCIO{background:#d3f9d8;color:#1a7f37;border:1px solid #8ce99a}
+.regime-SALITA{background:#ebfbee;color:#2f9e44;border:1px solid #b2f2bb}
+.regime-RIBASSO{background:#ffe3e3;color:#c92a2a;border:1px solid #ffa8a8}
+.regime-TRANSIZIONE{background:#fff3bf;color:#7d4e00;border:1px solid #ffd43b}
+.regime-LATERALE{background:#f1f3f5;color:#868e96;border:1px solid #dee2e6}
+
+/* STORIA SEGNALI */
+.history-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.history-table th{font-family:var(--font-cond);font-size:10px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.history-table td{padding:6px 10px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px}
+.section-title{margin:16px 0 8px;font-family:var(--font-cond);font-size:11px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase}
+
 @media (max-width:700px){
   .modal{padding:14px}
   td,thead th{padding:5px}
@@ -296,62 +325,171 @@ async function openChart(ticker){
 document.getElementById('modalClose').addEventListener('click', ()=>document.getElementById('modalBg').classList.remove('open'));
 document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target.id==='modalBg') e.currentTarget.classList.remove('open'); });
 
+const REGIME_LABEL = {
+  SLANCIO:'🚀 Slancio', SALITA:'📈 Salita', RIBASSO:'📉 Ribasso',
+  TRANSIZIONE:'⚠️ Transizione', LATERALE:'↔ Laterale'
+};
+
+function regimeBlockHTML(row){
+  const reg = row.regime;
+  if(!reg) return '';
+  const h60 = row.hurst_60, h1y = row.hurst_1y, adxv = row.adx;
+  const h60Col = h60>0.55?'var(--lc)':h60<0.45?'var(--le)':'var(--text3)';
+  const h1yCol = h1y>0.55?'var(--lc)':h1y<0.45?'var(--le)':'var(--text3)';
+  const adxCol = adxv>=25?'var(--lc)':adxv>=20?'var(--gr)':'var(--text3)';
+  const indTxt = {
+    SLANCIO:'Trend forte e confermato. BUY2/BUY3 favoriti.',
+    SALITA:'Rialzo in corso. Seguire il trend.',
+    RIBASSO:'Ribasso in corso. Cautela su nuovi ingressi.',
+    TRANSIZIONE:'Zona grigia. Attendere conferma.',
+    LATERALE:'Nessuna direzione. Segnali BUY più fragili.'
+  }[reg.code] || '—';
+  return `
+  <div class="regime-block">
+    <div class="rb-title">📊 Regime di Mercato</div>
+    <div style="margin-bottom:8px">
+      <span class="regime-badge regime-${reg.code}">${reg.label||REGIME_LABEL[reg.code]||reg.code}</span>
+      <span style="font-size:11px;color:var(--text2);margin-left:10px">${indTxt}</span>
+    </div>
+    <div class="rb-grid">
+      <div class="rb-cell">
+        <div class="rb-lbl">Memoria recente (60g)</div>
+        <div class="rb-val" style="color:${h60Col}">${h60!=null?h60.toFixed(3):'—'}</div>
+        <div class="rb-bar"><div class="rb-bar-fill" style="width:${Math.round((h60??0.5)*100)}%;background:${h60Col}"></div></div>
+        <div class="rb-sub">${h60>0.55?'tende a trendare':h60<0.45?'tende a rimbalzare':'neutro'}</div>
+      </div>
+      <div class="rb-cell">
+        <div class="rb-lbl">Carattere annuale (1y)</div>
+        <div class="rb-val" style="color:${h1yCol}">${h1y!=null?h1y.toFixed(3):'—'}</div>
+        <div class="rb-bar"><div class="rb-bar-fill" style="width:${Math.round((h1y??0.5)*100)}%;background:${h1yCol}"></div></div>
+        <div class="rb-sub">${h1y>0.55?'struttura trending':h1y<0.45?'struttura oscillante':'neutro'}</div>
+      </div>
+      <div class="rb-cell">
+        <div class="rb-lbl">ADX(14) — forza attuale</div>
+        <div class="rb-val" style="color:${adxCol}">${adxv!=null?adxv.toFixed(1):'—'}</div>
+        <div class="rb-bar"><div class="rb-bar-fill" style="width:${Math.min(Math.round((adxv??0)/60*100),100)}%;background:${adxCol}"></div></div>
+        <div class="rb-sub">${adxv>=25?'Forte':adxv>=20?'Transizione':'Debole'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function indicatorGridHTML(row){
+  const cell = (label, val, cls='') => `<div class="modal-stat"><div class="ms-label">${label}</div><div class="ms-val ${cls}">${val}</div></div>`;
+  const pctCls = v => v>0?'green':v<0?'red':'';
+  return `<div class="modal-grid">
+    ${cell('Segnale', segnalePill(row.segnale))}
+    ${cell('Rating', row.rating)}
+    ${cell('Prezzo', row.prezzo.toFixed(2))}
+    ${cell('Var% oggi', (row.perf_oggi>0?'+':'')+row.perf_oggi.toFixed(2)+'%', pctCls(row.perf_oggi))}
+    ${cell('Score', row.score.toFixed(0)+'/100')}
+    ${cell('ER', (row.er*100).toFixed(1)+'%')}
+    ${cell('KAMA fast', row.kama_fast.toFixed(2))}
+    ${cell('KAMA%', (row.kama_gap_pct>0?'+':'')+row.kama_gap_pct.toFixed(2)+'%', pctCls(row.kama_gap_pct))}
+    ${cell('baff', row.baff)}
+    ${cell('SAR', row.sar_bullish?'▲ BULL':'▼ BEAR', row.sar_bullish?'green':'red')}
+    ${cell('AO', row.ao.toFixed(4), row.ao_improving?'green':'red')}
+    ${cell('RVI', row.rvi>0?'BULL':'BEAR', row.rvi>0?'green':'red')}
+    ${cell('RSI14', row.rsi14.toFixed(1), row.rsi14>70?'red':row.rsi14<30?'green':'')}
+    ${cell('ADX', row.adx.toFixed(1))}
+    ${cell('Mom 1M', row.perf_1m!=null?(row.perf_1m>0?'+':'')+row.perf_1m.toFixed(2)+'%':'—', pctCls(row.perf_1m))}
+    ${cell('Mom 3M', row.perf_3m!=null?(row.perf_3m>0?'+':'')+row.perf_3m.toFixed(2)+'%':'—', pctCls(row.perf_3m))}
+    ${cell('Mom 6M', row.perf_6m!=null?(row.perf_6m>0?'+':'')+row.perf_6m.toFixed(2)+'%':'—', pctCls(row.perf_6m))}
+    ${cell('Segnale dal', row.segnale_dal||'—')}
+    ${cell('Barre', row.segnale_bars!=null?row.segnale_bars+'gg':'—')}
+    ${cell('Trend KAMA', row.kama_trend||'—', row.kama_trend==='VERDE'?'green':row.kama_trend==='ROSSO'?'red':'')}
+  </div>`;
+}
+
+function historyTableHTML(chart){
+  const n = chart.date.length;
+  const rows = [];
+  for(let i=n-1;i>=0 && rows.length<20;i--){
+    if(i===n-1 || chart.signals[i]!==chart.signals[i+1]){
+      rows.push(`<tr><td>${chart.date[i]}</td><td>${segnalePill(chart.signals[i])}</td><td>${chart.close[i]?.toFixed(2)}</td></tr>`);
+    }
+  }
+  if(!rows.length) return '<div style="font-size:12px;color:var(--text3)">Nessuna history disponibile</div>';
+  return `<table class="history-table"><thead><tr><th>Data</th><th>Segnale</th><th>Prezzo</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
 function buildChartHTML(row, chart){
   const n = chart.date.length;
-  const W = 860, H = 260;
-  const closes = chart.close, kf = chart.kama_fast, ks = chart.kama_slow, sar = chart.sar, sarT = chart.sar_trend;
-  const lo = Math.min(...chart.low.filter(v=>v!=null), ...sar);
-  const hi = Math.max(...chart.high.filter(v=>v!=null), ...sar);
-  const x = i => 10 + i*(W-20)/(n-1);
-  const y = v => H-10 - (v-lo)/(hi-lo)*(H-20);
+  const W = 860;
+  const PAD = { l:44, r:16 };
+  const PW = W - PAD.l - PAD.r;
+  const x = i => PAD.l + i*PW/(n-1);
+  const SIG_COL = { BUY3:'#2f9e44', BUY2:'#1971c2', SELL:'#c92a2a', STOP:'#862e2e' };
 
-  const candles = chart.date.map((d,i)=>{
-    const o=chart.open[i], c=closes[i], h=chart.high[i], l=chart.low[i];
-    const up = c>=o;
-    const cx = x(i);
-    const bw = Math.max(1.2, (W-20)/n*0.6);
-    return `<line x1="${cx}" y1="${y(h)}" x2="${cx}" y2="${y(l)}" stroke="${up?'#2f9e44':'#c92a2a'}" stroke-width="1"/>
-      <rect x="${cx-bw/2}" y="${y(Math.max(o,c))}" width="${bw}" height="${Math.max(1,Math.abs(y(o)-y(c)))}" fill="${up?'#2f9e44':'#c92a2a'}"/>`;
+  // Pannello prezzo + KAMA fast/slow + marker segnali
+  const priceH = 170;
+  const closes = chart.close, kf = chart.kama_fast, ks = chart.kama_slow;
+  const allP = [...closes, ...kf, ...ks].filter(v=>v!=null);
+  const mn = Math.min(...allP)*0.997, mx = Math.max(...allP)*1.003;
+  const py = v => priceH - (v-mn)/(mx-mn)*priceH;
+  const linePath = arr => arr.map((v,i)=> v==null?'':`${i===0||arr[i-1]==null?'M':'L'}${x(i).toFixed(1)},${py(v).toFixed(1)}`).join(' ');
+  let prevSig = null;
+  const markers = chart.date.map((d,i)=>{
+    const sig = chart.signals?.[i];
+    if(!sig || sig===prevSig || !SIG_COL[sig] || closes[i]==null){ if(sig) prevSig=sig; return ''; }
+    prevSig = sig;
+    const isBuy = sig.startsWith('BUY');
+    const cx = x(i), cy = py(closes[i]) + (isBuy?9:-9), sz=4.5;
+    const pts = isBuy ? `${cx},${cy-sz} ${cx-sz},${cy+sz} ${cx+sz},${cy+sz}` : `${cx},${cy+sz} ${cx-sz},${cy-sz} ${cx+sz},${cy-sz}`;
+    return `<polygon points="${pts}" fill="${SIG_COL[sig]}"/>`;
   }).join('');
 
-  const linePath = arr => arr.map((v,i)=> v==null? '' : `${i===0||arr[i-1]==null?'M':'L'}${x(i)},${y(v)}`).join(' ');
-  const sarDots = chart.date.map((d,i)=>{
-    if(i===0 || sarT[i]===sarT[i-1]) return `<circle cx="${x(i)}" cy="${y(sar[i])}" r="1.3" fill="${sarT[i]===1?'#2f9e44':'#c92a2a'}" opacity="0.6"/>`;
-    return `<circle cx="${x(i)}" cy="${y(sar[i])}" r="2.6" fill="${sarT[i]===1?'#2f9e44':'#c92a2a'}"/>`;
+  // Pannello BAFF (dato reale dal backend)
+  const baffH = 55;
+  const baffMax = Math.max(...chart.baff.map(Math.abs), 5);
+  const baffMid = baffH/2;
+  const baffBars = chart.baff.map((v,i)=>{
+    const barW = Math.max(1, PW/n-0.3);
+    const bh = Math.abs(v)/baffMax*(baffH/2-2);
+    const col = v>0?'#2f9e44':'#c92a2a';
+    return `<rect x="${(x(i)-barW/2).toFixed(1)}" y="${(v>0?baffMid-bh:baffMid).toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1,bh).toFixed(1)}" fill="${col}" opacity="0.85"/>`;
   }).join('');
 
-  // AO panel
-  const aoH = 60;
+  // Pannello AO
+  const aoH = 55;
   const aoMax = Math.max(...chart.ao.map(Math.abs), 0.01);
   const aoY = v => aoH/2 - v/aoMax*(aoH/2-4);
   const aoBars = chart.ao.map((v,i)=>{
-    const cx = x(i);
-    const barH = Math.abs(aoY(v)-aoH/2);
-    return `<rect x="${cx-1}" y="${Math.min(aoY(v),aoH/2)}" width="2" height="${Math.max(1,barH)}" fill="${v>=0?'#2f9e44':'#c92a2a'}"/>`;
+    const barW = Math.max(1, PW/n-0.3);
+    const bh = Math.abs(aoY(v)-aoH/2);
+    return `<rect x="${(x(i)-barW/2).toFixed(1)}" y="${Math.min(aoY(v),aoH/2).toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(1,bh).toFixed(1)}" fill="${v>=0?'#2f9e44':'#c92a2a'}"/>`;
   }).join('');
 
-  // RSI panel
-  const rsiH = 60;
+  // Pannello RSI
+  const rsiH = 55;
   const rsiY = v => rsiH - v/100*rsiH;
-  const rsiPath = chart.rsi14.map((v,i)=> `${i===0?'M':'L'}${x(i)},${rsiY(v)}`).join(' ');
+  const rsiPath = chart.rsi14.map((v,i)=> `${i===0?'M':'L'}${x(i).toFixed(1)},${rsiY(v).toFixed(1)}`).join(' ');
+
+  // Asse data/giorno condiviso (in fondo)
+  const step = Math.max(1, Math.floor(n/7));
+  const dateLabels = [];
+  for(let i=0;i<n;i+=step) dateLabels.push(`<text x="${x(i).toFixed(1)}" y="12" fill="var(--text3)" font-size="9" font-family="var(--font-mono)" text-anchor="middle">${chart.date[i]}</text>`);
 
   return `
     <div class="modal-header">
       <h2>${row.nome} <span style="color:var(--text3);font-family:var(--font-mono);font-size:13px">${row.ticker}</span></h2>
-      <div class="kv"><b>PREZZO</b>${row.prezzo.toFixed(2)}</div>
-      <div class="kv ${row.perf_oggi>=0?'green':'red'}"><b>OGGI</b>${row.perf_oggi>=0?'+':''}${row.perf_oggi.toFixed(2)}%</div>
-      <div class="kv blue"><b>SEGNALE</b>${row.segnale}</div>
-      <div class="kv"><b>RATING</b>${row.rating}</div>
-      <div class="kv"><b>SCORE</b>${row.score.toFixed(0)}</div>
+    </div>
+
+    ${indicatorGridHTML(row)}
+    ${regimeBlockHTML(row)}
+
+    <div class="chart-panel">
+      <div class="chart-panel-title">PREZZO · KAMA FAST/SLOW · SEGNALI BUY/SELL</div>
+      <svg viewBox="0 0 ${W} ${priceH}" width="100%" height="${priceH}">
+        <path d="${linePath(ks)}" stroke="var(--gr)" stroke-width="1.2" fill="none"/>
+        <path d="${linePath(kf)}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>
+        <path d="${linePath(closes)}" stroke="var(--text)" stroke-width="1.2" fill="none"/>
+        ${markers}
+      </svg>
     </div>
     <div class="chart-panel">
-      <div class="chart-panel-title">PREZZO · KAMA FAST/SLOW · SAR</div>
-      <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}">
-        <path d="${linePath(ks)}" stroke="var(--gr)" stroke-width="1.4" fill="none"/>
-        <path d="${linePath(kf)}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>
-        ${candles}
-        ${sarDots}
-      </svg>
+      <div class="chart-panel-title">BAFF — BARRE SOPRA/SOTTO KAMA</div>
+      <svg viewBox="0 0 ${W} ${baffH}" width="100%" height="${baffH}">${baffBars}</svg>
     </div>
     <div class="chart-panel">
       <div class="chart-panel-title">AO — AWESOME OSCILLATOR</div>
@@ -360,11 +498,18 @@ function buildChartHTML(row, chart){
     <div class="chart-panel">
       <div class="chart-panel-title">RSI14</div>
       <svg viewBox="0 0 ${W} ${rsiH}" width="100%" height="${rsiH}">
-        <line x1="0" y1="${rsiY(70)}" x2="${W}" y2="${rsiY(70)}" stroke="var(--border)" stroke-dasharray="3,3"/>
-        <line x1="0" y1="${rsiY(30)}" x2="${W}" y2="${rsiY(30)}" stroke="var(--border)" stroke-dasharray="3,3"/>
+        <line x1="0" y1="${rsiY(70).toFixed(1)}" x2="${W}" y2="${rsiY(70).toFixed(1)}" stroke="var(--border)" stroke-dasharray="3,3"/>
+        <line x1="0" y1="${rsiY(30).toFixed(1)}" x2="${W}" y2="${rsiY(30).toFixed(1)}" stroke="var(--border)" stroke-dasharray="3,3"/>
         <path d="${rsiPath}" stroke="var(--accent)" stroke-width="1.4" fill="none"/>
       </svg>
     </div>
+    <div class="chart-panel">
+      <svg viewBox="0 0 ${W} 16" width="100%" height="16">${dateLabels.join('')}</svg>
+    </div>
+
+    <div class="section-title">Storia Segnali</div>
+    ${historyTableHTML(chart)}
+
     <div class="modal-actions">
       <button class="btn" onclick="openRegole('${row.ticker}')">📄 Regole operative</button>
       <button class="btn" onclick="window.open('https://www.tradingview.com/chart/?symbol=${encodeURIComponent(row.tv_symbol)}','_blank')">↗ Apri su TradingView</button>
