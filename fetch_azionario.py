@@ -144,7 +144,8 @@ def rsi(close: pd.Series, n: int) -> pd.Series:
     return out.fillna(50)
 
 
-def adx(high: pd.Series, low: pd.Series, close: pd.Series, n=ADX_N) -> pd.Series:
+def adx(high: pd.Series, low: pd.Series, close: pd.Series, n=ADX_N):
+    """Restituisce (adx, plus_di, minus_di). plus_di/minus_di servono a classify_regime."""
     up_move = high.diff()
     down_move = -low.diff()
     plus_dm = np.where((up_move > down_move) & (up_move > 0), up_move, 0.0)
@@ -158,7 +159,92 @@ def adx(high: pd.Series, low: pd.Series, close: pd.Series, n=ADX_N) -> pd.Series
     plus_di = 100 * pd.Series(plus_dm, index=high.index).ewm(alpha=1 / n, adjust=False).mean() / atr.replace(0, np.nan)
     minus_di = 100 * pd.Series(minus_dm, index=high.index).ewm(alpha=1 / n, adjust=False).mean() / atr.replace(0, np.nan)
     dx = 100 * (plus_di - minus_di).abs() / (plus_di + minus_di).replace(0, np.nan)
-    return dx.ewm(alpha=1 / n, adjust=False).mean().fillna(0)
+    adx_series = dx.ewm(alpha=1 / n, adjust=False).mean().fillna(0)
+    return adx_series, plus_di.fillna(0), minus_di.fillna(0)
+
+
+# ---------------------------------------------------------------------------
+# Regime di mercato (Hurst + ADX/DI) — standard scannerv2, portato identico
+# ---------------------------------------------------------------------------
+
+def calc_hurst(prices_list, min_points=30) -> float:
+    """
+    Hurst Exponent con metodo varianza.
+    H > 0.55 -> trending | H ~ 0.5 -> random walk | H < 0.45 -> mean reverting
+    """
+    if len(prices_list) < min_points:
+        return 0.5
+    lags = [l for l in [2, 4, 8, 16, 32] if l < len(prices_list) // 2]
+    if len(lags) < 3:
+        return 0.5
+    try:
+        log_p = [math.log(p) for p in prices_list if p > 0]
+        if len(log_p) < max(lags) + 1:
+            return 0.5
+        vars_ = []
+        for lag in lags:
+            diffs = [log_p[i] - log_p[i - lag] for i in range(lag, len(log_p))]
+            mean_d = sum(diffs) / len(diffs)
+            var = sum((d - mean_d) ** 2 for d in diffs) / len(diffs)
+            vars_.append(var if var > 0 else 1e-10)
+        log_lags = [math.log(l) for l in lags]
+        log_vars = [math.log(v) for v in vars_]
+        n = len(lags)
+        mean_x = sum(log_lags) / n
+        mean_y = sum(log_vars) / n
+        num = sum((log_lags[i] - mean_x) * (log_vars[i] - mean_y) for i in range(n))
+        den = sum((log_lags[i] - mean_x) ** 2 for i in range(n))
+        if den == 0:
+            return 0.5
+        return round(max(0.1, min(0.9, num / den / 2)), 3)
+    except Exception:
+        return 0.5
+
+
+def classify_regime(h60: float, h1y: float, adx_val: float, pdi: float, ndi: float) -> dict:
+    """
+    5 stati (standard scannerv2):
+    Slancio     - ADX>=25 + PDI>=NDI + H60>0.55
+    Salita      - ADX>=25 + PDI>=NDI
+    Ribasso     - ADX>=25 + NDI>PDI
+    Transizione - ADX 20-25
+    Laterale    - ADX<20
+    """
+    adx_val = adx_val or 0
+    pdi = pdi or 0
+    ndi = ndi or 0
+    if adx_val >= 25:
+        if pdi >= ndi:
+            if h60 > 0.55:
+                return {"code": "SLANCIO", "label": "\U0001F680 Slancio", "color": "#1a7f37"}
+            return {"code": "SALITA", "label": "\U0001F4C8 Salita", "color": "#2ea043"}
+        return {"code": "RIBASSO", "label": "\U0001F4C9 Ribasso", "color": "#cf222e"}
+    if adx_val >= 20:
+        return {"code": "TRANSIZIONE", "label": "\u26A0\uFE0F Transizione", "color": "#bc4c00"}
+    return {"code": "LATERALE", "label": "\u2194 Laterale", "color": "#8c98a4"}
+
+
+def kama_trend_calc(kama_series: pd.Series, lookback=5) -> str:
+    """VERDE/ROSSO/GRIGIO in base all'andamento delle ultime `lookback` barre di KAMA."""
+    valid = kama_series.dropna()
+    if len(valid) < lookback + 1:
+        return "GRIGIO"
+    recent = valid.iloc[-(lookback + 1):].values
+    if all(recent[j] < recent[j + 1] for j in range(len(recent) - 1)):
+        return "VERDE"
+    if all(recent[j] > recent[j + 1] for j in range(len(recent) - 1)):
+        return "ROSSO"
+    return "GRIGIO"
+
+
+# Mappa etichetta rating italiana -> codice enum (solo per la classe CSS del badge)
+RATING_CODE_MAP = {
+    "Forte Buy": "STRONG_BUY",
+    "Buy": "BUY",
+    "Neutro": "NEUTRAL",
+    "Sell": "SELL",
+    "Forte Sell": "STRONG_SELL",
+}
 
 
 def parabolic_sar(high: pd.Series, low: pd.Series, close: pd.Series, step=SAR_STEP, max_af=SAR_MAX):
@@ -254,12 +340,46 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     rvi_v = rvi(open_, high, low, close)
     rsi5 = rsi(close, RSI_FAST_N)
     rsi14 = rsi(close, RSI_SLOW_N)
-    adx_v = adx(high, low, close)
+    adx_v, plus_di, minus_di = adx(high, low, close)
     sar, sar_trend, sar_flip = parabolic_sar(high, low, close)
     vol_avg = vol.rolling(VOL_AVG_N).mean()
     vol_ratio = (vol / vol_avg.replace(0, np.nan)).fillna(0)
 
     price_above_kf = close > kama_fast
+
+    # ---- Storico vettorizzato zona/segnale (per grafico + tabella storia segnali) ----
+    grp = (price_above_kf != price_above_kf.shift()).cumsum()
+    baff_series = price_above_kf.groupby(grp).cumcount() + 1
+    baff_series = baff_series.where(price_above_kf, -baff_series)
+
+    gap_pct_series = (kama_fast - kama_slow) / kama_slow.replace(0, np.nan) * 100
+    sar_bullish_series = close > sar
+    d1_ao = ao.diff()
+    ao_improving_series = (d1_ao > 0) & (d1_ao.shift(1) > 0)
+
+    zona_series = pd.Series(np.select(
+        [
+            (close > kama_fast) & (kama_fast > kama_slow),
+            (close > kama_fast) & (close <= kama_slow),
+            (close < kama_slow * 0.98),
+            (close < kama_slow),
+        ],
+        ["LONG_CONF", "LONG_EARLY", "STOP", "USCITA"],
+        default="NEUTRA",
+    ), index=close.index)
+
+    buy3_mask = ((zona_series == "LONG_CONF") & (ao > 0) & (vol_ratio >= 2.0)
+                 & (baff_series >= 3) & (er >= 0.35) & (gap_pct_series >= 0.3) & sar_bullish_series)
+    buy2_mask = ((zona_series == "LONG_EARLY") & (ao > 0) & (vol_ratio >= 1.5)
+                 & (baff_series >= 3) & (er >= 0.35))
+    sell_stop_mask = zona_series == "STOP"
+    sell_exit_mask = zona_series == "USCITA"
+
+    segnale_series = pd.Series(np.select(
+        [buy3_mask, buy2_mask, sell_stop_mask, sell_exit_mask],
+        ["BUY3", "BUY2", "STOP", "SELL"],
+        default="HOLD",
+    ), index=close.index)
 
     i = -1  # ultima barra
     price = float(close.iloc[i])
@@ -357,9 +477,20 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     flip_idx = np.where(sar_flip.values)[0]
     sar_since_date = str(df.index[flip_idx[-1]].date()) if len(flip_idx) else None
 
-    # data da cui vige il segnale attuale (ultima variazione di `segnale` — approssimato
-    # tornando indietro finché baff resta coerente con lo stato attuale sopra/sotto KAMA)
-    segnale_dal = str(df.index[max(len(df) - baff, 0)].date())
+    # data esatta da cui vige il segnale attuale + numero di barre (dallo storico vettorizzato)
+    seg_vals = segnale_series.values
+    run_start = len(seg_vals) - 1
+    while run_start > 0 and seg_vals[run_start - 1] == seg_vals[-1]:
+        run_start -= 1
+    segnale_dal = str(df.index[run_start].date())
+    segnale_bars = int(len(seg_vals) - 1 - run_start)
+
+    # Regime di mercato (Hurst 60g / 1y + ADX/DI) — standard scannerv2
+    closes_list = close.tolist()
+    hurst_60 = calc_hurst(closes_list[-60:]) if len(closes_list) >= 60 else 0.5
+    hurst_1y = calc_hurst(closes_list)
+    regime = classify_regime(hurst_60, hurst_1y, adx_val, float(plus_di.iloc[i]), float(minus_di.iloc[i]))
+    kama_trend = kama_trend_calc(kama_fast)
 
     return {
         "prezzo": round(price, 4),
@@ -385,6 +516,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "score": round(score, 1),
         "rating": rating,
         "segnale_dal": segnale_dal,
+        "segnale_bars": segnale_bars,
         "buy3": buy3,
         "buy2": buy2,
         "super_best_buy": super_best_buy,
@@ -393,6 +525,12 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "perf_3m": round(perf_3m, 2) if perf_3m is not None else None,
         "perf_6m": round(perf_6m, 2) if perf_6m is not None else None,
         "ultimo_aggiornamento": str(df.index[-1].date()),
+        # Regime di mercato (standard scannerv2)
+        "hurst_60": hurst_60,
+        "hurst_1y": hurst_1y,
+        "regime": regime,
+        "kama_trend": kama_trend,
+        "tv_rating_code": RATING_CODE_MAP.get(rating, "NEUTRAL"),
     }, {
         # serie storiche per il grafico (stile scannerv2)
         "date": [str(d.date()) for d in df.index],
@@ -407,6 +545,8 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "sar_trend": [int(v) for v in sar_trend],
         "ao": [round(float(v), 4) for v in ao],
         "rsi14": [round(float(v), 2) for v in rsi14],
+        "baff": [int(v) for v in baff_series.values],
+        "signals": [str(s) for s in segnale_series.values],
     }
 
 
