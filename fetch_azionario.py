@@ -247,6 +247,53 @@ RATING_CODE_MAP = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Renko (standard raptor-geografia, portato identico) — mattoni a dimensione
+# fissa = ATR(14) mediano dell'ultimo anno
+# ---------------------------------------------------------------------------
+
+def calc_atr_series(high: list, low: list, close: list, n: int = 14) -> list:
+    if len(close) < 2:
+        return [None] * len(close)
+    tr = [max(high[i] - low[i], abs(high[i] - close[i - 1]), abs(low[i] - close[i - 1]))
+          for i in range(1, len(close))]
+    if not tr:
+        return [None] * len(close)
+    result = [None] * (len(close) - len(tr))
+    av = sum(tr[:n]) / min(n, len(tr))
+    result.append(round(av, 5))
+    for i in range(min(n, len(tr)), len(tr)):
+        av = (av * (n - 1) + tr[i]) / n
+        result.append(round(av, 5))
+    return result
+
+
+def calc_renko(close: list, atr_series: list):
+    """Renko a mattoni fissi, brick = ATR(14) mediano dell'ultimo anno."""
+    valid_atr = [a for a in atr_series if a]
+    if not valid_atr or len(close) < 20:
+        return [], None
+    brick = round(sorted(valid_atr)[len(valid_atr) // 2], 5)
+    if brick <= 0:
+        return [], None
+    bricks = []
+    base = close[0]
+    direction = 0
+    for p in close[1:]:
+        while True:
+            if direction >= 0 and p >= base + brick:
+                bricks.append({"o": round(base, 5), "c": round(base + brick, 5), "dir": 1})
+                base += brick
+                direction = 1
+            elif direction <= 0 and p <= base - brick:
+                bricks.append({"o": round(base, 5), "c": round(base - brick, 5), "dir": -1})
+                base -= brick
+                direction = -1
+            else:
+                break
+    return bricks[-120:], brick
+
+
 def parabolic_sar(high: pd.Series, low: pd.Series, close: pd.Series, step=SAR_STEP, max_af=SAR_MAX):
     n = len(close)
     sar = np.zeros(n)
@@ -492,6 +539,10 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     regime = classify_regime(hurst_60, hurst_1y, adx_val, float(plus_di.iloc[i]), float(minus_di.iloc[i]))
     kama_trend = kama_trend_calc(kama_fast)
 
+    # Renko (standard raptor-geografia)
+    atr_series_full = calc_atr_series(high.tolist(), low.tolist(), closes_list)
+    renko_bricks, renko_brick_size = calc_renko(closes_list, atr_series_full)
+
     return {
         "prezzo": round(price, 4),
         "kama_fast": round(kf, 4),
@@ -545,8 +596,11 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "sar_trend": [int(v) for v in sar_trend],
         "ao": [round(float(v), 4) for v in ao],
         "rsi14": [round(float(v), 2) for v in rsi14],
+        "rsi5": [round(float(v), 2) for v in rsi5],
         "baff": [int(v) for v in baff_series.values],
         "signals": [str(s) for s in segnale_series.values],
+        "renko": renko_bricks,
+        "renko_brick": renko_brick_size,
     }
 
 
