@@ -52,6 +52,10 @@ SAR_STEP = 0.02
 SAR_MAX = 0.2
 VOL_AVG_N = 20
 
+# Uscita: Chandelier Exit (trailing) + hard stop fisso di sicurezza
+CHANDELIER_ATR_MULT = 3.0   # Massimo da entrata - 3xATR14
+HARD_STOP_PCT = 0.08        # -8% dall'entrata: rete di sicurezza contro i gap
+
 BATCH_SIZE = 40          # ticker per batch yfinance
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
@@ -269,7 +273,8 @@ def calc_atr_series(high: list, low: list, close: list, n: int = 14) -> list:
 
 
 def calc_renko(close: list, atr_series: list):
-    """Renko a mattoni fissi, brick = ATR(14) mediano dell'ultimo anno."""
+    """Renko con reversal a 2 mattoni (standard classico): per invertire direzione serve
+    un movimento di 2 brick nella direzione opposta, non 1 — riduce le inversioni rumorose."""
     valid_atr = [a for a in atr_series if a]
     if not valid_atr or len(close) < 20:
         return [], None
@@ -289,6 +294,14 @@ def calc_renko(close: list, atr_series: list):
                 bricks.append({"o": round(base, 5), "c": round(base - brick, 5), "dir": -1})
                 base -= brick
                 direction = -1
+            elif direction == 1 and p <= base - 2 * brick:
+                bricks.append({"o": round(base, 5), "c": round(base - brick, 5), "dir": -1})
+                base -= brick
+                direction = -1
+            elif direction == -1 and p >= base + 2 * brick:
+                bricks.append({"o": round(base, 5), "c": round(base + brick, 5), "dir": 1})
+                base += brick
+                direction = 1
             else:
                 break
     return bricks[-120:], brick
@@ -308,9 +321,9 @@ def build_signal_note(tier: str, ctx: dict) -> str:
         gap_txt = f", gap KAMA={gap_pct:+.1f}%" if gap_pct is not None else ""
         return f"ER={er_pct if er_pct is not None else '?'}% (forte), baffetti={baff if baff is not None else '?'} barre{gap_txt}, sopra KAMA"
     if tier == "SELL":
-        return "Prezzo sceso sotto KAMA lenta (uscita per rottura del trend)"
+        return "Chandelier Exit: prezzo sceso sotto il massimo da entrata meno 3×ATR14 (protezione profitto)"
     if tier == "STOP":
-        return "Prezzo sceso oltre la soglia di stop (-2% sotto KAMA lenta)"
+        return f"Stop fisso di sicurezza: prezzo sceso oltre -{int(HARD_STOP_PCT*100)}% dall'entrata (gap improvviso)"
     return "—"
 
 
@@ -435,18 +448,60 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         default="NEUTRA",
     ), index=close.index)
 
-    buy3_mask = ((zona_series == "LONG_CONF") & (ao > 0) & (vol_ratio >= 2.0)
-                 & (baff_series >= 3) & (er >= 0.35) & (gap_pct_series >= 0.3) & sar_bullish_series)
-    buy2_mask = ((zona_series == "LONG_EARLY") & (ao > 0) & (vol_ratio >= 1.5)
-                 & (baff_series >= 3) & (er >= 0.35))
-    sell_stop_mask = zona_series == "STOP"
-    sell_exit_mask = zona_series == "USCITA"
+    # ---- Uscita a Chandelier Exit (sostituisce l'uscita basata su KAMA slow) ----
+    # SELL = trailing stop (Massimo da entrata - CHANDELIER_ATR_MULT x ATR14): segue il prezzo,
+    #        molto meno in ritardo della vecchia regola "prezzo < KAMA slow".
+    # STOP = rete di sicurezza fissa (-8% dall'entrata) per gap improvvisi: controllata PRIMA
+    #        del chandelier, ha priorità se il prezzo crolla di colpo.
+    # BUY2 accetta ora anche "AO in miglioramento (3 barre)" oltre a "AO>0" — BUY3 resta rigido.
+    atr_series_full = calc_atr_series(high.tolist(), low.tolist(), close.tolist())
+    high_list = high.tolist()
+    close_list_full = close.tolist()
+    ao_list = ao.tolist()
+    volr_list = vol_ratio.tolist()
+    baff_list = baff_series.tolist()
+    er_list = er.tolist()
+    gap_list = gap_pct_series.tolist()
+    sarb_list = sar_bullish_series.tolist()
+    ao_impr_list = ao_improving_series.tolist()
+    zona_list = zona_series.tolist()
 
-    segnale_series = pd.Series(np.select(
-        [buy3_mask, buy2_mask, sell_stop_mask, sell_exit_mask],
-        ["BUY3", "BUY2", "STOP", "SELL"],
-        default="HOLD",
-    ), index=close.index)
+    seg_vals = []
+    chandelier_stop_series = []
+    state = "FLAT"
+    entry_price = None
+    highest_high = None
+    for idx in range(len(close_list_full)):
+        c = close_list_full[idx]
+        if state == "FLAT":
+            chandelier_stop_series.append(None)
+            ao_ok = (ao_list[idx] > 0) or ao_impr_list[idx]
+            buy3_ok = (zona_list[idx] == "LONG_CONF" and ao_list[idx] > 0 and volr_list[idx] >= 2.0
+                       and baff_list[idx] >= 3 and er_list[idx] >= 0.35 and gap_list[idx] >= 0.3 and sarb_list[idx])
+            buy2_ok = (zona_list[idx] == "LONG_EARLY" and ao_ok and volr_list[idx] >= 1.5
+                       and baff_list[idx] >= 3 and er_list[idx] >= 0.35)
+            if buy3_ok:
+                state = "LONG"; entry_price = c; highest_high = high_list[idx]
+                seg_vals.append("BUY3")
+            elif buy2_ok:
+                state = "LONG"; entry_price = c; highest_high = high_list[idx]
+                seg_vals.append("BUY2")
+            else:
+                seg_vals.append("HOLD")
+        else:  # in posizione (LONG)
+            highest_high = max(highest_high, high_list[idx])
+            atr_v = atr_series_full[idx] if idx < len(atr_series_full) else None
+            chand_stop = (highest_high - CHANDELIER_ATR_MULT * atr_v) if atr_v else None
+            chandelier_stop_series.append(round(chand_stop, 4) if chand_stop is not None else None)
+            hard_stop = entry_price * (1 - HARD_STOP_PCT)
+            if c < hard_stop:
+                seg_vals.append("STOP"); state = "FLAT"; entry_price = None; highest_high = None
+            elif chand_stop is not None and c < chand_stop:
+                seg_vals.append("SELL"); state = "FLAT"; entry_price = None; highest_high = None
+            else:
+                seg_vals.append("HOLD")
+
+    segnale_series = pd.Series(seg_vals, index=close.index)
 
     i = -1  # ultima barra
     price = float(close.iloc[i])
@@ -496,18 +551,18 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         elif prev5 >= prev14 and rsi5_v < rsi14_v:
             rsi_cross = -1
 
-    buy3 = (zona == "LONG_CONF" and ao_v > 0 and volr >= 2.0 and baff >= 3
-            and er_v >= 0.35 and gap_pct >= 0.3 and sar_bullish)
-    buy2 = (zona == "LONG_EARLY" and ao_v > 0 and volr >= 1.5 and baff >= 3 and er_v >= 0.35)
-    sell_stop = zona == "STOP"
-    sell_exit = zona == "USCITA"
+    buy3 = segnale_series.iloc[i] == "BUY3"
+    buy2 = segnale_series.iloc[i] == "BUY2"
+    sell_stop = segnale_series.iloc[i] == "STOP"
+    sell_exit = segnale_series.iloc[i] == "SELL"
 
-    super_best_buy = (
-        sar_bullish and bars_since_flip <= 2
-        and ao_v > 0 and ao_improving
-        and volr >= 1.5
-        and abs(perf_oggi) <= 4.0
-    )
+    # Super Best Buy — semplificato: SAR rialzista con flip recente + AO in miglioramento
+    # (rimossi i vincoli di volume 1.5x e movimento giornaliero ±4%, come richiesto)
+    super_best_buy = sar_bullish and bars_since_flip <= 2 and ao_improving
+
+    chandelier_stop = chandelier_stop_series[i]
+    in_posizione = entry_price is not None
+    highest_high_pos = highest_high if in_posizione else None
 
     # Score tecnico composito 0-100 (allineamento trend + momentum + forza)
     score = 50.0
@@ -529,16 +584,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     else:
         rating = "Forte Sell"
 
-    if buy3:
-        segnale = "BUY3"
-    elif buy2:
-        segnale = "BUY2"
-    elif sell_stop:
-        segnale = "STOP"
-    elif sell_exit:
-        segnale = "SELL"
-    else:
-        segnale = "HOLD"
+    segnale = str(segnale_series.iloc[i])
 
     # data ultimo flip SAR
     flip_idx = np.where(sar_flip.values)[0]
@@ -561,7 +607,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
 
     # Renko — brick su ATR RECENTE (ultimi ~6 mesi / 126 barre), non sull'intero storico:
     # riflette la volatilità attuale del titolo invece di una mediana diluita su 18 mesi
-    atr_series_full = calc_atr_series(high.tolist(), low.tolist(), closes_list)
+    # (atr_series_full già calcolato sopra per la state machine Chandelier/hard-stop)
     renko_bricks, renko_brick_size = calc_renko(closes_list, atr_series_full[-126:])
 
     # Storia segnali compatta (solo cambi di stato, con commento leggibile entrata/uscita)
@@ -613,6 +659,8 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "buy3": buy3,
         "buy2": buy2,
         "super_best_buy": super_best_buy,
+        "chandelier_stop": chandelier_stop,
+        "in_posizione": in_posizione,
         "perf_oggi": round(perf_oggi, 2),
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
@@ -642,6 +690,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "rsi5": [round(float(v), 2) for v in rsi5],
         "baff": [int(v) for v in baff_series.values],
         "signals": [str(s) for s in segnale_series.values],
+        "chandelier_stop": chandelier_stop_series,
         "renko": renko_bricks,
         "renko_brick": renko_brick_size,
         "signals_history": signals_history,
