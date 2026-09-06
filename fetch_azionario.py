@@ -294,6 +294,26 @@ def calc_renko(close: list, atr_series: list):
     return bricks[-120:], brick
 
 
+def build_signal_note(tier: str, ctx: dict) -> str:
+    """Commento testuale leggibile per un segnale di entrata/uscita (standard raptor-geografia,
+    adattato ai 4 segnali operativi di azionario: BUY2, BUY3, SELL, STOP)."""
+    er = ctx.get("er")
+    baff = ctx.get("baff")
+    gap_pct = ctx.get("gap_pct")
+    ao_v = ctx.get("ao")
+    er_pct = round(er * 100) if er is not None else None
+    if tier == "BUY2":
+        return f"Prezzo sopra KAMA, AO {'positivo' if (ao_v or 0) > 0 else 'in miglioramento'}, baffetti={baff if baff is not None else '?'} barre"
+    if tier == "BUY3":
+        gap_txt = f", gap KAMA={gap_pct:+.1f}%" if gap_pct is not None else ""
+        return f"ER={er_pct if er_pct is not None else '?'}% (forte), baffetti={baff if baff is not None else '?'} barre{gap_txt}, sopra KAMA"
+    if tier == "SELL":
+        return "Prezzo sceso sotto KAMA lenta (uscita per rottura del trend)"
+    if tier == "STOP":
+        return "Prezzo sceso oltre la soglia di stop (-2% sotto KAMA lenta)"
+    return "—"
+
+
 def parabolic_sar(high: pd.Series, low: pd.Series, close: pd.Series, step=SAR_STEP, max_af=SAR_MAX):
     n = len(close)
     sar = np.zeros(n)
@@ -539,9 +559,31 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     regime = classify_regime(hurst_60, hurst_1y, adx_val, float(plus_di.iloc[i]), float(minus_di.iloc[i]))
     kama_trend = kama_trend_calc(kama_fast)
 
-    # Renko (standard raptor-geografia)
+    # Renko — brick su ATR RECENTE (ultimi ~6 mesi / 126 barre), non sull'intero storico:
+    # riflette la volatilità attuale del titolo invece di una mediana diluita su 18 mesi
     atr_series_full = calc_atr_series(high.tolist(), low.tolist(), closes_list)
-    renko_bricks, renko_brick_size = calc_renko(closes_list, atr_series_full)
+    renko_bricks, renko_brick_size = calc_renko(closes_list, atr_series_full[-126:])
+
+    # Storia segnali compatta (solo cambi di stato, con commento leggibile entrata/uscita)
+    signals_history = []
+    for i in range(len(seg_vals)):
+        if i == 0 or seg_vals[i] != seg_vals[i - 1]:
+            tier = seg_vals[i]
+            note = build_signal_note(tier, {
+                "er": float(er.iloc[i]),
+                "baff": int(baff_series.iloc[i]),
+                "gap_pct": float(gap_pct_series.iloc[i]) if not math.isnan(gap_pct_series.iloc[i]) else None,
+                "ao": float(ao.iloc[i]),
+            })
+            signals_history.append({
+                "date": str(df.index[i].date()),
+                "signal": str(tier),
+                "price": round(float(close.iloc[i]), 4),
+                "note": note,
+            })
+
+    # Performance 7 giorni di borsa (coerente con lo standard raptor-geografia)
+    perf_7g = round((closes_list[-1] / closes_list[-8] - 1) * 100, 2) if len(closes_list) >= 8 else None
 
     return {
         "prezzo": round(price, 4),
@@ -572,6 +614,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "buy2": buy2,
         "super_best_buy": super_best_buy,
         "perf_oggi": round(perf_oggi, 2),
+        "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
         "perf_3m": round(perf_3m, 2) if perf_3m is not None else None,
         "perf_6m": round(perf_6m, 2) if perf_6m is not None else None,
@@ -601,6 +644,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "signals": [str(s) for s in segnale_series.values],
         "renko": renko_bricks,
         "renko_brick": renko_brick_size,
+        "signals_history": signals_history,
     }
 
 
