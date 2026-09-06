@@ -68,6 +68,27 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
 .pill-hold{background:var(--bg3);color:var(--text3)}
 .sbb-flag{color:#e67700;font-weight:700;font-size:10px;font-family:var(--font-cond)}
 
+/* STRISCIA INDICATORI COMPATTA (standard raptor-geografia) */
+.stat-strip{display:flex;border:1px solid var(--border);border-radius:4px;background:var(--bg2);margin:14px 0;overflow-x:auto}
+.stat-strip-item{flex:1;min-width:90px;padding:8px 12px;border-right:1px solid var(--border)}
+.stat-strip-item:last-child{border-right:none}
+.stat-strip-item .ss-label{font-family:var(--font-cond);font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:3px}
+.stat-strip-item .ss-val{font-family:var(--font-mono);font-size:15px;font-weight:700}
+
+/* Badge regime compatto per la tabella principale */
+.regime-mini{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;font-family:var(--font-cond);white-space:nowrap}
+
+/* TOP SETTORE / TOP REGIONE */
+.top-sections{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 20px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.top-box{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:10px 12px}
+.top-box-title{font-family:var(--font-cond);font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.top-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--bg3);font-size:11px}
+.top-row:last-child{border-bottom:none}
+.top-row .tr-name{cursor:pointer;color:var(--text);font-weight:600}
+.top-row .tr-name:hover{color:var(--accent)}
+.top-row .tr-score{font-family:var(--font-mono);color:var(--text3)}
+@media (max-width:700px){ .top-sections{grid-template-columns:1fr} }
+
 .rowbtn{background:none;border:1px solid var(--border2);color:var(--text3);padding:2px 6px;border-radius:3px;font-size:10px;cursor:pointer;margin-right:2px}
 .rowbtn:hover{border-color:var(--accent);color:var(--accent)}
 
@@ -137,6 +158,8 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
   <div class="tab" data-tab="IT">🇮🇹 Italia <span class="tab-cnt" id="cntIT">–</span></div>
 </div>
 
+<div class="top-sections" id="topSections"></div>
+
 <div class="controls">
   <span class="ctrl-label">Cerca</span>
   <input type="text" id="search" placeholder="nome o ticker...">
@@ -167,13 +190,16 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
       <th data-k="settore">Settore</th>
       <th data-k="prezzo">Prezzo</th>
       <th data-k="perf_oggi">Oggi%</th>
+      <th data-k="perf_7g">7gg%</th>
       <th data-k="perf_1m">Mese%</th>
       <th data-k="perf_6m">6M%</th>
       <th data-k="zona">Zona</th>
       <th data-k="segnale">Segnale</th>
       <th data-k="sar_bullish">SAR</th>
+      <th data-k="rvi">RVI</th>
       <th data-k="rsi14">RSI14</th>
       <th data-k="adx">ADX</th>
+      <th>Regime</th>
       <th data-k="score">Score</th>
       <th>Azioni</th>
     </tr>
@@ -225,7 +251,43 @@ async function load(){
   document.getElementById('cntUS').textContent = ALL.filter(x=>x.regione==='US').length;
   document.getElementById('cntIT').textContent = ALL.filter(x=>x.regione==='IT').length;
   populateSettori();
+  renderTopSections();
   render();
+}
+
+function renderTopSections(){
+  const box = document.getElementById('topSections');
+  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia' };
+  const bySettore = {};
+  ALL.forEach(r=>{ (bySettore[r.settore] = bySettore[r.settore]||[]).push(r); });
+  const topSettori = Object.entries(bySettore)
+    .map(([nome, arr])=>({ nome, best: arr.slice().sort((a,b)=>b.score-a.score)[0] }))
+    .sort((a,b)=>b.best.score-a.best.score).slice(0,10);
+  const byRegione = {};
+  ALL.forEach(r=>{ (byRegione[r.regione] = byRegione[r.regione]||[]).push(r); });
+  const topRegioni = Object.entries(byRegione)
+    .map(([reg, arr])=>arr.slice().sort((a,b)=>b.score-a.score).slice(0,3).map(r=>({...r, _reg:reg})))
+    .flat();
+
+  const rowHTML = r => `<div class="top-row">
+      <span class="tr-name" onclick="openChart('${r.ticker}')">${r.nome}</span>
+      ${segnalePill(r.segnale)}
+      <span class="tr-score">${r.score?.toFixed(0)}</span>
+    </div>`;
+
+  box.innerHTML = `
+    <div class="top-box">
+      <div class="top-box-title">🏆 Top per Settore</div>
+      ${topSettori.map(s=>rowHTML(s.best)).join('')}
+    </div>
+    <div class="top-box">
+      <div class="top-box-title">🌍 Top per Regione</div>
+      ${topRegioni.map(r=>`<div class="top-row">
+        <span class="tr-name" onclick="openChart('${r.ticker}')">${REGIONE_LABEL[r._reg]||r._reg} · ${r.nome}</span>
+        ${segnalePill(r.segnale)}
+        <span class="tr-score">${r.score?.toFixed(0)}</span>
+      </div>`).join('')}
+    </div>`;
 }
 
 function populateSettori(){
@@ -266,13 +328,16 @@ function render(){
       <td>${r.settore}</td>
       <td class="num">${r.prezzo?.toFixed(2)}</td>
       <td class="num">${pct(r.perf_oggi)}</td>
+      <td class="num">${pct(r.perf_7g)}</td>
       <td class="num">${pct(r.perf_1m)}</td>
       <td class="num">${pct(r.perf_6m)}</td>
       <td>${zonaPill(r.zona)}</td>
       <td>${segnalePill(r.segnale)}</td>
       <td class="num" style="color:${r.sar_bullish?'var(--lc)':'var(--ex)'};font-weight:700" title="${r.bars_since_flip} barre dal flip">${r.sar_bullish?'▲':'▼'} ${r.bars_since_flip}</td>
+      <td class="num" style="color:${r.rvi>0?'var(--lc)':'var(--ex)'};font-weight:700">${r.rvi>0?'▲':'▼'}</td>
       <td class="num">${r.rsi14?.toFixed(1)}</td>
       <td class="num">${r.adx?.toFixed(1)}</td>
+      <td><span class="regime-mini regime-${r.regime?.code}" title="Hurst60=${r.hurst_60} · Hurst1y=${r.hurst_1y}">${r.regime?.label||r.regime?.code||'—'}</span></td>
       <td class="score">${r.score?.toFixed(0)}</td>
       <td>
         <button class="rowbtn" onclick="openChart('${r.ticker}')" title="Grafico">📈</button>
@@ -375,6 +440,19 @@ function regimeBlockHTML(row){
   </div>`;
 }
 
+function statStripHTML(row){
+  const pctCls = v => v>0?'green':v<0?'red':'';
+  const item = (label, val, cls='') => `<div class="stat-strip-item"><div class="ss-label">${label}</div><div class="ss-val ${cls}">${val}</div></div>`;
+  return `<div class="stat-strip">
+    ${item('ER', (row.er*100).toFixed(0)+'%')}
+    ${item('Score', row.score.toFixed(1))}
+    ${item('RVI', row.rvi>0?'▲ Bull':'▼ Bear', row.rvi>0?'green':'red')}
+    ${item('Mom 1M', row.perf_1m!=null?(row.perf_1m>0?'+':'')+row.perf_1m.toFixed(2)+'%':'—', pctCls(row.perf_1m))}
+    ${item('Mom 3M', row.perf_3m!=null?(row.perf_3m>0?'+':'')+row.perf_3m.toFixed(2)+'%':'—', pctCls(row.perf_3m))}
+    ${item('Mom 6M', row.perf_6m!=null?(row.perf_6m>0?'+':'')+row.perf_6m.toFixed(2)+'%':'—', pctCls(row.perf_6m))}
+  </div>`;
+}
+
 function indicatorGridHTML(row){
   const cell = (label, val, cls='') => `<div class="modal-stat"><div class="ms-label">${label}</div><div class="ms-val ${cls}">${val}</div></div>`;
   const pctCls = v => v>0?'green':v<0?'red':'';
@@ -383,35 +461,76 @@ function indicatorGridHTML(row){
     ${cell('Rating', row.rating)}
     ${cell('Prezzo', row.prezzo.toFixed(2))}
     ${cell('Var% oggi', (row.perf_oggi>0?'+':'')+row.perf_oggi.toFixed(2)+'%', pctCls(row.perf_oggi))}
-    ${cell('Score', row.score.toFixed(0)+'/100')}
-    ${cell('ER', (row.er*100).toFixed(1)+'%')}
+    ${cell('7gg%', row.perf_7g!=null?(row.perf_7g>0?'+':'')+row.perf_7g.toFixed(2)+'%':'—', pctCls(row.perf_7g))}
     ${cell('KAMA fast', row.kama_fast.toFixed(2))}
     ${cell('KAMA%', (row.kama_gap_pct>0?'+':'')+row.kama_gap_pct.toFixed(2)+'%', pctCls(row.kama_gap_pct))}
     ${cell('baff', row.baff)}
     ${cell('SAR', row.sar_bullish?'▲ BULL':'▼ BEAR', row.sar_bullish?'green':'red')}
     ${cell('AO', row.ao.toFixed(4), row.ao_improving?'green':'red')}
-    ${cell('RVI', row.rvi>0?'BULL':'BEAR', row.rvi>0?'green':'red')}
     ${cell('RSI14', row.rsi14.toFixed(1), row.rsi14>70?'red':row.rsi14<30?'green':'')}
     ${cell('ADX', row.adx.toFixed(1))}
-    ${cell('Mom 1M', row.perf_1m!=null?(row.perf_1m>0?'+':'')+row.perf_1m.toFixed(2)+'%':'—', pctCls(row.perf_1m))}
-    ${cell('Mom 3M', row.perf_3m!=null?(row.perf_3m>0?'+':'')+row.perf_3m.toFixed(2)+'%':'—', pctCls(row.perf_3m))}
-    ${cell('Mom 6M', row.perf_6m!=null?(row.perf_6m>0?'+':'')+row.perf_6m.toFixed(2)+'%':'—', pctCls(row.perf_6m))}
     ${cell('Segnale dal', row.segnale_dal||'—')}
     ${cell('Barre', row.segnale_bars!=null?row.segnale_bars+'gg':'—')}
     ${cell('Trend KAMA', row.kama_trend||'—', row.kama_trend==='VERDE'?'green':row.kama_trend==='ROSSO'?'red':'')}
   </div>`;
 }
 
-function historyTableHTML(chart){
-  const n = chart.date.length;
-  const rows = [];
-  for(let i=n-1;i>=0 && rows.length<20;i--){
-    if(i===n-1 || chart.signals[i]!==chart.signals[i+1]){
-      rows.push(`<tr><td>${chart.date[i]}</td><td>${segnalePill(chart.signals[i])}</td><td>${chart.close[i]?.toFixed(2)}</td></tr>`);
+// Ricostruisce i trade (entrata -> uscita) dalla storia segnali compatta (standard raptor-geografia)
+function buildTrades(chart){
+  const sigHist = (chart.signals_history || []).filter(e => e.signal !== 'HOLD');
+  const dates = chart.date, closes = chart.close;
+  const BUY = ['BUY2','BUY3'];
+  const trades = [];
+  let open = null;
+  sigHist.forEach(sh=>{
+    if(BUY.includes(sh.signal)){
+      if(!open) open = { entryDate: sh.date, entryTier: sh.signal, entryPrice: sh.price, entryNote: sh.note };
+    } else if(sh.signal==='SELL' || sh.signal==='STOP'){
+      if(open){
+        trades.push({...open, exitDate: sh.date, exitTier: sh.signal, exitPrice: sh.price, exitNote: sh.note, isOpen:false});
+        open = null;
+      }
     }
-  }
-  if(!rows.length) return '<div style="font-size:12px;color:var(--text3)">Nessuna history disponibile</div>';
-  return `<table class="history-table"><thead><tr><th>Data</th><th>Segnale</th><th>Prezzo</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+  });
+  if(open) trades.push({...open, exitDate:null, exitTier:null, exitPrice:null, exitNote:null, isOpen:true});
+
+  const lastPrice = closes[closes.length-1];
+  trades.forEach(tr=>{
+    const exitP = tr.isOpen ? lastPrice : tr.exitPrice;
+    tr.exitPriceEff = exitP;
+    tr.deltaPct = (tr.entryPrice && exitP!=null) ? ((exitP/tr.entryPrice - 1)*100) : null;
+    const eIdx = dates.indexOf(tr.entryDate);
+    const xIdx = tr.isOpen ? dates.length-1 : dates.indexOf(tr.exitDate);
+    tr.days = (eIdx>=0 && xIdx>=0) ? (xIdx-eIdx) : null;
+  });
+  return trades.reverse();
+}
+
+function historyTableHTML(chart){
+  const trades = buildTrades(chart);
+  if(!trades.length) return '<div style="font-size:12px;color:var(--text3)">Nessun trade nello storico disponibile</div>';
+  const rows = trades.slice(0,20).map((tr,idx)=>{
+    const deltaStr = tr.deltaPct!=null ? (tr.deltaPct>=0?'+':'')+tr.deltaPct.toFixed(2)+'%' : '—';
+    const deltaCls = tr.deltaPct==null?'':tr.deltaPct>=0?'green':'red';
+    const exitBadge = tr.isOpen ? '<span class="pill pill-le">APERTA</span>' : segnalePill(tr.exitTier);
+    return `<tr>
+      <td>${trades.length-idx}</td>
+      <td>${tr.entryDate||'—'}</td>
+      <td>${tr.exitDate||'—'}</td>
+      <td>${segnalePill(tr.entryTier)} → ${exitBadge}</td>
+      <td>${tr.entryPrice!=null?tr.entryPrice.toFixed(2):'—'}</td>
+      <td>${tr.exitPriceEff!=null?tr.exitPriceEff.toFixed(2):'—'}</td>
+      <td class="${deltaCls}">${deltaStr}</td>
+      <td>${tr.days!=null?tr.days:'—'}</td>
+      <td style="white-space:normal;font-family:var(--font-body);font-size:10px;color:var(--text2);max-width:280px">
+        <div><b>Entrata:</b> ${tr.entryNote||'—'}</div>
+        <div><b>Uscita:</b> ${tr.exitNote||(tr.isOpen?'Posizione ancora aperta':'—')}</div>
+      </td>
+    </tr>`;
+  }).join('');
+  return `<table class="history-table"><thead><tr>
+    <th>#</th><th>Data entrata</th><th>Data uscita</th><th>Segnale</th><th>Prezzo E.</th><th>Prezzo U.</th><th>Δ%</th><th>Giorni</th><th>Note</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function buildChartHTML(row, chart){
@@ -420,6 +539,7 @@ function buildChartHTML(row, chart){
       <h2>${row.nome} <span style="color:var(--text3);font-family:var(--font-mono);font-size:13px">${row.ticker}</span></h2>
     </div>
 
+    ${statStripHTML(row)}
     ${indicatorGridHTML(row)}
     ${regimeBlockHTML(row)}
 
@@ -429,7 +549,7 @@ function buildChartHTML(row, chart){
       <div id="chartLegend" style="display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:var(--text2);font-family:var(--font-cond);margin-top:6px;padding:0 4px"></div>
     </div>
 
-    <div class="section-title">Storia Segnali</div>
+    <div class="section-title">Storia Trade</div>
     ${historyTableHTML(chart)}
 
     <div class="modal-actions">
