@@ -148,6 +148,12 @@ def rsi(close: pd.Series, n: int) -> pd.Series:
     return out.fillna(50)
 
 
+def calc_obv(close: pd.Series, vol: pd.Series) -> pd.Series:
+    """On-Balance Volume (standard min-finder)."""
+    direction = np.sign(close.diff().fillna(0))
+    return (direction * vol.fillna(0)).cumsum()
+
+
 def adx(high: pd.Series, low: pd.Series, close: pd.Series, n=ADX_N):
     """Restituisce (adx, plus_di, minus_di). plus_di/minus_di servono a classify_regime."""
     up_move = high.diff()
@@ -327,6 +333,87 @@ def build_signal_note(tier: str, ctx: dict) -> str:
     return "—"
 
 
+# Nome provvisorio del nuovo segnale di inversione (min-finder + REV1) — rinominare qui quando deciso
+INVERSIONE_LABEL = "INVERSIONE"
+
+
+def calc_inversion_signal(close: pd.Series, kama_fast: pd.Series, atr_series: list,
+                           obv: pd.Series, rsi14: pd.Series, ao: pd.Series) -> dict:
+    """Segnale di inversione anticipata (indipendente da BUY2/BUY3/Chandelier), mix di:
+    - KAMA cross recente (standard min-finder)
+    - ATR in salita + prezzo in salita (standard min-finder)
+    - Divergenza OBV: prezzo fa un minimo più basso, OBV fa un minimo più alto, con
+      KAMA piatta — segnale di accumulo silenzioso (standard min-finder)
+    - RSI(14) ipervenduto + AO in miglioramento (standard REV1)
+    Più prove scattano insieme, più alto il punteggio. NON sostituisce né modifica
+    BUY2/BUY3/SELL/STOP: è un segnale separato, pensato per anticipare l'inversione
+    prima che il motore trend-following principale la confermi."""
+    n = len(close)
+    c = close.values
+    kf = kama_fast.values
+
+    kama_cross, kama_cross_bars = False, None
+    for bars_ago in range(1, 6):
+        idx = n - bars_ago
+        if idx < 1:
+            continue
+        if math.isnan(kf[idx]) or math.isnan(kf[idx - 1]):
+            continue
+        if c[idx] > kf[idx] and c[idx - 1] <= kf[idx - 1]:
+            kama_cross, kama_cross_bars = True, bars_ago
+            break
+
+    atr_rising = False
+    if n >= 6:
+        atr_now = atr_series[-1] if atr_series and atr_series[-1] else None
+        atr_5ago = None
+        for j in range(n - 2, max(n - 7, -1), -1):
+            if 0 <= j < len(atr_series) and atr_series[j]:
+                atr_5ago = atr_series[j]
+                break
+        price_rising = bool(c[-1] > c[-5]) if n >= 5 else False
+        if atr_now and atr_5ago:
+            atr_rising = bool(atr_now > atr_5ago and price_rising)
+
+    obv_divergence = False
+    if n > 20:
+        price_trend = float(c[-1] - c[-20])
+        obv_trend = float(obv.iloc[-1] - obv.iloc[-20])
+        obv_div_raw = bool(price_trend < 0 and obv_trend > 0)
+        kama_flat = False
+        if n >= 11 and not math.isnan(kf[-1]) and not math.isnan(kf[-11]) and kf[-11] != 0:
+            kama_flat = bool(abs(kf[-1] - kf[-11]) / abs(kf[-11]) < 0.02)
+        obv_divergence = bool(obv_div_raw and kama_flat)
+
+    rsi_oversold_improving = False
+    if n >= 2:
+        rsi_oversold_improving = bool(rsi14.iloc[-1] < 35 and ao.iloc[-1] > ao.iloc[-2])
+
+    trigger_count = sum([kama_cross, atr_rising, obv_divergence, rsi_oversold_improving])
+    score = 0
+    if kama_cross:
+        score += 30 + (10 if kama_cross_bars == 1 else 5 if kama_cross_bars == 2 else 0)
+    if atr_rising:
+        score += 20
+    if obv_divergence:
+        score += 30
+    if rsi_oversold_improving:
+        score += 20
+    score = min(100, score)
+
+    return {
+        "label": INVERSIONE_LABEL,
+        "score": score,
+        "trigger_count": int(trigger_count),
+        "kama_cross": kama_cross,
+        "kama_cross_bars": kama_cross_bars,
+        "atr_rising": atr_rising,
+        "obv_divergence": obv_divergence,
+        "rsi_oversold_improving": rsi_oversold_improving,
+        "flag": trigger_count >= 2,
+    }
+
+
 def parabolic_sar(high: pd.Series, low: pd.Series, close: pd.Series, step=SAR_STEP, max_af=SAR_MAX):
     n = len(close)
     sar = np.zeros(n)
@@ -424,6 +511,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     sar, sar_trend, sar_flip = parabolic_sar(high, low, close)
     vol_avg = vol.rolling(VOL_AVG_N).mean()
     vol_ratio = (vol / vol_avg.replace(0, np.nan)).fillna(0)
+    obv = calc_obv(close, vol)
 
     price_above_kf = close > kama_fast
 
@@ -610,6 +698,9 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     # (atr_series_full già calcolato sopra per la state machine Chandelier/hard-stop)
     renko_bricks, renko_brick_size = calc_renko(closes_list, atr_series_full[-126:])
 
+    # Segnale di inversione anticipata (min-finder + REV1) — indipendente dal motore principale
+    inversione = calc_inversion_signal(close, kama_fast, atr_series_full, obv, rsi14, ao)
+
     # Storia segnali compatta (solo cambi di stato, con commento leggibile entrata/uscita)
     signals_history = []
     for i in range(len(seg_vals)):
@@ -661,6 +752,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "super_best_buy": super_best_buy,
         "chandelier_stop": chandelier_stop,
         "in_posizione": in_posizione,
+        "inversione": inversione,
         "perf_oggi": round(perf_oggi, 2),
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
