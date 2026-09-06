@@ -269,6 +269,7 @@ function renderTopSections(){
     .map(([reg, arr])=>arr.slice().sort((a,b)=>b.score-a.score).slice(0,3).map(r=>({...r, _reg:reg})))
     .flat();
   const sbbList = ALL.filter(r=>r.super_best_buy).sort((a,b)=>b.score-a.score);
+  const invList = ALL.filter(r=>r.inversione?.flag).sort((a,b)=>b.inversione.score-a.inversione.score);
 
   const rowHTML = r => `<div class="top-row">
       <span class="tr-name" onclick="openChart('${r.ticker}')">${r.nome}${r.super_best_buy?' <span class="sbb-flag">🚀SBB</span>':''}</span>
@@ -276,14 +277,32 @@ function renderTopSections(){
       <span class="tr-score">${r.score?.toFixed(0)}</span>
     </div>`;
 
+  const invEvidenze = inv => [
+    inv.kama_cross ? `KAMA cross (${inv.kama_cross_bars}gg fa)` : null,
+    inv.atr_rising ? 'ATR+prezzo in salita' : null,
+    inv.obv_divergence ? 'Divergenza OBV' : null,
+    inv.rsi_oversold_improving ? 'RSI ipervenduto+AO su' : null,
+  ].filter(Boolean).join(' · ');
+
   const sbbBoxHTML = sbbList.length ? `
     <div class="top-box" style="grid-column:1/-1;border-color:#e67700">
       <div class="top-box-title" style="color:#e67700">🚀 Super Best Buy — SAR ribaltato + AO in miglioramento</div>
       ${sbbList.map(rowHTML).join('')}
     </div>` : '';
 
+  const invBoxHTML = invList.length ? `
+    <div class="top-box" style="grid-column:1/-1;border-color:#8250df">
+      <div class="top-box-title" style="color:#8250df">🔄 ${invList[0].inversione.label} — segnale di inversione anticipata (sperimentale)</div>
+      ${invList.map(r=>`<div class="top-row">
+        <span class="tr-name" onclick="openChart('${r.ticker}')">${r.nome}</span>
+        <span style="font-size:9px;color:var(--text3);font-family:var(--font-cond)">${invEvidenze(r.inversione)}</span>
+        <span class="tr-score" style="color:#8250df;font-weight:700">${r.inversione.score}</span>
+      </div>`).join('')}
+    </div>` : '';
+
   box.innerHTML = `
     ${sbbBoxHTML}
+    ${invBoxHTML}
     <div class="top-box">
       <div class="top-box-title">🏆 Top per Settore</div>
       ${topSettori.map(s=>rowHTML(s.best)).join('')}
