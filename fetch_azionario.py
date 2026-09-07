@@ -56,6 +56,14 @@ VOL_AVG_N = 20
 CHANDELIER_ATR_MULT = 3.0   # Massimo da entrata - 3xATR14
 HARD_STOP_PCT = 0.08        # -8% dall'entrata: rete di sicurezza contro i gap
 
+# Motore Mean-Reversion (parallelo/separato da BUY2/BUY3/Chandelier) — "compra i minimi, vendi i massimi"
+MR_BB_N = 20                 # periodo Bollinger Bands
+MR_BB_STD = 2.0              # deviazioni standard
+MR_RSI_OVERSOLD = 30         # RSI14 sotto questa soglia = ipervenduto
+MR_HURST_THRESHOLD = 0.45    # sotto questa soglia: regime mean-reverting confermato (filtro bloccante)
+HURST_STRIDE = 5             # ricalcolo Hurst ogni N barre (statistica lenta, approssimazione lecita
+                              # per limitare il costo computazionale su storici lunghi)
+
 BATCH_SIZE = 40          # ticker per batch yfinance
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
@@ -152,6 +160,12 @@ def calc_obv(close: pd.Series, vol: pd.Series) -> pd.Series:
     """On-Balance Volume (standard min-finder)."""
     direction = np.sign(close.diff().fillna(0))
     return (direction * vol.fillna(0)).cumsum()
+
+
+def bollinger_bands(close: pd.Series, n=MR_BB_N, num_std=MR_BB_STD):
+    mid = close.rolling(n).mean()
+    std = close.rolling(n).std()
+    return mid + num_std * std, mid, mid - num_std * std
 
 
 def adx(high: pd.Series, low: pd.Series, close: pd.Series, n=ADX_N):
@@ -591,6 +605,52 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
 
     segnale_series = pd.Series(seg_vals, index=close.index)
 
+    # ---- Motore Mean-Reversion (parallelo, separato) — "compra i minimi, vendi i massimi" ----
+    # Entrata: prezzo <= banda inferiore Bollinger + RSI14 ipervenduto + Hurst60 < soglia
+    #          (filtro di regime BLOCCANTE: niente segnale se il titolo non sta davvero
+    #          oscillando in un range, per evitare di comprare durante un vero crollo)
+    # Uscita:  prezzo >= banda superiore Bollinger (massimo guadagno, come richiesto)
+    bb_upper, bb_mid, bb_lower = bollinger_bands(close)
+    bb_upper_l, bb_lower_l = bb_upper.tolist(), bb_lower.tolist()
+    rsi14_l = rsi14.tolist()
+
+    rolling_hurst = [None] * len(close_list_full)
+    last_h = 0.5
+    for idx in range(59, len(close_list_full)):
+        if (idx - 59) % HURST_STRIDE == 0:
+            last_h = calc_hurst(close_list_full[max(0, idx - 59):idx + 1])
+        rolling_hurst[idx] = last_h
+
+    mr_state = "FLAT"
+    mr_entry_price = None
+    mr_seg = []
+    for idx in range(len(close_list_full)):
+        c = close_list_full[idx]
+        if mr_state == "FLAT":
+            h, bl, r = rolling_hurst[idx], bb_lower_l[idx], rsi14_l[idx]
+            if (h is not None and bl is not None and not math.isnan(bl)
+                    and h < MR_HURST_THRESHOLD and c <= bl and r < MR_RSI_OVERSOLD):
+                mr_state = "LONG"; mr_entry_price = c
+                mr_seg.append("MR_BUY")
+            else:
+                mr_seg.append("MR_FLAT")
+        else:
+            bu = bb_upper_l[idx]
+            if bu is not None and not math.isnan(bu) and c >= bu:
+                mr_state = "FLAT"; mr_entry_price = None
+                mr_seg.append("MR_SELL")
+            else:
+                mr_seg.append("MR_HOLD")
+
+    mean_reversion = {
+        "segnale": mr_seg[-1],
+        "in_posizione": mr_state == "LONG",
+        "hurst_60_rolling": rolling_hurst[-1],
+        "bb_lower": round(bb_lower.iloc[-1], 4) if not math.isnan(bb_lower.iloc[-1]) else None,
+        "bb_upper": round(bb_upper.iloc[-1], 4) if not math.isnan(bb_upper.iloc[-1]) else None,
+        "entry_price": round(mr_entry_price, 4) if mr_entry_price is not None else None,
+    }
+
     i = -1  # ultima barra
     price = float(close.iloc[i])
     kf = float(kama_fast.iloc[i]) if not math.isnan(kama_fast.iloc[i]) else None
@@ -753,6 +813,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "chandelier_stop": chandelier_stop,
         "in_posizione": in_posizione,
         "inversione": inversione,
+        "mean_reversion": mean_reversion,
         "perf_oggi": round(perf_oggi, 2),
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
@@ -786,6 +847,9 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "renko": renko_bricks,
         "renko_brick": renko_brick_size,
         "signals_history": signals_history,
+        "bb_upper": [None if math.isnan(v) else round(float(v), 4) for v in bb_upper],
+        "bb_lower": [None if math.isnan(v) else round(float(v), 4) for v in bb_lower],
+        "mr_signals": mr_seg,
     }
 
 
