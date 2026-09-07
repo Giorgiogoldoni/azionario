@@ -10,13 +10,14 @@
   td{padding:6px 10px}
   .buy3{color:#2f9e44;font-weight:700} .buy2{color:#1971c2;font-weight:700}
   .sell{color:#c92a2a;font-weight:700} .warn{color:#e67700;font-weight:700}
+  .inv{color:#8250df;font-weight:700} .mr{color:#0969da;font-weight:700}
   .box{background:#fff9db;border:1px solid #ffd43b;border-radius:5px;padding:12px 16px;margin:12px 0;font-size:12px;color:#7a5c00}
   .stato{background:#f8f9fa;border-radius:5px;padding:12px 16px;margin:12px 0;font-size:12px}
   .footer{margin-top:40px;padding-top:12px;border-top:1px solid #dee2e6;font-size:10px;color:#868e96}
 </style></head><body>
 
 <h1>📊 Otis Worldwide — Regole Operative AZIONARIO</h1>
-<p style="color:#868e96;font-size:11px">Generato il 07/09/2026, 09:09:22 · OTIS · Dati aggiornati al 2026-09-04</p>
+<p style="color:#868e96;font-size:11px">Generato il 07/09/2026, 09:45:15 · OTIS · Dati aggiornati al 2026-09-04</p>
 
 <div class="stato">
   <strong>📊 Stato attuale</strong><br>
@@ -39,16 +40,16 @@
 <h2>🔵 BUY2 — Entrata anticipata</h2>
 <table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
 <tr><td>Zona</td><td class="buy2">LONG_EARLY</td><td>Prezzo &gt; KAMA Fast ma sotto KAMA Slow</td></tr>
-<tr><td>AO</td><td class="buy2">&gt; 0</td><td>Momentum positivo</td></tr>
+<tr><td>AO</td><td class="buy2">&gt; 0 oppure in miglioramento (3 barre)</td><td>Momentum positivo o in accelerazione</td></tr>
 <tr><td>Volume Ratio</td><td class="buy2">≥ 1.5x</td><td>Soglia ridotta rispetto a BUY3</td></tr>
 <tr><td>Baff</td><td class="buy2">≥ 3</td><td>Barre consecutive sopra KAMA</td></tr>
 <tr><td>ER</td><td class="buy2">≥ 0.35</td><td>Mercato direzionale</td></tr>
 </tbody></table>
 
-<h2>🔴 SELL — Uscita</h2>
-<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Azione</th></tr></thead><tbody>
-<tr><td>Zona USCITA</td><td class="sell">Prezzo &lt; KAMA Slow (&lt;2%)</td><td>Valutare uscita</td></tr>
-<tr><td>Zona STOP</td><td class="sell">Prezzo &gt;2% sotto KAMA Slow</td><td>Uscita immediata</td></tr>
+<h2>🔴 Uscita — Chandelier Exit + Stop di sicurezza</h2>
+<table><thead><tr><th>Segnale</th><th>Regola</th><th>Perché</th></tr></thead><tbody>
+<tr><td class="sell">SELL</td><td>Prezzo &lt; Massimo raggiunto da entrata − 3×ATR14 (trailing)</td><td>Segue il prezzo verso l'alto, protegge il profitto quando il trend si esaurisce</td></tr>
+<tr><td class="sell">STOP</td><td>Prezzo &lt; Prezzo di entrata − 8% (fisso)</td><td>Rete di sicurezza contro i gap improvvisi — controllata PRIMA del Chandelier, ha priorità</td></tr>
 </tbody></table>
 
 <h2>⚡ RSI Cross — Filtro qualità</h2>
@@ -60,9 +61,26 @@
 <h2>🚀 Super Best Buy — Flip SAR</h2>
 <table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
 <tr><td>Primo pallino SAR</td><td class="buy3">Flip entro 2 barre</td><td>Cambio di direzione recente del SAR</td></tr>
-<tr><td>AO</td><td class="buy3">&gt; 0 e in miglioramento (3 barre)</td><td>Momentum in accelerazione</td></tr>
-<tr><td>Volume Ratio</td><td class="buy3">≥ 1.5x</td><td>Filtro alleggerito rispetto a Best Buy standard</td></tr>
-<tr><td>Movimento giornaliero</td><td class="warn">entro ±4%</td><td>Sanità — evita ingressi dopo spike già avvenuto</td></tr>
+<tr><td>AO</td><td class="buy3">In miglioramento (3 barre)</td><td>Momentum in accelerazione</td></tr>
+</tbody></table>
+
+<h2>🔄 INVERSIONE — Segnale anticipato (sperimentale, parallelo)</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Non sostituisce BUY2/BUY3: prova ad anticipare l'inversione prima che il motore
+principale la confermi. Punteggio più alto = più prove indipendenti allineate.</p>
+<table><thead><tr><th>Prova</th><th>Condizione</th><th>Punti</th></tr></thead><tbody>
+<tr><td class="inv">KAMA cross recente</td><td>Prezzo ha riattraversato KAMA sopra negli ultimi 5gg</td><td>30 (+bonus se 1-2gg fa)</td></tr>
+<tr><td class="inv">ATR + prezzo in salita</td><td>Volatilità in espansione durante un movimento al rialzo</td><td>20</td></tr>
+<tr><td class="inv">Divergenza OBV</td><td>Prezzo fa un minimo più basso, ma il volume cumulato (OBV) sale — accumulo silenzioso, con KAMA piatta</td><td>30</td></tr>
+<tr><td class="inv">RSI ipervenduto + AO su</td><td>RSI14 &lt; 35 e AO in miglioramento</td><td>20</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Evidenza attiva con almeno 2 prove su 4.</p>
+
+<h2>🎯 Mean-Reversion — Compra i minimi, vendi i massimi (parallelo)</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Motore separato, filosofia opposta al trend-following: opera solo quando il titolo
+sta davvero oscillando in un range (non in un trend forte).</p>
+<table><thead><tr><th>Segnale</th><th>Condizione</th><th>Note</th></tr></thead><tbody>
+<tr><td class="mr">MR_BUY</td><td>Prezzo ≤ banda inferiore Bollinger (20, 2σ) e RSI14 &lt; 30 e Hurst60 &lt; 0.45</td><td>Il filtro Hurst è bloccante: senza regime oscillante confermato, nessun segnale</td></tr>
+<tr><td class="mr">MR_SELL</td><td>Prezzo ≥ banda superiore Bollinger</td><td>Uscita al massimo del range (nessuna uscita anticipata)</td></tr>
 </tbody></table>
 
 <div class="box">
