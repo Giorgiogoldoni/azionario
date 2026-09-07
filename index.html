@@ -270,6 +270,7 @@ function renderTopSections(){
     .flat();
   const sbbList = ALL.filter(r=>r.super_best_buy).sort((a,b)=>b.score-a.score);
   const invList = ALL.filter(r=>r.inversione?.flag).sort((a,b)=>b.inversione.score-a.inversione.score);
+  const mrList = ALL.filter(r=>r.mean_reversion?.segnale==='MR_BUY').sort((a,b)=>a.hurst_60-b.hurst_60);
 
   const rowHTML = r => `<div class="top-row">
       <span class="tr-name" onclick="openChart('${r.ticker}')">${r.nome}${r.super_best_buy?' <span class="sbb-flag">🚀SBB</span>':''}</span>
@@ -300,9 +301,20 @@ function renderTopSections(){
       </div>`).join('')}
     </div>` : '';
 
+  const mrBoxHTML = mrList.length ? `
+    <div class="top-box" style="grid-column:1/-1;border-color:#0969da">
+      <div class="top-box-title" style="color:#0969da">🎯 Mean Reversion — su banda Bollinger inferiore (regime oscillante confermato da Hurst)</div>
+      ${mrList.map(r=>`<div class="top-row">
+        <span class="tr-name" onclick="openChart('${r.ticker}')">${r.nome}</span>
+        <span style="font-size:9px;color:var(--text3);font-family:var(--font-cond)">Hurst60=${r.hurst_60} · RSI14=${r.rsi14?.toFixed(1)}</span>
+        <span class="tr-score" style="color:#0969da;font-weight:700">${r.prezzo?.toFixed(2)}</span>
+      </div>`).join('')}
+    </div>` : '';
+
   box.innerHTML = `
     ${sbbBoxHTML}
     ${invBoxHTML}
+    ${mrBoxHTML}
     <div class="top-box">
       <div class="top-box-title">🏆 Top per Settore</div>
       ${topSettori.map(s=>rowHTML(s.best)).join('')}
