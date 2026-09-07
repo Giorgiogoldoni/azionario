@@ -560,7 +560,6 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     high_list = high.tolist()
     close_list_full = close.tolist()
     ao_list = ao.tolist()
-    volr_list = vol_ratio.tolist()
     baff_list = baff_series.tolist()
     er_list = er.tolist()
     gap_list = gap_pct_series.tolist()
@@ -578,9 +577,9 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         if state == "FLAT":
             chandelier_stop_series.append(None)
             ao_ok = (ao_list[idx] > 0) or ao_impr_list[idx]
-            buy3_ok = (zona_list[idx] == "LONG_CONF" and ao_list[idx] > 0 and volr_list[idx] >= 2.0
+            buy3_ok = (zona_list[idx] == "LONG_CONF" and ao_list[idx] > 0
                        and baff_list[idx] >= 3 and er_list[idx] >= 0.35 and gap_list[idx] >= 0.3 and sarb_list[idx])
-            buy2_ok = (zona_list[idx] == "LONG_EARLY" and ao_ok and volr_list[idx] >= 1.5
+            buy2_ok = (zona_list[idx] == "LONG_EARLY" and ao_ok
                        and baff_list[idx] >= 3 and er_list[idx] >= 0.35)
             if buy3_ok:
                 state = "LONG"; entry_price = c; highest_high = high_list[idx]
