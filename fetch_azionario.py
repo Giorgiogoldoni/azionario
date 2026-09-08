@@ -21,6 +21,7 @@ import math
 import time
 import datetime
 import sys
+import urllib.request
 from pathlib import Path
 
 import numpy as np
@@ -66,6 +67,10 @@ HURST_STRIDE = 5             # ricalcolo Hurst ogni N barre (statistica lenta, a
                               # per limitare il costo computazionale su storici lunghi)
 
 BATCH_SIZE = 40          # ticker per batch yfinance
+
+# Basket "ETF Leva": ticker + suffisso Yahoo già risolti dal tool raptor-leva
+# (repo separato, stessa fonte già in uso per le pagine ETF a leva).
+RAPTOR_LEVA_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-leva/main/raptor_leva.json"
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
 
@@ -959,6 +964,34 @@ def build_regole_html(nome: str, ticker: str, ind: dict) -> str:
 # Main
 # ---------------------------------------------------------------------------
 
+def load_etfleva():
+    """Basket ETF a leva: legge ticker+borsa già risolti da raptor-leva (repo separato).
+    Se il fetch fallisce (rete/repo irraggiungibile), ritorna lista vuota e il basket
+    resta assente per questo run, senza bloccare il resto dello script."""
+    try:
+        with urllib.request.urlopen(RAPTOR_LEVA_URL, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"Avviso: impossibile scaricare raptor_leva.json ({e}) — basket ETF Leva saltato", file=sys.stderr)
+        return []
+
+    universe = []
+    for row in payload.get("data", []):
+        yahoo = row.get("yahoo")
+        if not yahoo:
+            continue
+        universe.append({
+            "regione": "ETFLEVA",
+            "nome": row.get("nome", yahoo),
+            "ticker": yahoo,
+            "settore": row.get("provider"),
+            "paese": None,
+            "exchange": None,
+            "leva": row.get("leva"),
+        })
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -973,6 +1006,7 @@ def load_universe():
     for nome, ticker, settore, paese_o_exch, _ in italia:
         universe.append({"regione": "IT", "nome": nome, "ticker": ticker,
                           "settore": settore, "paese": paese_o_exch, "exchange": None})
+    universe.extend(load_etfleva())
     return universe
 
 
