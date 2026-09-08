@@ -54,6 +54,7 @@ tbody tr:hover{background:var(--bg2)}
 tbody tr.hidden{display:none}
 td{padding:6px 8px;vertical-align:middle;white-space:nowrap}
 td.nome{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);font-size:11px}
+td.settore{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text3);font-size:10px}
 td.ticker{font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;color:var(--accent)}
 td.ticker:hover{text-decoration:underline}
 td.num{font-family:var(--font-mono);font-size:11px;text-align:right}
@@ -203,6 +204,10 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
       <th data-k="score">Score</th>
       <th>Ultimo Trade</th>
       <th>Data</th>
+      <th data-k="trade_chiusi">Trade</th>
+      <th data-k="pct_vincenti">% Vinc.</th>
+      <th data-k="delta_medio_pct">Δ% medio</th>
+      <th data-k="rendimento_cumulato">Rend. cum.</th>
       <th>Mean Rev.</th>
       <th>Super Best Buy</th>
       <th>Azioni</th>
@@ -368,7 +373,7 @@ function render(){
     <tr>
       <td class="nome" title="${r.nome}">${r.nome}</td>
       <td class="ticker" onclick="openChart('${r.ticker}')">${r.ticker}${r.super_best_buy?' <span class="sbb-flag">🚀SBB</span>':''}</td>
-      <td>${r.settore}</td>
+      <td class="settore" title="${r.settore}">${r.settore}</td>
       <td class="num">${r.prezzo?.toFixed(2)}</td>
       <td class="num">${pct(r.perf_oggi)}</td>
       <td class="num">${pct(r.perf_7g)}</td>
@@ -384,10 +389,13 @@ function render(){
       <td class="score">${r.score?.toFixed(0)}</td>
       <td class="num ${r.ultimo_trade_delta==null?'':r.ultimo_trade_delta>=0?'green':'red'}">${r.ultimo_trade_delta!=null?(r.ultimo_trade_delta>=0?'+':'')+r.ultimo_trade_delta.toFixed(2)+'%'+(r.ultimo_trade_aperto?' 🔵':''):'—'}</td>
       <td class="num" style="font-size:10px;color:var(--text3)" title="${r.ultimo_trade_aperto?'Posizione ancora aperta':'Trade chiuso'}">${r.ultimo_trade_data||'—'}</td>
+      <td class="num">${r.trade_chiusi||0}</td>
+      <td class="num ${r.pct_vincenti==null?'':r.pct_vincenti>=50?'green':'red'}">${r.pct_vincenti!=null?r.pct_vincenti.toFixed(0)+'%':'—'}</td>
+      <td class="num ${r.delta_medio_pct==null?'':r.delta_medio_pct>=0?'green':'red'}">${r.delta_medio_pct!=null?(r.delta_medio_pct>=0?'+':'')+r.delta_medio_pct.toFixed(2)+'%':'—'}</td>
+      <td class="num ${r.rendimento_cumulato==null?'':r.rendimento_cumulato>=0?'green':'red'}">${r.rendimento_cumulato!=null?(r.rendimento_cumulato>=0?'+':'')+r.rendimento_cumulato.toFixed(2)+'%':'—'}</td>
       <td>${r.mean_reversion && r.mean_reversion.segnale!=='MR_FLAT' ? `<span class="pill pill-le" title="dal ${r.mean_reversion.entry_date||'—'}">${r.mean_reversion.segnale.replace('MR_','')}</span><div style="font-size:9px;color:var(--text3);margin-top:2px">${r.mean_reversion.entry_date||''}</div>` : '—'}</td>
       <td>${r.super_best_buy ? `<span class="sbb-flag">🚀 SBB</span><div style="font-size:9px;color:var(--text3);margin-top:2px">dal ${r.super_best_buy_dal||'—'}</div>` : '—'}</td>
       <td>
-        <button class="rowbtn" onclick="openChart('${r.ticker}')" title="Grafico">📈</button>
         <button class="rowbtn" onclick="openRegole('${r.ticker}')" title="Regole PDF">📄</button>
         <button class="rowbtn" onclick="window.open('https://www.tradingview.com/chart/?symbol=${encodeURIComponent(r.tv_symbol)}','_blank')" title="TradingView">TV</button>
       </td>
