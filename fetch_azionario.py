@@ -55,7 +55,7 @@ VOL_AVG_N = 20
 # Uscita: Chandelier Exit (trailing) + hard stop fisso di sicurezza
 CHANDELIER_ATR_MULT = 3.0   # Massimo da entrata - 3xATR14
 HARD_STOP_PCT = 0.08        # -8% dall'entrata: rete di sicurezza contro i gap
-TREND_HURST_THRESHOLD = 0.45  # BUY2/BUY3 entrano solo se Hurst60 >= soglia (titolo che trenda davvero)
+TREND_HURST_THRESHOLD = 0.55  # BUY2/BUY3 entrano solo se Hurst60 >= soglia (titolo che trenda davvero)
 
 # Motore Mean-Reversion (parallelo/separato da BUY2/BUY3/Chandelier) — "compra i minimi, vendi i massimi"
 MR_BB_N = 20                 # periodo Bollinger Bands
@@ -628,6 +628,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
 
     mr_state = "FLAT"
     mr_entry_price = None
+    mr_entry_date = None
     mr_seg = []
     for idx in range(len(close_list_full)):
         c = close_list_full[idx]
@@ -635,14 +636,14 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
             h, bl, r = rolling_hurst[idx], bb_lower_l[idx], rsi14_l[idx]
             if (h is not None and bl is not None and not math.isnan(bl)
                     and h < MR_HURST_THRESHOLD and c <= bl and r < MR_RSI_OVERSOLD):
-                mr_state = "LONG"; mr_entry_price = c
+                mr_state = "LONG"; mr_entry_price = c; mr_entry_date = str(df.index[idx].date())
                 mr_seg.append("MR_BUY")
             else:
                 mr_seg.append("MR_FLAT")
         else:
             bu = bb_upper_l[idx]
             if bu is not None and not math.isnan(bu) and c >= bu:
-                mr_state = "FLAT"; mr_entry_price = None
+                mr_state = "FLAT"; mr_entry_price = None; mr_entry_date = None
                 mr_seg.append("MR_SELL")
             else:
                 mr_seg.append("MR_HOLD")
@@ -650,6 +651,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     mean_reversion = {
         "segnale": mr_seg[-1],
         "in_posizione": mr_state == "LONG",
+        "entry_date": mr_entry_date,
         "hurst_60_rolling": rolling_hurst[-1],
         "bb_lower": round(bb_lower.iloc[-1], 4) if not math.isnan(bb_lower.iloc[-1]) else None,
         "bb_upper": round(bb_upper.iloc[-1], 4) if not math.isnan(bb_upper.iloc[-1]) else None,
@@ -676,6 +678,14 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     sar_v = float(sar.iloc[i])
     sar_bullish = price > sar_v
     bars_since_flip = int(bars_since(sar_flip))
+
+    # bars_since_flip vettorizzato (serve per storicizzare Super Best Buy con la sua data)
+    bars_since_flip_arr = np.zeros(len(sar_flip), dtype=int)
+    last_flip_idx = None
+    for fidx, is_flip in enumerate(sar_flip.values):
+        if is_flip:
+            last_flip_idx = fidx
+        bars_since_flip_arr[fidx] = (fidx - last_flip_idx) if last_flip_idx is not None else 9999
 
     gap_pct = (kf - ks) / ks * 100 if ks else 0
     perf_oggi = float((close.iloc[i] / close.iloc[i - 1] - 1) * 100) if len(close) > 1 else 0
@@ -712,6 +722,19 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     # Super Best Buy — semplificato: SAR rialzista con flip recente + AO in miglioramento
     # (rimossi i vincoli di volume 1.5x e movimento giornaliero ±4%, come richiesto)
     super_best_buy = sar_bullish and bars_since_flip <= 2 and ao_improving
+
+    # Storicizzazione Super Best Buy (per la data "da quando" in home page)
+    sbb_series = pd.Series(
+        sar_bullish_series.values & (bars_since_flip_arr <= 2) & ao_improving_series.fillna(False).values,
+        index=close.index,
+    )
+    if bool(sbb_series.iloc[-1]):
+        sbb_run_start = len(sbb_series) - 1
+        while sbb_run_start > 0 and bool(sbb_series.iloc[sbb_run_start - 1]):
+            sbb_run_start -= 1
+        super_best_buy_dal = str(df.index[sbb_run_start].date())
+    else:
+        super_best_buy_dal = None
 
     chandelier_stop = chandelier_stop_series[i]
     in_posizione = entry_price is not None
@@ -787,6 +810,22 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     # Performance 7 giorni di borsa (coerente con lo standard raptor-geografia)
     perf_7g = round((closes_list[-1] / closes_list[-8] - 1) * 100, 2) if len(closes_list) >= 8 else None
 
+    # Ultimo trade (chiuso, oppure ancora aperto) — per la colonna "Ultimo Trade" in home page
+    ultimo_trade_delta, ultimo_trade_data, ultimo_trade_aperto = None, None, False
+    last_open_entry = None
+    for ev in signals_history:
+        if ev["signal"] in ("BUY2", "BUY3"):
+            last_open_entry = ev
+        elif ev["signal"] in ("SELL", "STOP") and last_open_entry is not None:
+            ultimo_trade_delta = round((ev["price"] / last_open_entry["price"] - 1) * 100, 2)
+            ultimo_trade_data = ev["date"]
+            ultimo_trade_aperto = False
+            last_open_entry = None
+    if last_open_entry is not None:
+        ultimo_trade_delta = round((closes_list[-1] / last_open_entry["price"] - 1) * 100, 2)
+        ultimo_trade_data = last_open_entry["date"]
+        ultimo_trade_aperto = True
+
     return {
         "prezzo": round(price, 4),
         "kama_fast": round(kf, 4),
@@ -815,11 +854,15 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "buy3": buy3,
         "buy2": buy2,
         "super_best_buy": super_best_buy,
+        "super_best_buy_dal": super_best_buy_dal,
         "chandelier_stop": chandelier_stop,
         "in_posizione": in_posizione,
         "inversione": inversione,
         "mean_reversion": mean_reversion,
         "perf_oggi": round(perf_oggi, 2),
+        "ultimo_trade_delta": ultimo_trade_delta,
+        "ultimo_trade_data": ultimo_trade_data,
+        "ultimo_trade_aperto": ultimo_trade_aperto,
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
         "perf_3m": round(perf_3m, 2) if perf_3m is not None else None,
