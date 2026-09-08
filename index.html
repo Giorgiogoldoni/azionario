@@ -201,6 +201,10 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
       <th data-k="adx">ADX</th>
       <th>Regime</th>
       <th data-k="score">Score</th>
+      <th>Ultimo Trade</th>
+      <th>Data</th>
+      <th>Mean Rev.</th>
+      <th>Super Best Buy</th>
       <th>Azioni</th>
     </tr>
   </thead>
@@ -378,6 +382,10 @@ function render(){
       <td class="num">${r.adx?.toFixed(1)}</td>
       <td><span class="regime-mini regime-${r.regime?.code}" title="Hurst60=${r.hurst_60} · Hurst1y=${r.hurst_1y}">${r.regime?.label||r.regime?.code||'—'}</span></td>
       <td class="score">${r.score?.toFixed(0)}</td>
+      <td class="num ${r.ultimo_trade_delta==null?'':r.ultimo_trade_delta>=0?'green':'red'}">${r.ultimo_trade_delta!=null?(r.ultimo_trade_delta>=0?'+':'')+r.ultimo_trade_delta.toFixed(2)+'%'+(r.ultimo_trade_aperto?' 🔵':''):'—'}</td>
+      <td class="num" style="font-size:10px;color:var(--text3)" title="${r.ultimo_trade_aperto?'Posizione ancora aperta':'Trade chiuso'}">${r.ultimo_trade_data||'—'}</td>
+      <td>${r.mean_reversion && r.mean_reversion.segnale!=='MR_FLAT' ? `<span class="pill pill-le" title="dal ${r.mean_reversion.entry_date||'—'}">${r.mean_reversion.segnale.replace('MR_','')}</span><div style="font-size:9px;color:var(--text3);margin-top:2px">${r.mean_reversion.entry_date||''}</div>` : '—'}</td>
+      <td>${r.super_best_buy ? `<span class="sbb-flag">🚀 SBB</span><div style="font-size:9px;color:var(--text3);margin-top:2px">dal ${r.super_best_buy_dal||'—'}</div>` : '—'}</td>
       <td>
         <button class="rowbtn" onclick="openChart('${r.ticker}')" title="Grafico">📈</button>
         <button class="rowbtn" onclick="openRegole('${r.ticker}')" title="Regole PDF">📄</button>
@@ -474,6 +482,34 @@ function regimeBlockHTML(row){
         <div class="rb-val" style="color:${adxCol}">${adxv!=null?adxv.toFixed(1):'—'}</div>
         <div class="rb-bar"><div class="rb-bar-fill" style="width:${Math.min(Math.round((adxv??0)/60*100),100)}%;background:${adxCol}"></div></div>
         <div class="rb-sub">${adxv>=25?'Forte':adxv>=20?'Transizione':'Debole'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function meanReversionBlockHTML(row){
+  const mr = row.mean_reversion;
+  if(!mr) return '';
+  const segLabel = { MR_FLAT:'Inattivo', MR_BUY:'🎯 Entrata oggi', MR_HOLD:'In posizione', MR_SELL:'Uscita oggi' }[mr.segnale] || mr.segnale;
+  const cls = mr.segnale==='MR_BUY'||mr.segnale==='MR_HOLD' ? 'green' : mr.segnale==='MR_SELL' ? 'red' : '';
+  return `
+  <div class="regime-block" style="border-color:#0969da">
+    <div class="rb-title" style="color:#0969da">🎯 Mean-Reversion (motore parallelo — compra i minimi, vende i massimi)</div>
+    <div class="rb-grid">
+      <div class="rb-cell">
+        <div class="rb-lbl">Stato</div>
+        <div class="rb-val ${cls}">${segLabel}</div>
+        <div class="rb-sub">${mr.in_posizione ? 'dal '+(mr.entry_date||'—') : 'nessuna posizione aperta'}</div>
+      </div>
+      <div class="rb-cell">
+        <div class="rb-lbl">Banda Bollinger</div>
+        <div class="rb-val">${mr.bb_lower!=null?mr.bb_lower.toFixed(2):'—'} / ${mr.bb_upper!=null?mr.bb_upper.toFixed(2):'—'}</div>
+        <div class="rb-sub">inferiore / superiore</div>
+      </div>
+      <div class="rb-cell">
+        <div class="rb-lbl">Hurst60 (rolling)</div>
+        <div class="rb-val" style="color:${mr.hurst_60_rolling<0.45?'var(--lc)':'var(--text3)'}">${mr.hurst_60_rolling!=null?mr.hurst_60_rolling.toFixed(3):'—'}</div>
+        <div class="rb-sub">${mr.hurst_60_rolling<0.45?'regime oscillante (gate superato)':'gate bloccante non superato'}</div>
       </div>
     </div>
   </div>`;
@@ -599,6 +635,7 @@ function buildChartHTML(row, chart){
     ${statStripHTML(row)}
     ${indicatorGridHTML(row)}
     ${regimeBlockHTML(row)}
+    ${meanReversionBlockHTML(row)}
 
 
     <div class="chart-panel">
