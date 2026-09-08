@@ -55,6 +55,7 @@ VOL_AVG_N = 20
 # Uscita: Chandelier Exit (trailing) + hard stop fisso di sicurezza
 CHANDELIER_ATR_MULT = 3.0   # Massimo da entrata - 3xATR14
 HARD_STOP_PCT = 0.08        # -8% dall'entrata: rete di sicurezza contro i gap
+TREND_HURST_THRESHOLD = 0.45  # BUY2/BUY3 entrano solo se Hurst60 >= soglia (titolo che trenda davvero)
 
 # Motore Mean-Reversion (parallelo/separato da BUY2/BUY3/Chandelier) — "compra i minimi, vendi i massimi"
 MR_BB_N = 20                 # periodo Bollinger Bands
@@ -567,6 +568,16 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     ao_impr_list = ao_improving_series.tolist()
     zona_list = zona_series.tolist()
 
+    # Hurst rolling (60gg, ricalcolato ogni HURST_STRIDE barre) — usato sia come filtro di
+    # regime per BUY2/BUY3 (trend-following: entra solo se il titolo sta davvero trendando)
+    # sia dal motore Mean-Reversion più sotto (soglia opposta: solo se sta oscillando)
+    rolling_hurst = [None] * len(close_list_full)
+    last_h = 0.5
+    for idx in range(59, len(close_list_full)):
+        if (idx - 59) % HURST_STRIDE == 0:
+            last_h = calc_hurst(close_list_full[max(0, idx - 59):idx + 1])
+        rolling_hurst[idx] = last_h
+
     seg_vals = []
     chandelier_stop_series = []
     state = "FLAT"
@@ -577,9 +588,11 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         if state == "FLAT":
             chandelier_stop_series.append(None)
             ao_ok = (ao_list[idx] > 0) or ao_impr_list[idx]
-            buy3_ok = (zona_list[idx] == "LONG_CONF" and ao_list[idx] > 0
+            h = rolling_hurst[idx]
+            regime_trend_ok = h is not None and h >= TREND_HURST_THRESHOLD
+            buy3_ok = (regime_trend_ok and zona_list[idx] == "LONG_CONF" and ao_list[idx] > 0
                        and baff_list[idx] >= 3 and er_list[idx] >= 0.35 and gap_list[idx] >= 0.3 and sarb_list[idx])
-            buy2_ok = (zona_list[idx] == "LONG_EARLY" and ao_ok
+            buy2_ok = (regime_trend_ok and zona_list[idx] == "LONG_EARLY" and ao_ok
                        and baff_list[idx] >= 3 and er_list[idx] >= 0.35)
             if buy3_ok:
                 state = "LONG"; entry_price = c; highest_high = high_list[idx]
@@ -612,13 +625,6 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     bb_upper, bb_mid, bb_lower = bollinger_bands(close)
     bb_upper_l, bb_lower_l = bb_upper.tolist(), bb_lower.tolist()
     rsi14_l = rsi14.tolist()
-
-    rolling_hurst = [None] * len(close_list_full)
-    last_h = 0.5
-    for idx in range(59, len(close_list_full)):
-        if (idx - 59) % HURST_STRIDE == 0:
-            last_h = calc_hurst(close_list_full[max(0, idx - 59):idx + 1])
-        rolling_hurst[idx] = last_h
 
     mr_state = "FLAT"
     mr_entry_price = None
