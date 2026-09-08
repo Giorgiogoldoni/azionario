@@ -580,6 +580,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
 
     seg_vals = []
     chandelier_stop_series = []
+    kf_list = kama_fast.tolist()
     state = "FLAT"
     entry_price = None
     highest_high = None
@@ -587,13 +588,15 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         c = close_list_full[idx]
         if state == "FLAT":
             chandelier_stop_series.append(None)
-            ao_ok = (ao_list[idx] > 0) or ao_impr_list[idx]
             h = rolling_hurst[idx]
             regime_trend_ok = h is not None and h >= TREND_HURST_THRESHOLD
             buy3_ok = (regime_trend_ok and zona_list[idx] == "LONG_CONF" and ao_list[idx] > 0
                        and baff_list[idx] >= 3 and er_list[idx] >= 0.35 and gap_list[idx] >= 0.3 and sarb_list[idx])
-            buy2_ok = (regime_trend_ok and zona_list[idx] == "LONG_EARLY" and ao_ok
-                       and baff_list[idx] >= 3 and er_list[idx] >= 0.35)
+            # BUY2 ridefinito: condizione diretta, non più legata a zona/baff/ER/Hurst —
+            # prezzo sopra KAMA fast + SAR rialzista + AO in miglioramento, punto.
+            kf_v = kf_list[idx]
+            buy2_ok = (kf_v is not None and not math.isnan(kf_v) and c > kf_v
+                       and sarb_list[idx] and ao_impr_list[idx])
             if buy3_ok:
                 state = "LONG"; entry_price = c; highest_high = high_list[idx]
                 seg_vals.append("BUY3")
