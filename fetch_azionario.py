@@ -816,11 +816,14 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     # Ultimo trade (chiuso, oppure ancora aperto) — per la colonna "Ultimo Trade" in home page
     ultimo_trade_delta, ultimo_trade_data, ultimo_trade_aperto = None, None, False
     last_open_entry = None
+    closed_deltas = []  # Δ% di ogni trade CHIUSO, in ordine cronologico (per riepilogo storico sotto)
     for ev in signals_history:
         if ev["signal"] in ("BUY2", "BUY3"):
             last_open_entry = ev
         elif ev["signal"] in ("SELL", "STOP") and last_open_entry is not None:
-            ultimo_trade_delta = round((ev["price"] / last_open_entry["price"] - 1) * 100, 2)
+            delta = round((ev["price"] / last_open_entry["price"] - 1) * 100, 2)
+            closed_deltas.append(delta)
+            ultimo_trade_delta = delta
             ultimo_trade_data = ev["date"]
             ultimo_trade_aperto = False
             last_open_entry = None
@@ -828,6 +831,19 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         ultimo_trade_delta = round((closes_list[-1] / last_open_entry["price"] - 1) * 100, 2)
         ultimo_trade_data = last_open_entry["date"]
         ultimo_trade_aperto = True
+
+    # Riepilogo storico trade CHIUSI — per le colonne "Trade chiusi / % Vincenti / Δ% medio / Rendimento
+    # cumulato" in home page. Rendimento cumulato = composto (non sommato), stesso metodo già usato nel
+    # modal "Storia Trade" (historyTableHTML in index.html): prodotto di (1+Δ%/100) in ordine cronologico.
+    trade_chiusi = len(closed_deltas)
+    pct_vincenti = round(sum(1 for d in closed_deltas if d > 0) / trade_chiusi * 100, 1) if trade_chiusi else None
+    delta_medio_pct = round(sum(closed_deltas) / trade_chiusi, 2) if trade_chiusi else None
+    rendimento_cumulato = None
+    if trade_chiusi:
+        cum = 1.0
+        for d in closed_deltas:
+            cum *= (1 + d / 100)
+        rendimento_cumulato = round((cum - 1) * 100, 2)
 
     return {
         "prezzo": round(price, 4),
@@ -866,6 +882,10 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "ultimo_trade_delta": ultimo_trade_delta,
         "ultimo_trade_data": ultimo_trade_data,
         "ultimo_trade_aperto": ultimo_trade_aperto,
+        "trade_chiusi": trade_chiusi,
+        "pct_vincenti": pct_vincenti,
+        "delta_medio_pct": delta_medio_pct,
+        "rendimento_cumulato": rendimento_cumulato,
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
         "perf_3m": round(perf_3m, 2) if perf_3m is not None else None,
