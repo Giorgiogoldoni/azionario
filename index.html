@@ -548,6 +548,24 @@ function buildTrades(chart){
 function historyTableHTML(chart){
   const trades = buildTrades(chart);
   if(!trades.length) return '<div style="font-size:12px;color:var(--text3)">Nessun trade nello storico disponibile</div>';
+
+  // Riepilogo: solo sui trade CHIUSI (una posizione ancora aperta non ha un esito da contare)
+  const closed = trades.filter(tr=>!tr.isOpen && tr.deltaPct!=null);
+  const wins = closed.filter(tr=>tr.deltaPct>0).length;
+  const winRate = closed.length ? (wins/closed.length*100) : null;
+  const avgDelta = closed.length ? closed.reduce((s,tr)=>s+tr.deltaPct,0)/closed.length : null;
+  // Rendimento cumulato COMPOSTO (non sommato): se avessi seguito ogni segnale in sequenza,
+  // reinvestendo il capitale — è la metrica che dice se il sistema ha reso qualcosa di concreto
+  const cumulative = closed.length ? (closed.slice().reverse().reduce((acc,tr)=>acc*(1+tr.deltaPct/100), 1) - 1) * 100 : null;
+
+  const summaryHTML = closed.length ? `
+    <div class="stat-strip" style="margin:0 0 10px">
+      <div class="stat-strip-item"><div class="ss-label">Trade chiusi</div><div class="ss-val">${closed.length}</div></div>
+      <div class="stat-strip-item"><div class="ss-label">% Vincenti</div><div class="ss-val ${winRate>=50?'green':'red'}">${winRate.toFixed(0)}%</div></div>
+      <div class="stat-strip-item"><div class="ss-label">Δ% medio/trade</div><div class="ss-val ${avgDelta>=0?'green':'red'}">${avgDelta>=0?'+':''}${avgDelta.toFixed(2)}%</div></div>
+      <div class="stat-strip-item"><div class="ss-label">Rendimento cumulato</div><div class="ss-val ${cumulative>=0?'green':'red'}">${cumulative>=0?'+':''}${cumulative.toFixed(2)}%</div></div>
+    </div>` : '';
+
   const rows = trades.slice(0,20).map((tr,idx)=>{
     const deltaStr = tr.deltaPct!=null ? (tr.deltaPct>=0?'+':'')+tr.deltaPct.toFixed(2)+'%' : '—';
     const deltaCls = tr.deltaPct==null?'':tr.deltaPct>=0?'green':'red';
@@ -567,7 +585,7 @@ function historyTableHTML(chart){
       </td>
     </tr>`;
   }).join('');
-  return `<table class="history-table"><thead><tr>
+  return summaryHTML + `<table class="history-table"><thead><tr>
     <th>#</th><th>Data entrata</th><th>Data uscita</th><th>Segnale</th><th>Prezzo E.</th><th>Prezzo U.</th><th>Δ%</th><th>Giorni</th><th>Note</th>
   </tr></thead><tbody>${rows}</tbody></table>`;
 }
@@ -674,7 +692,7 @@ function renderChartSVG(cd){
     for(let g=0; g<=4; g++){ const gy = yTop+hh/4*g; line(PAD.l, gy, PAD.l+PW, gy, g===0||g===4?'#d0d7de':'#eef0f3', g===0||g===4?0.8:0.5); }
 
     if(panel.id==='price'){
-      const allP = [...ha.haH, ...ha.haL, ...kama.filter(x=>x!=null), ...mm20.filter(x=>x!=null), ...mm100.filter(x=>x!=null), ...(cd.chandelier_stop||[]).filter(x=>x!=null)];
+      const allP = [...ha.haH, ...ha.haL, ...kama.filter(x=>x!=null), ...mm20.filter(x=>x!=null), ...mm100.filter(x=>x!=null), ...(cd.chandelier_stop||[]).filter(x=>x!=null), ...(cd.bb_upper||[]).filter(x=>x!=null), ...(cd.bb_lower||[]).filter(x=>x!=null)];
       const mn = Math.min(...allP)*0.995, mx = Math.max(...allP)*1.005;
       const sy = vv => scY(vv, mn, mx, yTop, hh);
       for(let g=0; g<=4; g++){ const vv = mn+(mx-mn)/4*g; txt(PAD.l-4, sy(vv)+3, vv<10?vv.toFixed(3):vv.toFixed(2), '#57606a', 8, 'end'); }
@@ -690,6 +708,8 @@ function renderChartSVG(cd){
       polyline(mm50.map((vv,i)=>vv!=null?[xPos(i),sy(vv)]:null).filter(Boolean), '#e3b341', 1, '5,3');
       polyline(mm20.map((vv,i)=>vv!=null?[xPos(i),sy(vv)]:null).filter(Boolean), '#58a6ff', 1, '3,3');
       polyline(kama.map((vv,i)=>vv!=null?[xPos(i),sy(vv)]:null).filter(Boolean), '#f0883e', 2);
+      if(cd.bb_upper) polyline(cd.bb_upper.map((vv,i)=>vv!=null?[xPos(i),sy(vv)]:null).filter(Boolean), '#0d9488', 1, '2,2');
+      if(cd.bb_lower) polyline(cd.bb_lower.map((vv,i)=>vv!=null?[xPos(i),sy(vv)]:null).filter(Boolean), '#0d9488', 1, '2,2');
       if(cd.chandelier_stop) polyline(cd.chandelier_stop.map((vv,i)=>vv!=null?[xPos(i),sy(vv)]:null).filter(Boolean), '#cf222e', 1.3, '4,2');
       sarArr.forEach((s,i)=>{ if(s==null) return; el('circle',{cx:xPos(i).toFixed(1),cy:sy(s).toFixed(1),r:2.6,fill:(c[i]>s)?'#6e40c9':'#f85149',stroke:'#fff','stroke-width':0.8}); });
       sigHistRecent.forEach(sh=>{
@@ -809,7 +829,7 @@ function renderChartSVG(cd){
   const legEl = document.getElementById('chartLegend');
   if(legEl){
     const swf = (color,label) => `<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:${color};display:inline-block;border-radius:2px"></span>${label}</span>`;
-    legEl.innerHTML = [swf('#1a7f37','HA Verde'), swf('#cf222e','HA Rosso'), swf('#f0883e','KAMA'), swf('#58a6ff','MM20'), swf('#e3b341','MM50'), swf('#bc8cff','MM100'),
+    legEl.innerHTML = [swf('#1a7f37','HA Verde'), swf('#cf222e','HA Rosso'), swf('#f0883e','KAMA'), swf('#58a6ff','MM20'), swf('#e3b341','MM50'), swf('#bc8cff','MM100'), swf('#0d9488','Bollinger'),
       swf('#0969da','BUY2'), swf('#6e40c9','BUY3'), swf('#cf222e','SELL/STOP'), '<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:2px;background:#cf222e;display:inline-block;border-top:2px dashed #cf222e"></span>Chandelier Stop</span>'].join('');
   }
 }
