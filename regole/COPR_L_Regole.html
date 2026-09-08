@@ -1,0 +1,94 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  body{font-family:'Segoe UI',sans-serif;max-width:680px;margin:40px auto;color:#212529;font-size:13px;line-height:1.6;background:#ffffff}
+  h1{color:#1971c2;font-size:22px;border-bottom:3px solid #1971c2;padding-bottom:8px;margin-bottom:20px}
+  h2{color:#495057;font-size:15px;margin:24px 0 8px;padding-left:10px;border-left:3px solid #1971c2}
+  table{width:100%;border-collapse:collapse;margin:10px 0 20px;font-size:12px}
+  thead th{background:#212529;color:#fff;padding:7px 10px;text-align:left;font-weight:700}
+  tbody tr{border-bottom:1px solid #dee2e6}
+  tbody tr:nth-child(even){background:#f8f9fa}
+  td{padding:6px 10px}
+  .buy3{color:#2f9e44;font-weight:700} .buy2{color:#1971c2;font-weight:700}
+  .sell{color:#c92a2a;font-weight:700} .warn{color:#e67700;font-weight:700}
+  .inv{color:#8250df;font-weight:700} .mr{color:#0969da;font-weight:700}
+  .box{background:#fff9db;border:1px solid #ffd43b;border-radius:5px;padding:12px 16px;margin:12px 0;font-size:12px;color:#7a5c00}
+  .stato{background:#f8f9fa;border-radius:5px;padding:12px 16px;margin:12px 0;font-size:12px}
+  .footer{margin-top:40px;padding-top:12px;border-top:1px solid #dee2e6;font-size:10px;color:#868e96}
+</style></head><body>
+
+<h1>📊 WisdomTree Copper IE — Regole Operative AZIONARIO</h1>
+<p style="color:#868e96;font-size:11px">Generato il 08/09/2026, 19:59:40 · COPR.L · Dati aggiornati al 2026-09-08</p>
+
+<div class="stato">
+  <strong>📊 Stato attuale</strong><br>
+  Prezzo: <strong>41.1450</strong> · KAMA Fast: 40.0267 · KAMA Slow: 39.7812<br>
+  RSI14: 63.1 · RSI5: 77.7 · AO: 0.3841<br>
+  Zona: <strong>LONG_CONF</strong> · Segnale: <strong>HOLD</strong> · Rating: <strong>Buy</strong> · Score: 74
+</div>
+
+<h2>🟢 BUY3 — Entrata confermata</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Il filtro sul Volume Ratio è stato rimosso (era fuorviante sui titoli a bassa liquidità
+e troppo restrittivo: richiedeva il picco di volume nello stesso identico giorno delle altre condizioni).
+Aggiunto un gate di regime: entra solo se Hurst60 ≥ 0.55 (il titolo sta davvero trendando, non oscillando).</p>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
+<tr><td>Zona</td><td class="buy3">LONG_CONF</td><td>Prezzo &gt; KAMA Fast &gt; KAMA Slow</td></tr>
+<tr><td>AO (EMA3−EMA13)</td><td class="buy3">&gt; 0</td><td>Momentum positivo</td></tr>
+<tr><td>Baff (barre sopra KAMA)</td><td class="buy3">≥ 3</td><td>Momentum continuativo</td></tr>
+<tr><td>ER (Efficiency Ratio)</td><td class="buy3">≥ 0.35</td><td>Mercato direzionale, non laterale</td></tr>
+<tr><td>Gap KAMA Fast/Slow</td><td class="buy3">≥ 0.3%</td><td>Evita falsi crossover marginali</td></tr>
+<tr><td>SAR</td><td class="buy3">Rialzista</td><td>Prezzo sopra il Parabolic SAR</td></tr>
+</tbody></table>
+
+<h2>🔵 BUY2 — Entrata anticipata</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Ridefinita: condizione diretta, non più legata a Zona/Baff/ER — niente attesa di conferma,
+niente gate di regime (a differenza di BUY3, entra anche in mercati laterali).</p>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
+<tr><td>Prezzo</td><td class="buy2">&gt; KAMA Fast</td><td>Il prezzo ha ripreso sopra la media veloce</td></tr>
+<tr><td>SAR</td><td class="buy2">Rialzista</td><td>Prezzo sopra il Parabolic SAR</td></tr>
+<tr><td>AO</td><td class="buy2">In miglioramento (3 barre)</td><td>Momentum in accelerazione</td></tr>
+</tbody></table>
+
+<h2>🔴 Uscita — Chandelier Exit + Stop di sicurezza</h2>
+<table><thead><tr><th>Segnale</th><th>Regola</th><th>Perché</th></tr></thead><tbody>
+<tr><td class="sell">SELL</td><td>Prezzo &lt; Massimo raggiunto da entrata − 3×ATR14 (trailing)</td><td>Segue il prezzo verso l'alto, protegge il profitto quando il trend si esaurisce</td></tr>
+<tr><td class="sell">STOP</td><td>Prezzo &lt; Prezzo di entrata − 8% (fisso)</td><td>Rete di sicurezza contro i gap improvvisi — controllata PRIMA del Chandelier, ha priorità</td></tr>
+</tbody></table>
+
+<h2>⚡ RSI Cross — Filtro qualità</h2>
+<table><thead><tr><th>Segnale</th><th>Condizione</th></tr></thead><tbody>
+<tr><td class="buy3">↑ Bull Cross</td><td>RSI5 supera RSI14 dal basso</td></tr>
+<tr><td class="sell">↓ Bear Cross</td><td>RSI5 scende sotto RSI14</td></tr>
+</tbody></table>
+
+<h2>🚀 Super Best Buy — Flip SAR</h2>
+<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
+<tr><td>Primo pallino SAR</td><td class="buy3">Flip entro 2 barre</td><td>Cambio di direzione recente del SAR</td></tr>
+<tr><td>AO</td><td class="buy3">In miglioramento (3 barre)</td><td>Momentum in accelerazione</td></tr>
+</tbody></table>
+
+<h2>🔄 INVERSIONE — Segnale anticipato (sperimentale, parallelo)</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Non sostituisce BUY2/BUY3: prova ad anticipare l'inversione prima che il motore
+principale la confermi. Punteggio più alto = più prove indipendenti allineate.</p>
+<table><thead><tr><th>Prova</th><th>Condizione</th><th>Punti</th></tr></thead><tbody>
+<tr><td class="inv">KAMA cross recente</td><td>Prezzo ha riattraversato KAMA sopra negli ultimi 5gg</td><td>30 (+bonus se 1-2gg fa)</td></tr>
+<tr><td class="inv">ATR + prezzo in salita</td><td>Volatilità in espansione durante un movimento al rialzo</td><td>20</td></tr>
+<tr><td class="inv">Divergenza OBV</td><td>Prezzo fa un minimo più basso, ma il volume cumulato (OBV) sale — accumulo silenzioso, con KAMA piatta</td><td>30</td></tr>
+<tr><td class="inv">RSI ipervenduto + AO su</td><td>RSI14 &lt; 35 e AO in miglioramento</td><td>20</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Evidenza attiva con almeno 2 prove su 4.</p>
+
+<h2>🎯 Mean-Reversion — Compra i minimi, vendi i massimi (parallelo)</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Motore separato, filosofia opposta al trend-following: opera solo quando il titolo
+sta davvero oscillando in un range (non in un trend forte).</p>
+<table><thead><tr><th>Segnale</th><th>Condizione</th><th>Note</th></tr></thead><tbody>
+<tr><td class="mr">MR_BUY</td><td>Prezzo ≤ banda inferiore Bollinger (20, 2σ) e RSI14 &lt; 30 e Hurst60 &lt; 0.45</td><td>Il filtro Hurst è bloccante: senza regime oscillante confermato, nessun segnale</td></tr>
+<tr><td class="mr">MR_SELL</td><td>Prezzo ≥ banda superiore Bollinger</td><td>Uscita al massimo del range (nessuna uscita anticipata)</td></tr>
+</tbody></table>
+
+<div class="box">
+  <strong>⚠️ Avvertenza:</strong> Le regole sopra sono indicazioni tecniche generate automaticamente,
+  non consigli di investimento. Verificare sempre il contesto di mercato prima di operare.
+</div>
+
+<div class="footer">AZIONARIO · giorgiogoldoni.github.io/azionario · Solo uso educativo — verificare sempre prima di operare</div>
+</body></html>
