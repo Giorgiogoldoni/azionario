@@ -17,7 +17,7 @@
 </style></head><body>
 
 <h1>📊 Unibail-Rodamco-Westfield — Regole Operative AZIONARIO</h1>
-<p style="color:#868e96;font-size:11px">Generato il 08/09/2026, 06:04:14 · URW.PA · Dati aggiornati al 2026-09-04</p>
+<p style="color:#868e96;font-size:11px">Generato il 08/09/2026, 06:42:15 · URW.PA · Dati aggiornati al 2026-09-04</p>
 
 <div class="stato">
   <strong>📊 Stato attuale</strong><br>
@@ -28,7 +28,8 @@
 
 <h2>🟢 BUY3 — Entrata confermata</h2>
 <p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Il filtro sul Volume Ratio è stato rimosso (era fuorviante sui titoli a bassa liquidità
-e troppo restrittivo: richiedeva il picco di volume nello stesso identico giorno delle altre condizioni).</p>
+e troppo restrittivo: richiedeva il picco di volume nello stesso identico giorno delle altre condizioni).
+Aggiunto un gate di regime: entra solo se Hurst60 ≥ 0.55 (il titolo sta davvero trendando, non oscillando).</p>
 <table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
 <tr><td>Zona</td><td class="buy3">LONG_CONF</td><td>Prezzo &gt; KAMA Fast &gt; KAMA Slow</td></tr>
 <tr><td>AO (EMA3−EMA13)</td><td class="buy3">&gt; 0</td><td>Momentum positivo</td></tr>
@@ -39,11 +40,12 @@ e troppo restrittivo: richiedeva il picco di volume nello stesso identico giorno
 </tbody></table>
 
 <h2>🔵 BUY2 — Entrata anticipata</h2>
+<p style="font-size:11px;color:#868e96;margin:-4px 0 8px">Ridefinita: condizione diretta, non più legata a Zona/Baff/ER — niente attesa di conferma,
+niente gate di regime (a differenza di BUY3, entra anche in mercati laterali).</p>
 <table><thead><tr><th>Condizione</th><th>Soglia</th><th>Significato</th></tr></thead><tbody>
-<tr><td>Zona</td><td class="buy2">LONG_EARLY</td><td>Prezzo &gt; KAMA Fast ma sotto KAMA Slow</td></tr>
-<tr><td>AO</td><td class="buy2">&gt; 0 oppure in miglioramento (3 barre)</td><td>Momentum positivo o in accelerazione</td></tr>
-<tr><td>Baff</td><td class="buy2">≥ 3</td><td>Barre consecutive sopra KAMA</td></tr>
-<tr><td>ER</td><td class="buy2">≥ 0.35</td><td>Mercato direzionale</td></tr>
+<tr><td>Prezzo</td><td class="buy2">&gt; KAMA Fast</td><td>Il prezzo ha ripreso sopra la media veloce</td></tr>
+<tr><td>SAR</td><td class="buy2">Rialzista</td><td>Prezzo sopra il Parabolic SAR</td></tr>
+<tr><td>AO</td><td class="buy2">In miglioramento (3 barre)</td><td>Momentum in accelerazione</td></tr>
 </tbody></table>
 
 <h2>🔴 Uscita — Chandelier Exit + Stop di sicurezza</h2>
