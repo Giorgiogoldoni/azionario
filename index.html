@@ -158,6 +158,7 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
   <div class="tab" data-tab="US">🇺🇸 USA <span class="tab-cnt" id="cntUS">–</span></div>
   <div class="tab" data-tab="IT">🇮🇹 Italia <span class="tab-cnt" id="cntIT">–</span></div>
   <div class="tab" data-tab="ETFLEVA">⚡ ETF Leva <span class="tab-cnt" id="cntETFLEVA">–</span></div>
+  <div class="tab" data-tab="ETFGEO">🌍 ETF Geografia <span class="tab-cnt" id="cntETFGEO">–</span></div>
 </div>
 
 <div class="top-sections" id="topSections"></div>
@@ -262,6 +263,7 @@ async function load(){
   document.getElementById('cntUS').textContent = ALL.filter(x=>x.regione==='US').length;
   document.getElementById('cntIT').textContent = ALL.filter(x=>x.regione==='IT').length;
   document.getElementById('cntETFLEVA').textContent = ALL.filter(x=>x.regione==='ETFLEVA').length;
+  document.getElementById('cntETFGEO').textContent = ALL.filter(x=>x.regione==='ETFGEO').length;
   populateSettori();
   renderTopSections();
   render();
@@ -269,7 +271,7 @@ async function load(){
 
 function renderTopSections(){
   const box = document.getElementById('topSections');
-  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva' };
+  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia' };
   const bySettore = {};
   ALL.forEach(r=>{ (bySettore[r.settore] = bySettore[r.settore]||[]).push(r); });
   const topSettori = Object.entries(bySettore)
