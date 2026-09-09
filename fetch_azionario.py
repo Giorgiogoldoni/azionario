@@ -71,6 +71,11 @@ BATCH_SIZE = 40          # ticker per batch yfinance
 # Basket "ETF Leva": ticker + suffisso Yahoo già risolti dal tool raptor-leva
 # (repo separato, stessa fonte già in uso per le pagine ETF a leva).
 RAPTOR_LEVA_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-leva/main/raptor_leva.json"
+
+# Basket "ETF Geografico": ticker+nome da raptor-geografia (repo separato). Distingue
+# "Paesi" (singolo paese/area storica) da "Nuove Aree" (aggiunte più recenti); sui pochi
+# ticker presenti in entrambe le liste vince l'etichetta "Paesi".
+GEOGRAFIA_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-geografia/main/geografia.json"
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
 
@@ -992,6 +997,43 @@ def load_etfleva():
     return universe
 
 
+def load_geografia():
+    """Basket ETF Geografico: legge ticker+nome già completi di suffisso borsa da
+    raptor-geografia (repo separato). Se il fetch fallisce, ritorna lista vuota senza
+    bloccare il resto dello script."""
+    try:
+        with urllib.request.urlopen(GEOGRAFIA_URL, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"Avviso: impossibile scaricare geografia.json ({e}) — basket ETF Geografico saltato", file=sys.stderr)
+        return []
+
+    paesi = payload.get("paesi", {}).get("all", [])
+    new_area = payload.get("new_area", {}).get("all", [])
+
+    by_ticker = {}
+    for row in new_area:
+        t = row.get("ticker")
+        if t:
+            by_ticker[t] = {"nome": row.get("name", t), "categoria": "Nuove Aree"}
+    for row in paesi:  # sovrascrive: "Paesi" vince sui duplicati presenti anche in new_area
+        t = row.get("ticker")
+        if t:
+            by_ticker[t] = {"nome": row.get("name", t), "categoria": "Paesi"}
+
+    universe = []
+    for ticker, info in by_ticker.items():
+        universe.append({
+            "regione": "ETFGEO",
+            "nome": info["nome"],
+            "ticker": ticker,
+            "settore": info["categoria"],
+            "paese": None,
+            "exchange": None,
+        })
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -1007,6 +1049,7 @@ def load_universe():
         universe.append({"regione": "IT", "nome": nome, "ticker": ticker,
                           "settore": settore, "paese": paese_o_exch, "exchange": None})
     universe.extend(load_etfleva())
+    universe.extend(load_geografia())
     return universe
 
 
