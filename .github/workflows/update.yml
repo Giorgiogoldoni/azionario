@@ -2,7 +2,10 @@ name: Aggiorna dati AZIONARIO
 
 on:
   schedule:
-    - cron: '30 6 * * 1-5'   # 08:30 CET/CEST circa, lun-ven
+    - cron: '30 6 * * 1-5'   # 08:30 IT (CEST=UTC+2; a ora solare diventa 09:30 IT)
+    - cron: '0 10 * * 1-5'   # 12:00 IT (CEST=UTC+2; a ora solare diventa 13:00 IT)
+    - cron: '0 16 * * 1-5'   # 18:00 IT (CEST=UTC+2; a ora solare diventa 19:00 IT)
+    - cron: '0 21 * * 1-5'   # 23:00 IT (CEST=UTC+2; a ora solare diventa 00:00 IT)
   workflow_dispatch: {}
 
 permissions:
