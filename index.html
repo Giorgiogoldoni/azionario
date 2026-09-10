@@ -43,7 +43,7 @@ select:focus,input:focus{outline:none;border-color:var(--accent)}
 .tab-cnt{background:var(--bg3);color:var(--text3);padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700}
 .tab.act .tab-cnt{background:var(--accent);color:#fff}
 
-.table-wrap{overflow-x:auto;padding:0 20px 40px}
+.table-wrap{overflow:visible;padding:0 20px 40px}
 table{width:100%;border-collapse:collapse;font-size:12px;margin-top:0}
 thead th{position:sticky;top:0;background:var(--bg2);border-bottom:2px solid var(--border);padding:7px 8px;text-align:left;font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--text2);white-space:nowrap;cursor:pointer;user-select:none;z-index:10}
 thead th:hover{color:var(--accent)}
@@ -68,6 +68,7 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
 .pill-st{background:#ffe3e3;color:var(--st);border:1px solid #fca5a5}
 .pill-hold{background:var(--bg3);color:var(--text3)}
 .sbb-flag{color:#e67700;font-weight:700;font-size:10px;font-family:var(--font-cond)}
+.trade-open-flag{color:#2f9e44;font-weight:700;font-size:10px;font-family:var(--font-cond)}
 
 /* STRISCIA INDICATORI COMPATTA (standard raptor-geografia) */
 .stat-strip{display:flex;border:1px solid var(--border);border-radius:4px;background:var(--bg2);margin:14px 0;overflow-x:auto}
@@ -393,7 +394,7 @@ function render(){
       <td class="num">${r.adx?.toFixed(1)}</td>
       <td><span class="regime-mini regime-${r.regime?.code}" title="Hurst60=${r.hurst_60} · Hurst1y=${r.hurst_1y}">${r.regime?.label||r.regime?.code||'—'}</span></td>
       <td class="score">${r.score?.toFixed(0)}</td>
-      <td class="num ${r.ultimo_trade_delta==null?'':r.ultimo_trade_delta>=0?'green':'red'}">${r.ultimo_trade_delta!=null?(r.ultimo_trade_delta>=0?'+':'')+r.ultimo_trade_delta.toFixed(2)+'%'+(r.ultimo_trade_aperto?' 🔵':''):'—'}</td>
+      <td class="num ${r.ultimo_trade_delta==null?'':r.ultimo_trade_delta>=0?'green':'red'}">${r.ultimo_trade_delta!=null?(r.ultimo_trade_delta>=0?'+':'')+r.ultimo_trade_delta.toFixed(2)+'%':'—'}${r.ultimo_trade_aperto?' <span class="trade-open-flag">🔓 Aperta</span>':''}</td>
       <td class="num" style="font-size:10px;color:var(--text3)" title="${r.ultimo_trade_aperto?'Posizione ancora aperta':'Trade chiuso'}">${r.ultimo_trade_data||'—'}</td>
       <td class="num">${r.trade_chiusi||0}</td>
       <td class="num ${r.pct_vincenti==null?'':r.pct_vincenti>=50?'green':'red'}">${r.pct_vincenti!=null?r.pct_vincenti.toFixed(0)+'%':'—'}</td>
