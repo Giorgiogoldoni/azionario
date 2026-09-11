@@ -827,12 +827,14 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     ultimo_trade_delta, ultimo_trade_data, ultimo_trade_aperto = None, None, False
     last_open_entry = None
     closed_deltas = []  # Δ% di ogni trade CHIUSO, in ordine cronologico (per riepilogo storico sotto)
+    closed_dates = []   # data di uscita di ogni trade CHIUSO, stesso ordine di closed_deltas (per il rolling 180g)
     for ev in signals_history:
         if ev["signal"] in ("BUY2", "BUY3"):
             last_open_entry = ev
         elif ev["signal"] in ("SELL", "STOP") and last_open_entry is not None:
             delta = round((ev["price"] / last_open_entry["price"] - 1) * 100, 2)
             closed_deltas.append(delta)
+            closed_dates.append(ev["date"])
             ultimo_trade_delta = delta
             ultimo_trade_data = ev["date"]
             ultimo_trade_aperto = False
@@ -854,6 +856,25 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         for d in closed_deltas:
             cum *= (1 + d / 100)
         rendimento_cumulato = round((cum - 1) * 100, 2)
+
+    # Riepilogo storico ROLLING (ultimi 180 giorni di borsa) — stessa logica dell'all-time sopra,
+    # ma filtrata sui trade la cui uscita cade nelle ultime 180 barre. Soglia minima 3 trade:
+    # sotto questa soglia il campo resta None (non abbastanza dati per essere significativo).
+    ROLLING_WINDOW_BARS = 180
+    ROLLING_MIN_TRADES = 3
+    cutoff_date = str(df.index[-ROLLING_WINDOW_BARS].date()) if len(df.index) >= ROLLING_WINDOW_BARS else str(df.index[0].date())
+    rolling_pairs = [(d, dt) for d, dt in zip(closed_deltas, closed_dates) if dt >= cutoff_date]
+    trade_chiusi_180g = len(rolling_pairs)
+    pct_vincenti_180g = None
+    delta_medio_pct_180g = None
+    rendimento_cumulato_180g = None
+    if trade_chiusi_180g >= ROLLING_MIN_TRADES:
+        pct_vincenti_180g = round(sum(1 for d, _ in rolling_pairs if d > 0) / trade_chiusi_180g * 100, 1)
+        delta_medio_pct_180g = round(sum(d for d, _ in rolling_pairs) / trade_chiusi_180g, 2)
+        cum180 = 1.0
+        for d, _ in rolling_pairs:
+            cum180 *= (1 + d / 100)
+        rendimento_cumulato_180g = round((cum180 - 1) * 100, 2)
 
     return {
         "prezzo": round(price, 4),
@@ -896,6 +917,10 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "pct_vincenti": pct_vincenti,
         "delta_medio_pct": delta_medio_pct,
         "rendimento_cumulato": rendimento_cumulato,
+        "trade_chiusi_180g": trade_chiusi_180g,
+        "pct_vincenti_180g": pct_vincenti_180g,
+        "delta_medio_pct_180g": delta_medio_pct_180g,
+        "rendimento_cumulato_180g": rendimento_cumulato_180g,
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
         "perf_3m": round(perf_3m, 2) if perf_3m is not None else None,
