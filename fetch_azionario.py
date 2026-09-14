@@ -63,6 +63,16 @@ MR_BB_N = 20                 # periodo Bollinger Bands
 MR_BB_STD = 2.0              # deviazioni standard
 MR_RSI_OVERSOLD = 30         # RSI14 sotto questa soglia = ipervenduto
 MR_HURST_THRESHOLD = 0.45    # sotto questa soglia: regime mean-reverting confermato (filtro bloccante)
+
+# Motore SUPER MEAN REVERSION — "compra dopo un forte calo", separato dalla MR normale
+# (che anzi blocca volutamente gli ingressi durante un vero crollo). Due fasi:
+# 1) IN OSSERVAZIONE quando c'è un calo forte + ipervenduto profondo
+# 2) INGRESSO solo quando arriva una conferma di inversione (non si compra "a scatola chiusa")
+SMR_DRAWDOWN_WINDOW = 60     # barre su cui calcolare il massimo di riferimento
+SMR_DRAWDOWN_THRESHOLD = -0.25   # calo minimo dal massimo per accendere "in osservazione"
+SMR_RSI14_MAX = 35           # ipervenduto profondo richiesto per "in osservazione"
+SMR_WATCH_EXPIRY = 15        # barre entro cui deve arrivare la conferma, altrimenti si annulla
+SMR_STOP_PCT = -0.15         # stop di invalidazione se il rimbalzo fallisce dopo l'ingresso
 HURST_STRIDE = 5             # ricalcolo Hurst ogni N barre (statistica lenta, approssimazione lecita
                               # per limitare il costo computazionale su storici lunghi)
 
@@ -676,6 +686,62 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "entry_price": round(mr_entry_price, 4) if mr_entry_price is not None else None,
     }
 
+    # ---- Motore SUPER MEAN REVERSION (parallelo, separato) — "compra dopo un forte calo" ----
+    rsi5_l = rsi5.tolist()
+    smr_state = "FLAT"   # FLAT -> WATCHING -> LONG
+    smr_watch_since = None
+    smr_entry_price = None
+    smr_entry_date = None
+    smr_closed_deltas = []  # Δ% di ogni trade CHIUSO, in ordine cronologico
+    for idx in range(len(close_list_full)):
+        c = close_list_full[idx]
+        if smr_state == "FLAT":
+            if idx >= SMR_DRAWDOWN_WINDOW:
+                window_high = max(close_list_full[idx - SMR_DRAWDOWN_WINDOW: idx + 1])
+                dd = c / window_high - 1 if window_high else 0
+                r14 = rsi14_l[idx]
+                if dd <= SMR_DRAWDOWN_THRESHOLD and r14 is not None and not math.isnan(r14) and r14 < SMR_RSI14_MAX:
+                    smr_state = "WATCHING"; smr_watch_since = idx
+        elif smr_state == "WATCHING":
+            if idx - smr_watch_since > SMR_WATCH_EXPIRY:
+                smr_state = "FLAT"; smr_watch_since = None
+            else:
+                r5_today, r5_yday = rsi5_l[idx], rsi5_l[idx - 1] if idx > 0 else None
+                c_yday = close_list_full[idx - 1] if idx > 0 else None
+                if (r5_today is not None and r5_yday is not None and not math.isnan(r5_today)
+                        and not math.isnan(r5_yday) and r5_today > r5_yday
+                        and c_yday is not None and c > c_yday):
+                    smr_state = "LONG"; smr_entry_price = c
+                    smr_entry_date = str(df.index[idx].date())
+        else:  # LONG
+            bu = bb_upper_l[idx]
+            delta = c / smr_entry_price - 1 if smr_entry_price else 0
+            if (bu is not None and not math.isnan(bu) and c >= bu) or delta <= SMR_STOP_PCT:
+                smr_closed_deltas.append(round(delta * 100, 2))
+                smr_state = "FLAT"; smr_entry_price = None; smr_entry_date = None; smr_watch_since = None
+
+    smr_trade_chiusi = len(smr_closed_deltas)
+    smr_pct_vincenti = round(sum(1 for x in smr_closed_deltas if x > 0) / smr_trade_chiusi * 100, 1) if smr_trade_chiusi else None
+    smr_delta_medio_pct = round(sum(smr_closed_deltas) / smr_trade_chiusi, 2) if smr_trade_chiusi else None
+    smr_rendimento_cumulato = None
+    if smr_trade_chiusi:
+        cum = 1.0
+        for x in smr_closed_deltas:
+            cum *= (1 + x / 100)
+        smr_rendimento_cumulato = round((cum - 1) * 100, 2)
+
+    super_mean_reversion = {
+        "segnale": smr_state,  # "FLAT" | "WATCHING" | "LONG"
+        "in_posizione": smr_state == "LONG",
+        "in_osservazione": smr_state == "WATCHING",
+        "entry_date": smr_entry_date,
+        "entry_price": round(smr_entry_price, 4) if smr_entry_price is not None else None,
+        "trade_chiusi": smr_trade_chiusi,
+        "pct_vincenti": smr_pct_vincenti,
+        "delta_medio_pct": smr_delta_medio_pct,
+        "rendimento_cumulato": smr_rendimento_cumulato,
+    }
+
     i = -1  # ultima barra
     price = float(close.iloc[i])
     kf = float(kama_fast.iloc[i]) if not math.isnan(kama_fast.iloc[i]) else None
@@ -893,6 +959,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "in_posizione": in_posizione,
         "inversione": inversione,
         "mean_reversion": mean_reversion,
+        "super_mean_reversion": super_mean_reversion,
         "perf_oggi": round(perf_oggi, 2),
         "ultimo_trade_delta": ultimo_trade_delta,
         "ultimo_trade_data": ultimo_trade_data,
