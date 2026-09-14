@@ -76,6 +76,11 @@ RAPTOR_LEVA_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-leva/
 # "Paesi" (singolo paese/area storica) da "Nuove Aree" (aggiunte più recenti); sui pochi
 # ticker presenti in entrambe le liste vince l'etichetta "Paesi".
 GEOGRAFIA_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-geografia/main/geografia.json"
+
+# Basket "Super Tematici": stesso schema di azionario.json (altro sistema scanner
+# indipendente) — prendiamo SOLO ticker/nome/settore e li facciamo ricalcolare da zero
+# dal motore scannerv3 di questo script, ignorando segnali/score già presenti nella fonte.
+SUPERTEMATICI_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/supertematici/main/supertematici.json"
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
 
@@ -827,14 +832,12 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     ultimo_trade_delta, ultimo_trade_data, ultimo_trade_aperto = None, None, False
     last_open_entry = None
     closed_deltas = []  # Δ% di ogni trade CHIUSO, in ordine cronologico (per riepilogo storico sotto)
-    closed_dates = []   # data di uscita di ogni trade CHIUSO, stesso ordine di closed_deltas (per il rolling 180g)
     for ev in signals_history:
         if ev["signal"] in ("BUY2", "BUY3"):
             last_open_entry = ev
         elif ev["signal"] in ("SELL", "STOP") and last_open_entry is not None:
             delta = round((ev["price"] / last_open_entry["price"] - 1) * 100, 2)
             closed_deltas.append(delta)
-            closed_dates.append(ev["date"])
             ultimo_trade_delta = delta
             ultimo_trade_data = ev["date"]
             ultimo_trade_aperto = False
@@ -856,25 +859,6 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         for d in closed_deltas:
             cum *= (1 + d / 100)
         rendimento_cumulato = round((cum - 1) * 100, 2)
-
-    # Riepilogo storico ROLLING (ultimi 180 giorni di borsa) — stessa logica dell'all-time sopra,
-    # ma filtrata sui trade la cui uscita cade nelle ultime 180 barre. Soglia minima 3 trade:
-    # sotto questa soglia il campo resta None (non abbastanza dati per essere significativo).
-    ROLLING_WINDOW_BARS = 180
-    ROLLING_MIN_TRADES = 3
-    cutoff_date = str(df.index[-ROLLING_WINDOW_BARS].date()) if len(df.index) >= ROLLING_WINDOW_BARS else str(df.index[0].date())
-    rolling_pairs = [(d, dt) for d, dt in zip(closed_deltas, closed_dates) if dt >= cutoff_date]
-    trade_chiusi_180g = len(rolling_pairs)
-    pct_vincenti_180g = None
-    delta_medio_pct_180g = None
-    rendimento_cumulato_180g = None
-    if trade_chiusi_180g >= ROLLING_MIN_TRADES:
-        pct_vincenti_180g = round(sum(1 for d, _ in rolling_pairs if d > 0) / trade_chiusi_180g * 100, 1)
-        delta_medio_pct_180g = round(sum(d for d, _ in rolling_pairs) / trade_chiusi_180g, 2)
-        cum180 = 1.0
-        for d, _ in rolling_pairs:
-            cum180 *= (1 + d / 100)
-        rendimento_cumulato_180g = round((cum180 - 1) * 100, 2)
 
     return {
         "prezzo": round(price, 4),
@@ -917,10 +901,6 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "pct_vincenti": pct_vincenti,
         "delta_medio_pct": delta_medio_pct,
         "rendimento_cumulato": rendimento_cumulato,
-        "trade_chiusi_180g": trade_chiusi_180g,
-        "pct_vincenti_180g": pct_vincenti_180g,
-        "delta_medio_pct_180g": delta_medio_pct_180g,
-        "rendimento_cumulato_180g": rendimento_cumulato_180g,
         "perf_7g": perf_7g,
         "perf_1m": round(perf_1m, 2) if perf_1m is not None else None,
         "perf_3m": round(perf_3m, 2) if perf_3m is not None else None,
@@ -1059,6 +1039,34 @@ def load_geografia():
     return universe
 
 
+def load_supertematici():
+    """Basket Super Tematici: prende SOLO ticker/nome/settore dalla fonte esterna
+    (supertematici.json, generato da un motore scanner diverso e indipendente) e li
+    passa al motore scannerv3 di questo script per ricalcolo completo da zero. Se il
+    fetch fallisce, ritorna lista vuota senza bloccare il resto dello script."""
+    try:
+        with urllib.request.urlopen(SUPERTEMATICI_URL, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"Avviso: impossibile scaricare supertematici.json ({e}) — basket Super Tematici saltato", file=sys.stderr)
+        return []
+
+    universe = []
+    for row in payload.get("titoli", []):
+        ticker = row.get("ticker")
+        if not ticker:
+            continue
+        universe.append({
+            "regione": "SUPERTEM",
+            "nome": row.get("nome", ticker),
+            "ticker": ticker,
+            "settore": row.get("settore"),
+            "paese": None,
+            "exchange": None,
+        })
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -1075,6 +1083,7 @@ def load_universe():
                           "settore": settore, "paese": paese_o_exch, "exchange": None})
     universe.extend(load_etfleva())
     universe.extend(load_geografia())
+    universe.extend(load_supertematici())
     return universe
 
 
