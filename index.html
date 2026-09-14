@@ -214,6 +214,7 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
       <th data-k="delta_medio_pct">Δ% medio</th>
       <th data-k="rendimento_cumulato">Rend. cum.</th>
       <th>Mean Rev.</th>
+      <th>Super MR</th>
       <th>Super Best Buy</th>
       <th>Azioni</th>
     </tr>
@@ -403,6 +404,7 @@ function render(){
       <td class="num ${r.delta_medio_pct==null?'':r.delta_medio_pct>=0?'green':'red'}">${r.delta_medio_pct!=null?(r.delta_medio_pct>=0?'+':'')+r.delta_medio_pct.toFixed(2)+'%':'—'}</td>
       <td class="num ${r.rendimento_cumulato==null?'':r.rendimento_cumulato>=0?'green':'red'}">${r.rendimento_cumulato!=null?(r.rendimento_cumulato>=0?'+':'')+r.rendimento_cumulato.toFixed(2)+'%':'—'}</td>
       <td>${r.mean_reversion && r.mean_reversion.segnale!=='MR_FLAT' ? `<span class="pill pill-le" title="dal ${r.mean_reversion.entry_date||'—'}">${r.mean_reversion.segnale.replace('MR_','')}</span><div style="font-size:9px;color:var(--text3);margin-top:2px">${r.mean_reversion.entry_date||''}</div>` : '—'}</td>
+      <td>${r.super_mean_reversion && r.super_mean_reversion.segnale!=='FLAT' ? `<span class="pill ${r.super_mean_reversion.segnale==='LONG'?'pill-lc':'pill-gr'}" title="dal ${r.super_mean_reversion.entry_date||'—'}">${r.super_mean_reversion.segnale==='LONG'?'LONG':'OSSERVA'}</span><div style="font-size:9px;color:var(--text3);margin-top:2px">${r.super_mean_reversion.entry_date||''}</div>` : '—'}</td>
       <td>${r.super_best_buy ? `<span class="sbb-flag">🚀 SBB</span><div style="font-size:9px;color:var(--text3);margin-top:2px">dal ${r.super_best_buy_dal||'—'}</div>` : '—'}</td>
       <td>
         <button class="rowbtn" onclick="openRegole('${r.ticker}')" title="Regole PDF">📄</button>
