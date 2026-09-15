@@ -926,6 +926,52 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
             cum *= (1 + d / 100)
         rendimento_cumulato = round((cum - 1) * 100, 2)
 
+    # ---- "Segnali di Qualità": conta quanti motori concordano oggi + filtro di qualità aggregato ----
+    STALE_DAYS_MAX = 4        # oltre questi giorni di calendario dall'ultimo dato, non è "fresco"
+    PRICE_ARTIFACT_MIN = 0.05  # sotto questo prezzo, i rendimenti % sono artefatti matematici (vedi SMR)
+    DELTA_ARTIFACT_MAX = 500   # oltre questa % un singolo trade storico è considerato artefatto
+
+    ultimo_aggiornamento_date = df.index[-1].date()
+    giorni_da_ultimo_dato = (datetime.date.today() - ultimo_aggiornamento_date).days
+    dato_fresco = giorni_da_ultimo_dato <= STALE_DAYS_MAX
+
+    motori_attivi = []
+    if segnale in ("BUY2", "BUY3"):
+        motori_attivi.append("BUY")
+    if inversione["flag"]:
+        motori_attivi.append("INVERSIONE")
+    if super_best_buy:
+        motori_attivi.append("SBB")
+    if mean_reversion["segnale"] == "MR_BUY":
+        motori_attivi.append("MR")
+    if super_mean_reversion["segnale"] == "LONG":
+        motori_attivi.append("SMR")
+    motori_concordi = len(motori_attivi)
+
+    prezzo_ok = price >= PRICE_ARTIFACT_MIN
+    storico_ok = True
+    if delta_medio_pct is not None and abs(delta_medio_pct) > DELTA_ARTIFACT_MAX:
+        storico_ok = False
+    if super_mean_reversion["delta_medio_pct"] is not None and abs(super_mean_reversion["delta_medio_pct"]) > DELTA_ARTIFACT_MAX:
+        storico_ok = False
+
+    # Campione storico minimo: richiesto solo per i motori che HANNO uno storico trade tracciato
+    # (BUY2/BUY3, Inversione e SBB condividono lo storico "trade_chiusi" principale; SMR ha il suo).
+    # Mean Reversion normale non ha storico dedicato (limite noto) quindi da sola non può mai bastare.
+    campione_minimo_ok = (
+        (any(m in motori_attivi for m in ("BUY", "INVERSIONE", "SBB")) and trade_chiusi >= 3)
+        or ("SMR" in motori_attivi and super_mean_reversion["trade_chiusi"] >= 3)
+    )
+
+    segnale_qualita = (
+        motori_concordi >= 1
+        and regime["code"] != "RIBASSO"
+        and dato_fresco
+        and prezzo_ok
+        and storico_ok
+        and campione_minimo_ok
+    )
+
     return {
         "prezzo": round(price, 4),
         "kama_fast": round(kf, 4),
@@ -979,6 +1025,10 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "regime": regime,
         "kama_trend": kama_trend,
         "tv_rating_code": RATING_CODE_MAP.get(rating, "NEUTRAL"),
+        "motori_attivi": motori_attivi,
+        "motori_concordi": motori_concordi,
+        "segnale_qualita": segnale_qualita,
+        "dato_fresco": dato_fresco,
     }, {
         # serie storiche per il grafico (stile scannerv2)
         "date": [str(d.date()) for d in df.index],
