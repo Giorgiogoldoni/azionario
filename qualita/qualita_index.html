@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🏆 Segnali di Qualità — AZIONARIO</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--bg3:#f1f3f5;
+  --border:#dee2e6;--border2:#ced4da;
+  --text:#212529;--text2:#495057;--text3:#868e96;
+  --accent:#1971c2;
+  --lc:#2f9e44;--le:#1971c2;--gr:#e67700;--ex:#c92a2a;--st:#862e2e;
+  --font-mono:'Space Mono',monospace;
+  --font-cond:'Barlow Condensed',sans-serif;
+  --font-body:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:13px}
+.topbar{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 20px;z-index:20;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.topbar h1{font-family:var(--font-cond);font-weight:800;font-size:22px;letter-spacing:.3px}
+.topbar .sub{font-family:var(--font-body);font-size:12px;color:var(--text3);margin-top:2px}
+.topbar a.back{font-size:12px;color:var(--accent);text-decoration:none}
+.topbar a.back:hover{text-decoration:underline}
+.btn{font-family:var(--font-cond);font-size:12px;font-weight:700;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);padding:7px 12px;border-radius:4px;cursor:pointer}
+.btn:hover{background:var(--bg3)}
+.controls{padding:12px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--border)}
+.controls input,.controls select{font-family:var(--font-body);font-size:12px;padding:6px 8px;border:1px solid var(--border2);border-radius:4px}
+.badge-count{font-family:var(--font-mono);font-weight:700;background:var(--accent);color:#fff;border-radius:10px;padding:2px 9px;font-size:12px}
+.table-wrap{overflow:visible;padding:0 20px 40px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px}
+thead th{position:sticky;top:66px;background:var(--bg2);border-bottom:2px solid var(--border);padding:7px 8px;text-align:left;font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--text2);white-space:nowrap;cursor:pointer;user-select:none;z-index:10}
+thead th:hover{color:var(--accent)}
+thead th.sort-asc::after{content:' ↑'}
+thead th.sort-desc::after{content:' ↓'}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:hover{background:var(--bg2)}
+td{padding:7px 8px;white-space:nowrap}
+td.nome{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2);font-size:11px}
+td.ticker{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent)}
+td.num{font-family:var(--font-mono);font-size:11px;text-align:right}
+.green{color:var(--lc)}.red{color:var(--ex)}
+.pill{display:inline-block;font-family:var(--font-cond);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;color:#fff;margin:1px 2px 1px 0}
+.pill-buy{background:var(--lc)}.pill-inv{background:#8e44ad}.pill-sbb{background:var(--gr)}.pill-mr{background:var(--le)}.pill-smr{background:#0c8599}
+.motori-cnt{font-family:var(--font-mono);font-weight:700;font-size:13px}
+.rowbtn{border:1px solid var(--border2);background:var(--bg2);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:12px;margin-right:3px}
+.rowbtn:hover{background:var(--bg3)}
+.empty{padding:60px 20px;text-align:center;color:var(--text3);font-family:var(--font-cond);font-size:16px}
+.criteri{padding:10px 20px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>🏆 Segnali di Qualità</h1>
+    <div class="sub">Solo titoli promossi da tutti i filtri, su tutti i basket · <a class="back" href="../">← Torna alla home AZIONARIO</a></div>
+  </div>
+  <button class="btn" onclick="scaricaExcel()">📥 Scarica Excel</button>
+</div>
+
+<div class="criteri">
+  Criteri richiesti insieme: ≥1 motore attivo (BUY2/BUY3, Inversione, Super Best Buy, Mean Reversion, Super Mean Reversion) ·
+  Regime non Ribasso · dato aggiornato negli ultimi 4 giorni · prezzo non anomalo (≥0.05) · nessun trade storico artefatto (±500%) ·
+  almeno 3 trade storici chiusi sul motore che ha generato il segnale.
+</div>
+
+<div class="controls">
+  <input id="search" type="text" placeholder="Cerca nome o ticker...">
+  <select id="filterRegione"><option value="">Tutte le regioni</option></select>
+  <span id="cnt" class="badge-count">–</span> segnali di qualità oggi
+</div>
+
+<div class="table-wrap">
+<table id="tbl">
+  <thead>
+    <tr>
+      <th data-k="nome">Nome</th>
+      <th data-k="ticker">Ticker</th>
+      <th data-k="regione">Regione</th>
+      <th data-k="motori_concordi">Motori</th>
+      <th>Attivi</th>
+      <th data-k="prezzo">Prezzo</th>
+      <th data-k="perf_oggi">Oggi%</th>
+      <th data-k="adx">ADX</th>
+      <th>Regime</th>
+      <th data-k="score">Score</th>
+      <th data-k="trade_chiusi">Trade</th>
+      <th data-k="pct_vincenti">% Vinc.</th>
+      <th data-k="rendimento_cumulato">Rend. cum.</th>
+      <th data-k="ultimo_aggiornamento">Aggiornato</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+<div id="emptyMsg" class="empty" style="display:none">Nessun titolo soddisfa tutti i criteri di qualità oggi.<br>Non è un errore: il sistema preferisce dirti "niente di solido oggi" piuttosto che forzare una scelta debole.</div>
+</div>
+
+<script>
+const DATA_URL = '../azionario.json';
+const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia', SUPERTEM:'🚀 Super Tematici' };
+const MOTORE_LABEL = { BUY:['pill-buy','BUY'], INVERSIONE:['pill-inv','INV'], SBB:['pill-sbb','SBB'], MR:['pill-mr','MR'], SMR:['pill-smr','SMR'] };
+const fileFor = t => t.replace(/\./g,'_').replace(/-/g,'_');
+
+let ALL = [];
+let sortKey = 'motori_concordi', sortDir = -1;
+
+function openRegole(ticker){
+  window.open(`../regole/${fileFor(ticker)}_Regole.html`, '_blank');
+}
+function openTV(tvSymbol){
+  window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(tvSymbol)}`, '_blank');
+}
+
+async function load(){
+  try{
+    const r = await fetch(DATA_URL + '?t=' + Date.now());
+    const d = await r.json();
+    ALL = (d.titoli || []).filter(x => x.segnale_qualita === true);
+    document.getElementById('cnt').textContent = ALL.length;
+    populateRegioni();
+    render();
+  }catch(e){
+    document.getElementById('emptyMsg').style.display='block';
+    document.getElementById('emptyMsg').textContent = '⚠️ Impossibile caricare azionario.json — ' + e.message;
+  }
+}
+
+function populateRegioni(){
+  const sel = document.getElementById('filterRegione');
+  const regioni = [...new Set(ALL.map(x=>x.regione))].sort();
+  regioni.forEach(r=>{
+    const o = document.createElement('option');
+    o.value = r; o.textContent = REGIONE_LABEL[r] || r;
+    sel.appendChild(o);
+  });
+}
+
+function currentRows(){
+  let rows = ALL.slice();
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  if(q) rows = rows.filter(x => x.nome.toLowerCase().includes(q) || x.ticker.toLowerCase().includes(q));
+  const reg = document.getElementById('filterRegione').value;
+  if(reg) rows = rows.filter(x => x.regione === reg);
+  rows.sort((a,b)=>{
+    let va=a[sortKey], vb=b[sortKey];
+    if(typeof va==='string') return sortDir*va.localeCompare(vb);
+    return sortDir*((va??-Infinity)-(vb??-Infinity));
+  });
+  return rows;
+}
+
+function render(){
+  const rows = currentRows();
+  document.getElementById('emptyMsg').style.display = rows.length ? 'none' : 'block';
+  document.getElementById('tbody').innerHTML = rows.map(r=>`
+    <tr>
+      <td class="nome" title="${r.nome}">${r.nome}</td>
+      <td class="ticker">${r.ticker}</td>
+      <td>${REGIONE_LABEL[r.regione]||r.regione}</td>
+      <td class="num motori-cnt">${r.motori_concordi}</td>
+      <td>${(r.motori_attivi||[]).map(m=>{const [cls,lbl]=MOTORE_LABEL[m]||['pill',m];return `<span class="pill ${cls}">${lbl}</span>`;}).join('')}</td>
+      <td class="num">${r.prezzo?.toFixed(2)??'—'}</td>
+      <td class="num ${r.perf_oggi>=0?'green':'red'}">${r.perf_oggi!=null?(r.perf_oggi>=0?'+':'')+r.perf_oggi.toFixed(2)+'%':'—'}</td>
+      <td class="num">${r.adx?.toFixed(1)??'—'}</td>
+      <td>${r.regime?.label||'—'}</td>
+      <td class="num">${r.score?.toFixed(1)??'—'}</td>
+      <td class="num">${r.trade_chiusi??0}</td>
+      <td class="num ${r.pct_vincenti>=50?'green':'red'}">${r.pct_vincenti!=null?r.pct_vincenti.toFixed(0)+'%':'—'}</td>
+      <td class="num ${r.rendimento_cumulato>=0?'green':'red'}">${r.rendimento_cumulato!=null?(r.rendimento_cumulato>=0?'+':'')+r.rendimento_cumulato.toFixed(2)+'%':'—'}</td>
+      <td style="font-size:10px;color:var(--text3)">${r.ultimo_aggiornamento||'—'}</td>
+      <td>
+        <button class="rowbtn" onclick="openRegole('${r.ticker}')" title="Regole PDF">📄</button>
+        <button class="rowbtn" onclick="openTV('${r.tv_symbol||r.ticker}')" title="TradingView">TV</button>
+      </td>
+    </tr>`).join('');
+}
+
+function scaricaExcel(){
+  const rows = currentRows().map(r=>({
+    Nome:r.nome, Ticker:r.ticker, Regione:REGIONE_LABEL[r.regione]||r.regione,
+    Motori:r.motori_concordi, Attivi:(r.motori_attivi||[]).join('+'),
+    Prezzo:r.prezzo, 'Oggi%':r.perf_oggi, ADX:r.adx, Regime:r.regime?.label,
+    Score:r.score, Trade:r.trade_chiusi, '%Vincenti':r.pct_vincenti,
+    'Rend.Cumulato':r.rendimento_cumulato, Aggiornato:r.ultimo_aggiornamento
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Qualita');
+  XLSX.writeFile(wb, `segnali_qualita_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+document.querySelectorAll('thead th[data-k]').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const k = th.dataset.k;
+    if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=-1; }
+    document.querySelectorAll('thead th').forEach(x=>x.classList.remove('sort-asc','sort-desc'));
+    th.classList.add(sortDir===1?'sort-asc':'sort-desc');
+    render();
+  });
+});
+['search','filterRegione'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+  document.getElementById(id).addEventListener('change', render);
+});
+
+load();
+</script>
+</body>
+</html>
