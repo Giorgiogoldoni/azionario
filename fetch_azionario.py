@@ -91,6 +91,11 @@ GEOGRAFIA_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-geograf
 # indipendente) — prendiamo SOLO ticker/nome/settore e li facciamo ricalcolare da zero
 # dal motore scannerv3 di questo script, ignorando segnali/score già presenti nella fonte.
 SUPERTEMATICI_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/supertematici/main/supertematici.json"
+
+# Basket "Scanner Settoriale": prende ticker/nome/categoria da raptor-scanner. A differenza
+# degli altri basket, qui NON si deduplica contro gli altri (richiesta esplicita di Giorgio:
+# vuole vedere anche gli eventuali duplicati, es. con ETF Leva/Tematici).
+SCANNER_SETTORIALE_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-scanner/main/data/signals.json"
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
 
@@ -955,17 +960,27 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     if super_mean_reversion["delta_medio_pct"] is not None and abs(super_mean_reversion["delta_medio_pct"]) > DELTA_ARTIFACT_MAX:
         storico_ok = False
 
-    # Campione storico minimo: richiesto solo per i motori che HANNO uno storico trade tracciato
-    # (BUY2/BUY3, Inversione e SBB condividono lo storico "trade_chiusi" principale; SMR ha il suo).
-    # Mean Reversion normale non ha storico dedicato (limite noto) quindi da sola non può mai bastare.
-    campione_minimo_ok = (
-        (any(m in motori_attivi for m in ("BUY", "INVERSIONE", "SBB")) and trade_chiusi >= 3)
-        or ("SMR" in motori_attivi and super_mean_reversion["trade_chiusi"] >= 3)
+    # Campione storico minimo E storico realmente positivo (non solo "esiste"):
+    # richiesto solo per i motori che HANNO uno storico trade tracciato (BUY2/BUY3,
+    # Inversione e SBB condividono lo storico "trade_chiusi" principale; SMR ha il suo).
+    # Mean Reversion normale non ha storico dedicato (limite noto) quindi da sola non basta mai.
+    storico_buy_ok = (
+        any(m in motori_attivi for m in ("BUY", "INVERSIONE", "SBB"))
+        and trade_chiusi >= 3
+        and pct_vincenti is not None and pct_vincenti >= 50
+        and rendimento_cumulato is not None and rendimento_cumulato > 0
     )
+    storico_smr_ok = (
+        "SMR" in motori_attivi
+        and super_mean_reversion["trade_chiusi"] >= 3
+        and super_mean_reversion["pct_vincenti"] is not None and super_mean_reversion["pct_vincenti"] >= 50
+        and super_mean_reversion["rendimento_cumulato"] is not None and super_mean_reversion["rendimento_cumulato"] > 0
+    )
+    campione_minimo_ok = storico_buy_ok or storico_smr_ok
 
     segnale_qualita = (
         motori_concordi >= 1
-        and regime["code"] != "RIBASSO"
+        and regime["code"] not in ("RIBASSO", "LATERALE")
         and dato_fresco
         and prezzo_ok
         and storico_ok
@@ -1184,6 +1199,34 @@ def load_supertematici():
     return universe
 
 
+def load_scanner_settoriale():
+    """Basket Scanner Settoriale: prende ticker/nome/categoria da raptor-scanner
+    (repo separato). Tenuto VOLUTAMENTE fuori dalla deduplica con gli altri basket —
+    Giorgio vuole vedere anche i ticker che compaiono già altrove. Se il fetch fallisce,
+    ritorna lista vuota senza bloccare il resto dello script."""
+    try:
+        with urllib.request.urlopen(SCANNER_SETTORIALE_URL, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"Avviso: impossibile scaricare signals.json di raptor-scanner ({e}) — basket Scanner Settoriale saltato", file=sys.stderr)
+        return []
+
+    universe = []
+    for row in payload.get("signals", []):
+        ticker = row.get("ticker")
+        if not ticker:
+            continue
+        universe.append({
+            "regione": "SCANNERSETT",
+            "nome": row.get("nome", ticker),
+            "ticker": ticker,
+            "settore": row.get("categoria"),
+            "paese": None,
+            "exchange": None,
+        })
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -1201,6 +1244,23 @@ def load_universe():
     universe.extend(load_etfleva())
     universe.extend(load_geografia())
     universe.extend(load_supertematici())
+
+    # Deduplica ticker fisicamente uguali comparsi in più liste sorgente (es. alcune
+    # large cap italiane presenti sia in tickers_stoxx600.json/EU sia in
+    # tickers_italia.json/IT). Tiene una sola occorrenza per ticker, con priorità
+    # IT > EU > US > basket ETF, così i titoli italiani restano classificati come IT.
+    priorita_regione = {"IT": 0, "EU": 1, "US": 2, "ETFLEVA": 3, "ETFGEO": 4, "SUPERTEM": 5}
+    per_ticker = {}
+    for u in universe:
+        t = u["ticker"]
+        if t not in per_ticker or priorita_regione.get(u["regione"], 9) < priorita_regione.get(per_ticker[t]["regione"], 9):
+            per_ticker[t] = u
+    universe = list(per_ticker.values())
+
+    # Scanner Settoriale aggiunto DOPO la deduplica: qui i duplicati con gli altri
+    # basket restano visibili di proposito (vedi load_scanner_settoriale).
+    universe.extend(load_scanner_settoriale())
+
     return universe
 
 
