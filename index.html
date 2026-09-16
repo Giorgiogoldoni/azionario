@@ -164,6 +164,7 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
   <div class="tab" data-tab="ETFGEO">🌍 ETF Geografia <span class="tab-cnt" id="cntETFGEO">–</span></div>
   <div class="tab" data-tab="SUPERTEM">🚀 Super Tematici <span class="tab-cnt" id="cntSUPERTEM">–</span></div>
   <div class="tab" data-tab="SCANNERSETT">🧭 Scanner Settoriale <span class="tab-cnt" id="cntSCANNERSETT">–</span></div>
+  <div class="tab" data-tab="SETTGICS">🔄 Settori GICS <span class="tab-cnt" id="cntSETTGICS">–</span></div>
   <a class="qualita-link" href="qualita/">🏆 Segnali di Qualità</a>
 </div>
 
@@ -273,6 +274,7 @@ async function load(){
   document.getElementById('cntETFGEO').textContent = ALL.filter(x=>x.regione==='ETFGEO').length;
   document.getElementById('cntSUPERTEM').textContent = ALL.filter(x=>x.regione==='SUPERTEM').length;
   document.getElementById('cntSCANNERSETT').textContent = ALL.filter(x=>x.regione==='SCANNERSETT').length;
+  document.getElementById('cntSETTGICS').textContent = ALL.filter(x=>x.regione==='SETTGICS').length;
   populateSettori();
   renderTopSections();
   render();
@@ -280,7 +282,7 @@ async function load(){
 
 function renderTopSections(){
   const box = document.getElementById('topSections');
-  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia', SUPERTEM:'🚀 Super Tematici', SCANNERSETT:'🧭 Scanner Settoriale' };
+  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia', SUPERTEM:'🚀 Super Tematici', SCANNERSETT:'🧭 Scanner Settoriale', SETTGICS:'🔄 Settori GICS' };
   const bySettore = {};
   ALL.forEach(r=>{ (bySettore[r.settore] = bySettore[r.settore]||[]).push(r); });
   const topSettori = Object.entries(bySettore)
