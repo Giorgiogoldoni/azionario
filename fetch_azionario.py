@@ -96,6 +96,12 @@ SUPERTEMATICI_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/supertemat
 # degli altri basket, qui NON si deduplica contro gli altri (richiesta esplicita di Giorgio:
 # vuole vedere anche gli eventuali duplicati, es. con ETF Leva/Tematici).
 SCANNER_SETTORIALE_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-scanner/main/data/signals.json"
+
+# Basket "Settori GICS": rotazione settoriale pulita (Energy/Tech/Financials/ecc.) su
+# Europa/USA/Mondo, da raptor-settoriali. Come Scanner Settoriale, NON deduplicato
+# contro gli altri basket (richiesta esplicita di Giorgio).
+SETTORI_GICS_URL = "https://raw.githubusercontent.com/Giorgiogoldoni/raptor-settoriali/main/settoriali.json"
+SETTORI_GICS_PREFIXES = ["SPDR MSCI Eu ", "SPDR S&P Eu ", "SPDR S&P US ", "SPDR MSCI Wld "]
 SLEEP_BETWEEN_BATCH = 3  # secondi, per non farsi rate-limitare da Yahoo
 HISTORY_PERIOD = "18mo"
 
@@ -1227,6 +1233,42 @@ def load_scanner_settoriale():
     return universe
 
 
+def load_settori_gics():
+    """Basket Settori GICS: rotazione settoriale Europa/USA/Mondo da raptor-settoriali
+    (repo separato). Come Scanner Settoriale, NON deduplicato contro gli altri basket.
+    Se il fetch fallisce, ritorna lista vuota senza bloccare il resto dello script."""
+    try:
+        with urllib.request.urlopen(SETTORI_GICS_URL, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"Avviso: impossibile scaricare settoriali.json ({e}) — basket Settori GICS saltato", file=sys.stderr)
+        return []
+
+    area_label = {"europa": "Europa", "usa": "USA", "mondo": "Mondo"}
+    universe = []
+    for area_key, area_data in payload.get("portfolios", {}).items():
+        area = area_label.get(area_key, area_key)
+        for row in area_data.get("all", []):
+            ticker = row.get("ticker")
+            if not ticker:
+                continue
+            nome = row.get("name", ticker)
+            settore_nome = nome
+            for pref in SETTORI_GICS_PREFIXES:
+                if nome.startswith(pref):
+                    settore_nome = nome[len(pref):]
+                    break
+            universe.append({
+                "regione": "SETTGICS",
+                "nome": nome,
+                "ticker": ticker,
+                "settore": f"{area} · {settore_nome}",
+                "paese": None,
+                "exchange": None,
+            })
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -1257,9 +1299,11 @@ def load_universe():
             per_ticker[t] = u
     universe = list(per_ticker.values())
 
-    # Scanner Settoriale aggiunto DOPO la deduplica: qui i duplicati con gli altri
-    # basket restano visibili di proposito (vedi load_scanner_settoriale).
+    # Scanner Settoriale e Settori GICS aggiunti DOPO la deduplica: qui i duplicati
+    # con gli altri basket restano visibili di proposito (vedi load_scanner_settoriale
+    # e load_settori_gics).
     universe.extend(load_scanner_settoriale())
+    universe.extend(load_settori_gics())
 
     return universe
 
