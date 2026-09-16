@@ -1269,6 +1269,27 @@ def load_settori_gics():
     return universe
 
 
+def load_ishares():
+    """Basket 'iShares': lista fissa caricata da tickers_ishares.json (file locale nel
+    repo, costruito da un CSV caricato da Giorgio — borsa .MI presunta per i ticker non
+    già verificati altrove, da confermare al primo run reale). Se il file manca, ritorna
+    lista vuota senza bloccare il resto dello script."""
+    path = ROOT / "tickers_ishares.json"
+    if not path.exists():
+        print("Avviso: tickers_ishares.json non trovato — basket iShares saltato", file=sys.stderr)
+        return []
+    try:
+        rows = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"Avviso: errore leggendo tickers_ishares.json ({e}) — basket iShares saltato", file=sys.stderr)
+        return []
+    universe = []
+    for nome, ticker, settore, paese_o_exch, _ in rows:
+        universe.append({"regione": "ISHARES", "nome": nome, "ticker": ticker,
+                          "settore": settore, "paese": paese_o_exch, "exchange": None})
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -1304,6 +1325,7 @@ def load_universe():
     # e load_settori_gics).
     universe.extend(load_scanner_settoriale())
     universe.extend(load_settori_gics())
+    universe.extend(load_ishares())
 
     return universe
 
