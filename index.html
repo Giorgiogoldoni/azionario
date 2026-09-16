@@ -38,6 +38,8 @@ select:focus,input:focus{outline:none;border-color:var(--accent)}
 
 .tabs{display:flex;gap:0;border-bottom:2px solid var(--border);padding:0 20px;background:var(--bg)}
 .tab{padding:10px 20px;font-family:var(--font-cond);font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--text3);transition:all .12s;display:flex;align-items:center;gap:6px}
+.qualita-link{padding:10px 20px;font-family:var(--font-cond);font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--accent);margin-left:auto;text-decoration:none}
+.qualita-link:hover{text-decoration:underline}
 .tab:hover{color:var(--text)}
 .tab.act{color:var(--accent);border-bottom-color:var(--accent)}
 .tab-cnt{background:var(--bg3);color:var(--text3);padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700}
@@ -161,6 +163,8 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
   <div class="tab" data-tab="ETFLEVA">⚡ ETF Leva <span class="tab-cnt" id="cntETFLEVA">–</span></div>
   <div class="tab" data-tab="ETFGEO">🌍 ETF Geografia <span class="tab-cnt" id="cntETFGEO">–</span></div>
   <div class="tab" data-tab="SUPERTEM">🚀 Super Tematici <span class="tab-cnt" id="cntSUPERTEM">–</span></div>
+  <div class="tab" data-tab="SCANNERSETT">🧭 Scanner Settoriale <span class="tab-cnt" id="cntSCANNERSETT">–</span></div>
+  <a class="qualita-link" href="qualita/">🏆 Segnali di Qualità</a>
 </div>
 
 <div class="top-sections" id="topSections"></div>
@@ -268,6 +272,7 @@ async function load(){
   document.getElementById('cntETFLEVA').textContent = ALL.filter(x=>x.regione==='ETFLEVA').length;
   document.getElementById('cntETFGEO').textContent = ALL.filter(x=>x.regione==='ETFGEO').length;
   document.getElementById('cntSUPERTEM').textContent = ALL.filter(x=>x.regione==='SUPERTEM').length;
+  document.getElementById('cntSCANNERSETT').textContent = ALL.filter(x=>x.regione==='SCANNERSETT').length;
   populateSettori();
   renderTopSections();
   render();
@@ -275,7 +280,7 @@ async function load(){
 
 function renderTopSections(){
   const box = document.getElementById('topSections');
-  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia', SUPERTEM:'🚀 Super Tematici' };
+  const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia', SUPERTEM:'🚀 Super Tematici', SCANNERSETT:'🧭 Scanner Settoriale' };
   const bySettore = {};
   ALL.forEach(r=>{ (bySettore[r.settore] = bySettore[r.settore]||[]).push(r); });
   const topSettori = Object.entries(bySettore)
