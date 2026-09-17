@@ -35,6 +35,12 @@ REGOLE_DIR = ROOT / "regole"
 CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 REGOLE_DIR.mkdir(parents=True, exist_ok=True)
 
+# Ledger di verifica: registro che si accumula nel tempo (mai riscritto da zero, a
+# differenza di azionario.json) per capire A POSTERIORI quale motore funziona meglio.
+LEDGER_PATH = ROOT / "ledger.json"
+LEDGER_COOLDOWN_DAYS = 10   # non riapre una voce sullo stesso ticker prima di N giorni
+LEDGER_CHECKPOINTS = [5, 10, 20]  # giorni di calendario dopo l'ingresso
+
 # ---------------------------------------------------------------------------
 # Parametri indicatori (allineati al template regole EEI_Regole_RAPTOR.html)
 # ---------------------------------------------------------------------------
@@ -1375,6 +1381,73 @@ def process_batch(batch):
     return rows_ok, failed
 
 
+def load_ledger():
+    if not LEDGER_PATH.exists():
+        return []
+    try:
+        return json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"Avviso: errore leggendo ledger.json ({e}) — riparto da ledger vuoto", file=sys.stderr)
+        return []
+
+
+def aggiorna_ledger(results):
+    """Aggiorna il ledger di verifica: apre nuove voci per ogni titolo con ALMENO 1
+    motore attivo oggi (BUY2/BUY3, Inversione, Super Best Buy, Mean Reversion, Super
+    Mean Reversion), rispettando un cooldown di LEDGER_COOLDOWN_DAYS sullo stesso
+    ticker per evitare doppioni quando un segnale sfarfalla. Per le voci già aperte,
+    registra i checkpoint di rendimento a +5/+10/+20 giorni di calendario dall'ingresso.
+    Non cancella e non riscrive mai da zero: i dati si accumulano run dopo run."""
+    ledger = load_ledger()
+    oggi = datetime.date.today()
+    prezzo_per_ticker = {r["ticker"]: r["prezzo"] for r in results}
+
+    ultima_per_ticker = {}
+    for voce in ledger:
+        t = voce["ticker"]
+        d = datetime.date.fromisoformat(voce["data_ingresso"])
+        if t not in ultima_per_ticker or d > ultima_per_ticker[t]:
+            ultima_per_ticker[t] = d
+
+    # 1) aggiorna i checkpoint delle voci ancora aperte
+    for voce in ledger:
+        if voce.get("chiusa"):
+            continue
+        prezzo_ora = prezzo_per_ticker.get(voce["ticker"])
+        if prezzo_ora is None:
+            continue  # ticker non presente in questo run (es. fetch fallito), riprovo al prossimo
+        entry_date = datetime.date.fromisoformat(voce["data_ingresso"])
+        giorni = (oggi - entry_date).days
+        for cp in LEDGER_CHECKPOINTS:
+            key = str(cp)
+            if giorni >= cp and key not in voce["checkpoints"]:
+                delta = round((prezzo_ora / voce["prezzo_ingresso"] - 1) * 100, 2)
+                voce["checkpoints"][key] = {"data": oggi.isoformat(), "prezzo": prezzo_ora, "delta_pct": delta}
+        if all(str(cp) in voce["checkpoints"] for cp in LEDGER_CHECKPOINTS):
+            voce["chiusa"] = True
+
+    # 2) apre nuove voci, rispettando il cooldown per ticker
+    for r in results:
+        motori = r.get("motori_attivi") or []
+        if not motori:
+            continue
+        t = r["ticker"]
+        ultima = ultima_per_ticker.get(t)
+        if ultima is not None and (oggi - ultima).days < LEDGER_COOLDOWN_DAYS:
+            continue
+        ledger.append({
+            "ticker": t, "nome": r["nome"], "regione": r["regione"], "tv_symbol": r.get("tv_symbol"),
+            "data_ingresso": oggi.isoformat(), "prezzo_ingresso": r["prezzo"],
+            "motori_attivi": motori, "motori_concordi": r.get("motori_concordi", len(motori)),
+            "segnale_qualita": r.get("segnale_qualita", False),
+            "checkpoints": {}, "chiusa": False,
+        })
+        ultima_per_ticker[t] = oggi
+
+    LEDGER_PATH.write_text(json.dumps(ledger, ensure_ascii=False), encoding="utf-8")
+    return ledger
+
+
 def main():
     universe = load_universe()
     print(f"Universo totale: {len(universe)} titoli")
@@ -1419,6 +1492,7 @@ def main():
             # i ".DE" ancora falliti restano solo nel log, non aggiungo doppioni a errors
 
     (DATA_DIR / "charts" / "index.json").write_text(json.dumps(chart_index), encoding="utf-8")
+    aggiorna_ledger(results)
     (ROOT / "azionario.json").write_text(
         json.dumps({
             "generato": datetime.datetime.now().isoformat(),
