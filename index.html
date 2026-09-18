@@ -458,7 +458,7 @@ async function openChart(ticker){
   try{
     const chart = await fetch(CHART_BASE + fileFor(ticker) + '.json?t=' + Date.now()).then(r=>r.json());
     content.innerHTML = buildChartHTML(row, chart);
-    renderChartSVG(chart);
+    renderChartSVG(chart, row);
   }catch(e){
     content.innerHTML = '<div class="loading">Dati grafico non disponibili per ' + ticker + '</div>';
   }
@@ -695,7 +695,7 @@ function sma(arr, period){
 
 // Grafico completo (standard raptor-geografia): Heikin-Ashi + KAMA + MM20/50/100 + SAR
 // + marker di entrata/uscita, Renko, Volume, Baffetti, AO, RSI(14/5) — reso via DOM in SVG.
-function renderChartSVG(cd){
+function renderChartSVG(cd, row){
   const dates = cd.date || [];
   const N = dates.length;
   if(!N) return;
@@ -758,7 +758,9 @@ function renderChartSVG(cd){
     for(let g=0; g<=4; g++){ const gy = yTop+hh/4*g; line(PAD.l, gy, PAD.l+PW, gy, g===0||g===4?'#d0d7de':'#eef0f3', g===0||g===4?0.8:0.5); }
 
     if(panel.id==='price'){
-      const allP = [...ha.haH, ...ha.haL, ...kama.filter(x=>x!=null), ...mm20.filter(x=>x!=null), ...mm100.filter(x=>x!=null), ...(cd.chandelier_stop||[]).filter(x=>x!=null), ...(cd.bb_upper||[]).filter(x=>x!=null), ...(cd.bb_lower||[]).filter(x=>x!=null)];
+      const allP = [...ha.haH, ...ha.haL, ...kama.filter(x=>x!=null), ...mm20.filter(x=>x!=null), ...mm100.filter(x=>x!=null), ...(cd.chandelier_stop||[]).filter(x=>x!=null), ...(cd.bb_upper||[]).filter(x=>x!=null), ...(cd.bb_lower||[]).filter(x=>x!=null),
+        ...(row?.ultimo_trade_entry_price!=null?[row.ultimo_trade_entry_price]:[]),
+        ...(row?.ultimo_trade_exit_price!=null?[row.ultimo_trade_exit_price]:[])];
       const mn = Math.min(...allP)*0.995, mx = Math.max(...allP)*1.005;
       const sy = vv => scY(vv, mn, mx, yTop, hh);
       for(let g=0; g<=4; g++){ const vv = mn+(mx-mn)/4*g; txt(PAD.l-4, sy(vv)+3, vv<10?vv.toFixed(3):vv.toFixed(2), '#57606a', 8, 'end'); }
@@ -788,6 +790,24 @@ function renderChartSVG(cd){
       const lc = c[N-1];
       rectEl(PAD.l+PW+2, sy(lc)-7, 50, 14, '#1f2328');
       txt(PAD.l+27+PW+0, sy(lc)+4, lc<10?lc.toFixed(4):lc.toFixed(2), '#fff', 8);
+
+      // Righe entrata/uscita dell'ultimo trade (BUY2/BUY3 -> SELL/STOP), se disponibili.
+      // Se la posizione è ancora aperta, terza riga verde sul prezzo corrente.
+      if(row?.ultimo_trade_entry_price!=null){
+        const ep = row.ultimo_trade_entry_price;
+        line(PAD.l, sy(ep), PAD.l+PW, sy(ep), '#1971c2', 1, '6,3');
+        rectEl(PAD.l+PW+2, sy(ep)-7, 50, 14, '#1971c2');
+        txt(PAD.l+27+PW+0, sy(ep)+4, 'E '+(ep<10?ep.toFixed(4):ep.toFixed(2)), '#fff', 7.5);
+      }
+      if(row?.ultimo_trade_exit_price!=null){
+        const xp = row.ultimo_trade_exit_price;
+        line(PAD.l, sy(xp), PAD.l+PW, sy(xp), '#495057', 1, '6,3');
+        rectEl(PAD.l+PW+2, sy(xp)-7, 50, 14, '#495057');
+        txt(PAD.l+27+PW+0, sy(xp)+4, 'U '+(xp<10?xp.toFixed(4):xp.toFixed(2)), '#fff', 7.5);
+      } else if(row?.ultimo_trade_aperto){
+        line(PAD.l, sy(lc), PAD.l+PW, sy(lc), '#2f9e44', 1.3, '2,2');
+      }
+
       txt(PAD.l+2, yTop+10, 'PREZZO (HEIKIN-ASHI) · KAMA · MM20/50/100 · SAR', '#57606a', 7.5, 'start', 700);
     }
 
