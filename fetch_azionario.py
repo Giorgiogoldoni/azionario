@@ -72,13 +72,14 @@ MR_HURST_THRESHOLD = 0.45    # sotto questa soglia: regime mean-reverting confer
 
 # Motore SUPER MEAN REVERSION — "compra dopo un forte calo", separato dalla MR normale
 # (che anzi blocca volutamente gli ingressi durante un vero crollo). Due fasi:
-# 1) IN OSSERVAZIONE quando c'è un calo forte + ipervenduto profondo
+# 1) IN OSSERVAZIONE quando c'è un calo forte (dall'ultimo pivot ZigZag, non da una finestra
+#    fissa di barre — vedi calc_zigzag) + ipervenduto profondo
 # 2) INGRESSO solo quando arriva una conferma di inversione (non si compra "a scatola chiusa")
-SMR_DRAWDOWN_WINDOW = 60     # barre su cui calcolare il massimo di riferimento
 SMR_DRAWDOWN_THRESHOLD = -0.25   # calo minimo dal massimo per accendere "in osservazione"
 SMR_RSI14_MAX = 35           # ipervenduto profondo richiesto per "in osservazione"
 SMR_WATCH_EXPIRY = 15        # barre entro cui deve arrivare la conferma, altrimenti si annulla
 SMR_STOP_PCT = -0.15         # stop di invalidazione se il rimbalzo fallisce dopo l'ingresso
+ZIGZAG_ATR_MULT = 4.0        # soglia ZigZag = ATR14 x questo moltiplicatore (si adatta da solo alla volatilità)
 HURST_STRIDE = 5             # ricalcolo Hurst ogni N barre (statistica lenta, approssimazione lecita
                               # per limitare il costo computazionale su storici lunghi)
 
@@ -319,19 +320,63 @@ RATING_CODE_MAP = {
 # fissa = ATR(14) mediano dell'ultimo anno
 # ---------------------------------------------------------------------------
 
+def calc_zigzag(high: list, low: list, atr_series: list, atr_mult: float = 4.0):
+    """ZigZag con soglia dinamica = ATR14 x atr_mult (invece di una % fissa): si adatta
+    da solo alla volatilità reale di ciascun titolo (un'azione tranquilla e un ETF a
+    leva 5x su materie prime avranno soglie diverse senza bisogno di tabelle manuali).
+    Ritorna la lista di pivot [(indice, prezzo, 'H'|'L'), ...] in ordine cronologico.
+    """
+    n = len(high)
+    if n < 2:
+        return []
+    pivots = []
+    up_zig = True
+    tmp_max, tmp_max_idx = high[0], 0
+    tmp_min, tmp_min_idx = low[0], 0
+    for i in range(1, n):
+        atr = atr_series[i]
+        if atr is None:
+            continue
+        base_price = tmp_max if up_zig else tmp_min
+        pct = (atr * atr_mult) / base_price if base_price else 0
+        if up_zig:
+            if high[i] > tmp_max:
+                tmp_max, tmp_max_idx = high[i], i
+            if pct and (low[i] - tmp_max) / tmp_max <= -pct:
+                pivots.append((tmp_max_idx, tmp_max, "H"))
+                up_zig = False
+                tmp_min, tmp_min_idx = low[i], i
+        else:
+            if low[i] < tmp_min:
+                tmp_min, tmp_min_idx = low[i], i
+            if pct and (high[i] - tmp_min) / tmp_min >= pct:
+                pivots.append((tmp_min_idx, tmp_min, "L"))
+                up_zig = True
+                tmp_max, tmp_max_idx = high[i], i
+    return pivots
+
+
 def calc_atr_series(high: list, low: list, close: list, n: int = 14) -> list:
-    if len(close) < 2:
-        return [None] * len(close)
-    tr = [max(high[i] - low[i], abs(high[i] - close[i - 1]), abs(low[i] - close[i - 1]))
-          for i in range(1, len(close))]
-    if not tr:
-        return [None] * len(close)
-    result = [None] * (len(close) - len(tr))
-    av = sum(tr[:n]) / min(n, len(tr))
-    result.append(round(av, 5))
-    for i in range(min(n, len(tr)), len(tr)):
+    """ATR (Average True Range) allineato per indice con high/low/close: il risultato ha
+    la STESSA lunghezza dell'input, con None nelle prime n barre (dati insufficienti).
+    ATTENZIONE: prima di questa correzione la versione restituiva un array più corto di
+    (n-1) elementi ma SENZA aggiustare l'indice — chi la usava indicizzandola con lo
+    stesso indice di close (es. il Chandelier Exit) leggeva quindi l'ATR di (n-1) barre
+    nel futuro rispetto a quella corrente. Corretto qui una volta per tutte."""
+    length = len(close)
+    if length < 2:
+        return [None] * length
+    tr = [None] * length  # tr[0] non definito (manca il close precedente)
+    for i in range(1, length):
+        tr[i] = max(high[i] - low[i], abs(high[i] - close[i - 1]), abs(low[i] - close[i - 1]))
+    result = [None] * length
+    if length <= n:
+        return result
+    av = sum(tr[1:n + 1]) / n
+    result[n] = round(av, 5)
+    for i in range(n + 1, length):
         av = (av * (n - 1) + tr[i]) / n
-        result.append(round(av, 5))
+        result[i] = round(av, 5)
     return result
 
 
@@ -601,6 +646,20 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     # BUY2 accetta ora anche "AO in miglioramento (3 barre)" oltre a "AO>0" — BUY3 resta rigido.
     atr_series_full = calc_atr_series(high.tolist(), low.tolist(), close.tolist())
     high_list = high.tolist()
+    low_list = low.tolist()
+    zigzag_pivots = calc_zigzag(high_list, low_list, atr_series_full, ZIGZAG_ATR_MULT)
+    # ultimo pivot "H" (massimo) confermato PRIMA (o a) ciascuna barra — per il calcolo del
+    # calo reale in Super Mean Reversion, sostituisce la vecchia finestra fissa di 60 barre.
+    ultimo_pivot_h_per_barra = [None] * len(close_list_full)
+    _ultimo_h = None
+    _pivot_iter = iter(zigzag_pivots)
+    _prossimo = next(_pivot_iter, None)
+    for idx in range(len(close_list_full)):
+        while _prossimo is not None and _prossimo[0] <= idx:
+            if _prossimo[2] == "H":
+                _ultimo_h = _prossimo[1]
+            _prossimo = next(_pivot_iter, None)
+        ultimo_pivot_h_per_barra[idx] = _ultimo_h
     close_list_full = close.tolist()
     ao_list = ao.tolist()
     baff_list = baff_series.tolist()
@@ -713,9 +772,9 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     for idx in range(len(close_list_full)):
         c = close_list_full[idx]
         if smr_state == "FLAT":
-            if idx >= SMR_DRAWDOWN_WINDOW:
-                window_high = max(close_list_full[idx - SMR_DRAWDOWN_WINDOW: idx + 1])
-                dd = c / window_high - 1 if window_high else 0
+            ref_high = ultimo_pivot_h_per_barra[idx]
+            if ref_high:
+                dd = c / ref_high - 1
                 r14 = rsi14_l[idx]
                 if dd <= SMR_DRAWDOWN_THRESHOLD and r14 is not None and not math.isnan(r14) and r14 < SMR_RSI14_MAX:
                     smr_state = "WATCHING"; smr_watch_since = idx
@@ -1097,6 +1156,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "baff": [int(v) for v in baff_series.values],
         "signals": [str(s) for s in segnale_series.values],
         "chandelier_stop": chandelier_stop_series,
+        "zigzag": [{"i": p[0], "data": str(df.index[p[0]].date()), "prezzo": round(p[1], 4), "tipo": p[2]} for p in zigzag_pivots],
         "renko": renko_bricks,
         "renko_brick": renko_brick_size,
         "signals_history": signals_history,
