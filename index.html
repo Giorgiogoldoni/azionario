@@ -282,6 +282,8 @@ async function load(){
   populateSettori();
   renderTopSections();
   render();
+  const tParam = new URL(window.location).searchParams.get('ticker');
+  if(tParam) openChart(tParam);
 }
 
 function renderTopSections(){
@@ -455,6 +457,9 @@ async function openChart(ticker){
   const content = document.getElementById('modalContent');
   bg.classList.add('open');
   content.innerHTML = '<div class="loading">Caricamento grafico...</div>';
+  const url = new URL(window.location);
+  url.searchParams.set('ticker', ticker);
+  history.pushState({ticker}, '', url);
   const row = ALL.find(x=>x.ticker===ticker);
   try{
     const chart = await fetch(CHART_BASE + fileFor(ticker) + '.json?t=' + Date.now()).then(r=>r.json());
@@ -465,8 +470,18 @@ async function openChart(ticker){
   }
 }
 
-document.getElementById('modalClose').addEventListener('click', ()=>document.getElementById('modalBg').classList.remove('open'));
-document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target.id==='modalBg') e.currentTarget.classList.remove('open'); });
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('open');
+  const url = new URL(window.location);
+  url.searchParams.delete('ticker');
+  history.pushState({}, '', url);
+}
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalBg').addEventListener('click', e=>{ if(e.target.id==='modalBg') closeModal(); });
+window.addEventListener('popstate', ()=>{
+  const t = new URL(window.location).searchParams.get('ticker');
+  if(t) openChart(t); else document.getElementById('modalBg').classList.remove('open');
+});
 
 const REGIME_LABEL = {
   SLANCIO:'🚀 Slancio', SALITA:'📈 Salita', RIBASSO:'📉 Ribasso',
