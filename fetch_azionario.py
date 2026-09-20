@@ -999,9 +999,20 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     )
     campione_minimo_ok = storico_buy_ok or storico_smr_ok
 
+    # Il filtro sul regime (niente Laterale/Ribasso) ha senso per i motori trend-following
+    # (BUY2/BUY3, Inversione, SBB), che hanno bisogno di un vero trend per funzionare — ma è
+    # AL CONTRARIO per Super Mean Reversion: un mercato Laterale è il suo habitat naturale
+    # (si compra dopo un crollo in attesa di un rimbalzo, non di un trend confermato), quindi
+    # per SMR il regime non è un requisito.
+    solo_trend_following = [m for m in motori_attivi if m in ("BUY", "INVERSIONE", "SBB")]
+    regime_ok = (
+        regime["code"] not in ("RIBASSO", "LATERALE") if solo_trend_following
+        else True  # nessun motore trend-following attivo (es. solo SMR): il regime non conta
+    )
+
     segnale_qualita = (
         motori_concordi >= 1
-        and regime["code"] not in ("RIBASSO", "LATERALE")
+        and regime_ok
         and dato_fresco
         and prezzo_ok
         and storico_ok
