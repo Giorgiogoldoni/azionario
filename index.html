@@ -461,6 +461,10 @@ async function openChart(ticker){
   url.searchParams.set('ticker', ticker);
   history.pushState({ticker}, '', url);
   const row = ALL.find(x=>x.ticker===ticker);
+  if(!row){
+    content.innerHTML = '<div class="loading">' + ticker + ' non è presente nell\'universo azionario di oggi (segnale scaduto o titolo temporaneamente non disponibile)</div>';
+    return;
+  }
   try{
     const chart = await fetch(CHART_BASE + fileFor(ticker) + '.json?t=' + Date.now()).then(r=>r.json());
     content.innerHTML = buildChartHTML(row, chart);
@@ -672,9 +676,18 @@ function historyTableHTML(chart){
 }
 
 function buildChartHTML(row, chart){
+  const dates = chart.date || [];
+  const ultimaData = dates[dates.length-1];
+  let staleInfo = '';
+  if(ultimaData){
+    const giorni = Math.round((new Date() - new Date(ultimaData)) / 86400000);
+    const stale = giorni > 4;
+    staleInfo = `<div style="font-size:11px;margin-top:2px;color:${stale?'var(--ex)':'var(--text3)'}">${stale?'⚠️ ':''}Ultimo dato: ${ultimaData}${stale?` (${giorni} giorni fa — non aggiornato di recente)`:''}</div>`;
+  }
   return `
     <div class="modal-header">
       <h2>${row.nome} <span style="color:var(--text3);font-family:var(--font-mono);font-size:13px">${row.ticker}</span></h2>
+      ${staleInfo}
     </div>
 
     ${statStripHTML(row)}
