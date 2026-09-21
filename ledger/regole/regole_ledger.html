@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📖 Come si legge il Ledger — AZIONARIO</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@300;400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f8f9fa;--bg3:#f1f3f5;
+  --border:#dee2e6;--border2:#ced4da;
+  --text:#212529;--text2:#495057;--text3:#868e96;
+  --accent:#1971c2;
+  --lc:#2f9e44;--le:#1971c2;--gr:#e67700;--ex:#c92a2a;
+  --font-mono:'Space Mono',monospace;
+  --font-cond:'Barlow Condensed',sans-serif;
+  --font-body:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.55}
+.wrap{max-width:820px;margin:0 auto;padding:30px 24px 80px}
+.topbar{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.topbar h1{font-family:var(--font-cond);font-weight:800;font-size:20px}
+.topbar a{font-size:12px;color:var(--accent);text-decoration:none}
+.topbar a:hover{text-decoration:underline}
+h2{font-family:var(--font-cond);font-weight:800;font-size:19px;margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+h3{font-family:var(--font-cond);font-weight:700;font-size:15px;margin:18px 0 6px;color:var(--text2)}
+p{margin-bottom:10px}
+ul,ol{margin:0 0 12px 22px}
+li{margin-bottom:5px}
+.box{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin:12px 0}
+.box.warn{background:#fff3bf;border-color:#ffe066}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+th{background:var(--bg2);font-family:var(--font-cond);font-weight:700}
+code{font-family:var(--font-mono);background:var(--bg3);padding:1px 5px;border-radius:3px;font-size:12.5px}
+.badge{display:inline-block;font-family:var(--font-cond);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;color:#fff}
+.badge-buy{background:var(--lc)}.badge-inv{background:#8e44ad}.badge-sbb{background:var(--gr)}.badge-mr{background:var(--le)}.badge-smr{background:#0c8599}
+.stato-aperta{background:#fff3bf;color:var(--gr);padding:2px 8px;border-radius:10px;font-family:var(--font-cond);font-weight:700;font-size:11px}
+.stato-chiusa{background:#d3f9d8;color:var(--lc);padding:2px 8px;border-radius:10px;font-family:var(--font-cond);font-weight:700;font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>📖 Come si legge il Ledger</h1>
+  <div><a href="../">← Home AZIONARIO</a> · <a href="./">📒 Vai al Ledger</a></div>
+</div>
+
+<div class="wrap">
+
+<p>Il Ledger di Verifica esiste per rispondere a una domanda sola: <b>quale dei motori di segnale funziona davvero, nel tempo, con dati reali</b> — non un'impressione, un registro che si accumula giorno dopo giorno e permette di controllare a posteriori come sono andati i segnali di qualche settimana fa.</p>
+
+<h2>1. Come si apre una voce</h2>
+<p>Ogni giorno, per ogni titolo con <b>almeno un motore attivo</b> (BUY2/BUY3, Inversione, Super Best Buy, Mean Reversion, o Super Mean Reversion), il sistema registra una nuova riga: ticker, nome, data, prezzo in quel momento, e quali motori erano attivi.</p>
+<div class="box">
+<b>Cooldown di 10 giorni</b>: se lo stesso titolo resta segnalato per più giorni di fila, non si apre una voce ogni giorno — se ne apre una sola, e non se ne aprirà un'altra sullo stesso ticker prima che siano passati 10 giorni dall'ultima. Serve a evitare che un segnale "che sfarfalla" (attivo-disattivo-attivo) generi decine di righe identiche.</div>
+
+<h2>2. I checkpoint: +5, +10, +20 giorni</h2>
+<p>Una volta aperta, ogni voce viene ricontrollata tre volte, sempre confrontando il prezzo di quel momento con il prezzo di ingresso:</p>
+<table>
+<tr><th>Checkpoint</th><th>Cosa succede</th></tr>
+<tr><td><code>+5 giorni</code></td><td>Primo controllo, di calendario (non di borsa) dall'apertura</td></tr>
+<tr><td><code>+10 giorni</code></td><td>Secondo controllo</td></tr>
+<tr><td><code>+20 giorni</code></td><td>Terzo e ultimo controllo — a questo punto la voce si chiude</td></tr>
+</table>
+<p>Ogni checkpoint registra il rendimento % rispetto al prezzo di ingresso. Una voce può avere 0, 1, 2 o 3 checkpoint compilati a seconda di quanti giorni sono già passati.</p>
+
+<h3>Aperta vs Chiusa</h3>
+<p><span class="stato-aperta">Aperta</span> = non ha ancora tutti e 3 i checkpoint (è nata da meno di 20 giorni, oppure il prezzo di quel giorno non è stato disponibile). <span class="stato-chiusa">Chiusa</span> = ha tutti e 3 i checkpoint, il suo percorso è concluso e resta nel registro come storico consultabile.</p>
+
+<h2>3. Il pannello "Performance per motore"</h2>
+<p>In cima alla pagina del Ledger, una card per ciascuno dei 5 motori mostra, per ogni checkpoint, la <b>media dei rendimenti</b> e la <b>% di voci finite positive</b>, calcolate solo sulle voci che hanno effettivamente già raggiunto quel checkpoint. È il numero più importante di tutta la pagina: risponde a "questo motore, storicamente, dopo N giorni, ha reso bene o male?".</p>
+<div class="box warn">
+<b>Attenzione ai campioni piccoli</b>: con pochi casi (es. 3-5 voci), un singolo risultato fortunato o sfortunato può spostare parecchio la media. Prima di fidarsi di un numero, guarda sempre anche l'<code>n</code> (quante voci lo compongono) — più basso è, meno affidabile è quel numero.
+</div>
+
+<h2>4. I 5 motori, in breve</h2>
+<table>
+<tr><th>Badge</th><th>Motore</th><th>Logica</th></tr>
+<tr><td><span class="badge badge-buy">BUY</span></td><td>BUY2 / BUY3</td><td>Trend-following: KAMA + AO + conferma "baffetti"</td></tr>
+<tr><td><span class="badge badge-inv">INV</span></td><td>Inversione</td><td>Reversal tecnico: cross KAMA + ATR in salita + altri trigger incrociati</td></tr>
+<tr><td><span class="badge badge-sbb">SBB</span></td><td>Super Best Buy</td><td>Combinazione di condizioni più stringente, punteggio alto</td></tr>
+<tr><td><span class="badge badge-mr">MR</span></td><td>Mean Reversion</td><td>Compra ai minimi/vende ai massimi in un range laterale (Bollinger + RSI + Hurst basso)</td></tr>
+<tr><td><span class="badge badge-smr">SMR</span></td><td>Super Mean Reversion</td><td>Compra dopo un forte calo confermato (ZigZag) + segnale di inversione</td></tr>
+</table>
+<p>Nota: BUY, Inversione e SBB hanno bisogno di un vero trend per funzionare (vengono penalizzati se il regime è Laterale o Ribasso). Mean Reversion e Super Mean Reversion lavorano meglio proprio quando il trend è debole — è il loro habitat naturale, non un difetto.</p>
+
+<h2>5. Filtri e ricerca</h2>
+<ul>
+<li><b>Cerca nome o ticker</b>: filtro testuale libero</li>
+<li><b>Regione</b>: EU/US/IT (azioni) o uno dei basket ETF (Leva, Geografia, Tematici, Settoriali, iShares...)</li>
+<li><b>Motore</b>: mostra solo le voci dove quel motore specifico era attivo</li>
+<li><b>Solo voci aperte</b>: nasconde le voci già chiuse, utile per vedere cosa sta ancora "maturando"</li>
+</ul>
+<p>Cliccando su nome o ticker di una riga si apre il grafico completo del titolo, con lo stato tecnico di oggi (non quello del giorno in cui la voce fu aperta).</p>
+
+<h2>6. Limiti onesti da tenere a mente</h2>
+<ul>
+<li><b>Il Ledger è giovane</b>: finché non sono passati almeno 20 giorni dall'apertura delle prime voci, il pannello "Performance per motore" mostrerà "dati insufficienti" per la maggior parte dei motori — non è un errore, è solo presto.</li>
+<li><b>I checkpoint sono a giorni di calendario, non di borsa</b>: un weekend o una festività dentro la finestra riduce leggermente i giorni di mercato realmente trascorsi.</li>
+<li><b>Un rendimento medio alto con pochi casi può essere un artefatto</b>, specialmente su strumenti a leva o a prezzo molto basso, dove un singolo movimento estremo genera percentuali enormi che non riflettono un vero vantaggio ripetibile.</li>
+</ul>
+
+</div>
+</body>
+</html>
