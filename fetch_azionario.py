@@ -1379,6 +1379,27 @@ def load_ishares():
     return universe
 
 
+def load_etp():
+    """Basket 'ETP': 63 ETF dell'universo 'Linea Full' del repo etp (estratti da
+    linea_full.py, lista fissa caricata da tickers_etp.json locale). Come Scanner
+    Settoriale/Settori GICS/iShares, NON deduplicato contro gli altri basket. Se il
+    file manca, ritorna lista vuota senza bloccare il resto dello script."""
+    path = ROOT / "tickers_etp.json"
+    if not path.exists():
+        print("Avviso: tickers_etp.json non trovato — basket ETP saltato", file=sys.stderr)
+        return []
+    try:
+        rows = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"Avviso: errore leggendo tickers_etp.json ({e}) — basket ETP saltato", file=sys.stderr)
+        return []
+    universe = []
+    for nome, ticker, settore, paese_o_exch, _ in rows:
+        universe.append({"regione": "ETP", "nome": nome, "ticker": ticker,
+                          "settore": settore, "paese": paese_o_exch, "exchange": None})
+    return universe
+
+
 def load_universe():
     stoxx = json.loads((ROOT / "tickers_stoxx600.json").read_text(encoding="utf-8"))
     sp500 = json.loads((ROOT / "tickers_sp500.json").read_text(encoding="utf-8"))
@@ -1415,6 +1436,7 @@ def load_universe():
     universe.extend(load_scanner_settoriale())
     universe.extend(load_settori_gics())
     universe.extend(load_ishares())
+    universe.extend(load_etp())
 
     return universe
 
