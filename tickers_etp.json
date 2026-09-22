@@ -1,0 +1,443 @@
+[
+ [
+  "WT World",
+  "WWRD.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares Core MSCI World",
+  "SWDA.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "Vanguard FTSE All-World",
+  "VWCE.DE",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "Xtrackers MSCI World Swap",
+  "XDWT.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI World Momentum",
+  "IWMO.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI World Quality",
+  "IWQU.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares World Enhanced Active",
+  "WOEE.DE",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares STOXX World Multifactor",
+  "IFSW.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "JPMorgan Global Multi-Factor",
+  "JPGL.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares World Factor Rotation",
+  "FCRN.DE",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "WT US Efficient Core",
+  "NTSX.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "WT Global Efficient Core",
+  "NTSG.MI",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "iShares STOXX World MF",
+  "IBCZ.DE",
+  "Azionario Globale",
+  null,
+  null
+ ],
+ [
+  "WT Euro Stoxx 50",
+  "WS5X.MI",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares Europe Small Cap",
+  "SMEA.MI",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares EURO STOXX 50",
+  "EXX5.DE",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares STOXX Europe 600",
+  "EXV1.DE",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares Europe Enhanced Active",
+  "EUEE.DE",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI Europe Momentum",
+  "IEMO.MI",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI Europe Quality",
+  "IEQU.MI",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI Europe",
+  "EXXW.DE",
+  "Azionario Europa",
+  null,
+  null
+ ],
+ [
+  "WT S&P 500",
+  "WSPX.MI",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "WT S&P 500 EUR Hedged",
+  "WSPE.MI",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "WT Nasdaq-100",
+  "WNAS.MI",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "WT Russell 2000 Efficient Core",
+  "WRTY.MI",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "iShares Core S&P 500",
+  "CSSPX.MI",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "iShares US Enhanced Active",
+  "USEE.DE",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI USA Quality",
+  "QDVB.DE",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "Xtrackers MSCI USA IT",
+  "XUTC.MI",
+  "Azionario USA",
+  null,
+  null
+ ],
+ [
+  "Vanguard FTSE EM",
+  "VFEM.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI EM",
+  "EIMI.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "WisdomTree Japan EUR Hedged",
+  "DXJF.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "iShares China",
+  "XCHA.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "iShares Asia Pacific",
+  "XASX.DE",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "iShares EM Enhanced Active",
+  "EMEE.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "iShares Asia ex Japan Enhanced",
+  "AXEE.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI EM Small Cap",
+  "IS3N.DE",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "Vanguard Dev Asia Pacific",
+  "VAPX.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "Amundi MSCI Japan EUR Hdg",
+  "JPNH.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "WT EM Efficient Core",
+  "NTSZ.MI",
+  "Azionario EM/Asia",
+  null,
+  null
+ ],
+ [
+  "VanEck Semiconductor",
+  "SMH.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "iShares AI Innovation",
+  "IART.DE",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "VanEck Defense",
+  "DFNS.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "WT Physical Gold",
+  "PHAU.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "WT WTI Crude Oil",
+  "CRUD.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "WT Copper",
+  "COPA.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "VanEck Rare Earth",
+  "RARE.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "iShares Commodity",
+  "CMOD.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "WT Agriculture",
+  "AIGA.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "iShares MSCI Global Financials",
+  "IFFF.MI",
+  "Tematico",
+  null,
+  null
+ ],
+ [
+  "WT Travel 2x Lev",
+  "2TRV.MI",
+  "Leva 2x",
+  null,
+  null
+ ],
+ [
+  "WT Automobiles 2x Lev",
+  "2CAR.MI",
+  "Leva 2x",
+  null,
+  null
+ ],
+ [
+  "WT Aerospace & Defence 3x Lev",
+  "3EDF.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT Euro Stoxx 50 3x Lev",
+  "3EUL.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT Banks 3x Lev",
+  "3BAL.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT DAX 3x Lev",
+  "3DEL.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT Italy 3x Lev",
+  "3ITL.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT S&P 500 3x Lev",
+  "3USL.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT Nasdaq 3x Lev",
+  "QQQ3.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT MSCI G7 3x Lev",
+  "3MG7.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "WT Semiconductor 3x Lev",
+  "3SEM.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "Leverage Shares 3x NVIDIA",
+  "3NVD.MI",
+  "Leva 3x",
+  null,
+  null
+ ],
+ [
+  "Xtrackers EUR Overnight Rate Swap",
+  "XEON.MI",
+  "Monetario",
+  null,
+  null
+ ]
+]
