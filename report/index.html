@@ -72,6 +72,10 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
 .rowbtn{border:1px solid var(--border2);background:var(--bg2);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:12px;margin-right:3px}
 .rowbtn:hover{background:var(--bg3)}
 .empty{padding:30px 20px;text-align:center;color:var(--text3);font-family:var(--font-cond);font-size:14px}
+.top3-note{font-size:10.5px;color:var(--text3);margin:6px 0 10px;line-height:1.5}
+.grp-row td{background:var(--bg3);font-family:var(--font-cond);font-weight:800;font-size:12px;letter-spacing:.3px;padding:6px 8px;border-top:2px solid var(--border)}
+.grp-row .grp-n{font-weight:400;color:var(--text3);font-size:10.5px;margin-left:6px}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
 .ledger-note{font-size:10.5px;color:var(--text3);margin-top:8px}
 
 /* --- Blocchi copiati identici da index.html per il modal grafico --- */
@@ -149,7 +153,11 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
     <h1>🌅 Report Mattutino</h1>
     <div class="sub"><span id="lastUpdate">—</span> · <a href="../">← Home AZIONARIO</a> · <a href="../qualita/">🏆 Segnali di Qualità</a> · <a href="../ledger/">📒 Ledger di Verifica</a></div>
   </div>
-  <button class="btn" onclick="scaricaExcel()">📥 Scarica Excel dei consigli</button>
+  <div class="top-actions">
+    <button class="btn" onclick="scaricaExcel()">📥 Scarica Excel dei consigli</button>
+    <button class="btn" onclick="scaricaTradeAperti()">📥 Tutti i trade aperti (Excel)</button>
+    <button class="btn" onclick="openRegoleReport()">📄 Regole (PDF)</button>
+  </div>
 </div>
 
 <div class="section" id="macroSection">
@@ -159,6 +167,11 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
 
 <div class="section" id="rotazioneSection">
   <div class="section-h">🔄 Rotazione interna (universo AZIONARIO)</div>
+  <div class="empty">Caricamento...</div>
+</div>
+
+<div class="section" id="top3Section">
+  <div class="section-h">🏅 Top 3 per basket — trade aperti con storia solida</div>
   <div class="empty">Caricamento...</div>
 </div>
 
@@ -212,6 +225,34 @@ const segnalePill = s => ({
 const pct = v => v==null ? '—' : `<span style="color:${v>=0?'var(--lc)':'var(--ex)'}">${v>=0?'+':''}${v.toFixed(2)}%</span>`;
 
 let AZ_TITOLI = [];
+let AZ_REF = null;
+
+// Soglie Top 3 per basket (unica fonte: usate anche nel PDF regole)
+const TOP3_MIN_TRADE = 8;      // storia minima: trade chiusi
+const TOP3_MAX_GIORNI = 30;    // ingresso recente: giorni dall'apertura del trade
+const TOP3_MAX_STALE = 5;      // dato non aggiornato oltre N giorni => escluso
+const BASKET_ORDER = ['EU','US','IT','ISHARES','SUPERTEM','SCANNERSETT','SETTGICS','ETFLEVA','ETFGEO','ETP'];
+
+function giorniTra(dataStr, refStr){
+  if(!dataStr || !refStr) return null;
+  const a = Date.parse(dataStr.slice(0,10)+'T00:00:00Z'), b = Date.parse(refStr.slice(0,10)+'T00:00:00Z');
+  if(isNaN(a)||isNaN(b)) return null;
+  return Math.round((b-a)/86400000);
+}
+const _n = (v,d=1) => (v==null||isNaN(v)) ? '—' : Number(v).toFixed(d);
+
+// Trade aperto (in_posizione) + storia + recente + dato fresco + delta medio storico > 0
+function top3Ok(t){
+  if(!t.in_posizione) return false;
+  if((t.trade_chiusi||0) < TOP3_MIN_TRADE) return false;
+  if(t.pct_vincenti==null || t.delta_medio_pct==null || t.delta_medio_pct<=0) return false;
+  const g = giorniTra(t.ultimo_trade_entry_date, AZ_REF);
+  if(g==null || g<-1 || g>TOP3_MAX_GIORNI) return false;
+  const st = giorniTra(t.ultimo_aggiornamento, AZ_REF);
+  if(st==null || st>TOP3_MAX_STALE) return false;
+  return true;
+}
+const top3Sort = (a,b) => (b.pct_vincenti-a.pct_vincenti) || (b.delta_medio_pct-a.delta_medio_pct) || (b.trade_chiusi-a.trade_chiusi);
 
 function openRegole(ticker){ window.open(`../regole/${fileFor(ticker)}_Regole.html`, '_blank'); }
 function openTV(tvSymbol){ window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(tvSymbol)}`, '_blank'); }
@@ -347,6 +388,107 @@ function motorePerformanceMap(ledger){
   return map;
 }
 
+function renderTop3(titoli){
+  const el = document.getElementById('top3Section');
+  const baskets = BASKET_ORDER.filter(b=>titoli.some(t=>t.regione===b));
+  const exportRows = [];
+  let tot = 0;
+  const body = baskets.map(b=>{
+    const cand = titoli.filter(t=>t.regione===b && top3Ok(t)).sort(top3Sort);
+    const top = cand.slice(0,3);
+    tot += top.length;
+    top.forEach((r,i)=>exportRows.push({
+      Basket:REGIONE_LABEL[b]||b, Pos:i+1, Nome:r.nome, Ticker:r.ticker,
+      'Data ingresso':r.ultimo_trade_entry_date, 'Giorni dall\'ingresso':giorniTra(r.ultimo_trade_entry_date, AZ_REF),
+      'P&L aperto %':(r.prezzo!=null&&r.ultimo_trade_entry_price)?+((r.prezzo/r.ultimo_trade_entry_price-1)*100).toFixed(2):null,
+      'Trade chiusi':r.trade_chiusi, '% vincita':r.pct_vincenti, 'Delta medio %':r.delta_medio_pct,
+      'Rend. cumulato %':r.rendimento_cumulato, Score:r.score, Segnale:r.segnale,
+      'Candidati nel basket':cand.length
+    }));
+    const head = `<tr class="grp-row"><td colspan="10">${REGIONE_LABEL[b]||b}<span class="grp-n">${cand.length} candidati su ${titoli.filter(t=>t.regione===b&&t.in_posizione).length} trade aperti</span></td></tr>`;
+    if(!top.length) return head + `<tr><td colspan="10" class="muted" style="color:var(--text3)">Nessun titolo supera i filtri in questo basket oggi.</td></tr>`;
+    return head + top.map((r,i)=>{
+      const g = giorniTra(r.ultimo_trade_entry_date, AZ_REF);
+      const pl = (r.prezzo!=null&&r.ultimo_trade_entry_price) ? (r.prezzo/r.ultimo_trade_entry_price-1)*100 : null;
+      return `<tr>
+        <td class="num">${i+1}</td>
+        <td class="nome" title="${r.nome}" onclick="openChart('${r.ticker}')">${r.nome}</td>
+        <td class="ticker" onclick="openChart('${r.ticker}')">${r.ticker}</td>
+        <td>${r.ultimo_trade_entry_date} <span style="color:var(--text3)">(${g}g)</span></td>
+        <td class="num">${pct(pl)}</td>
+        <td class="num">${r.trade_chiusi}</td>
+        <td class="num"><b>${_n(r.pct_vincenti)}%</b></td>
+        <td class="num">${pct(r.delta_medio_pct)}</td>
+        <td class="num">${pct(r.rendimento_cumulato)}</td>
+        <td>
+          <button class="rowbtn" onclick="openRegole('${r.ticker}')" title="Regole PDF">📄</button>
+          <button class="rowbtn" onclick="openTV('${r.tv_symbol||r.ticker}')" title="TradingView">TV</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }).join('');
+  window._top3Export = exportRows;
+  el.innerHTML = `
+    <div class="section-h">🏅 Top 3 per basket — trade aperti con storia solida
+      <button class="btn" style="margin-left:auto" onclick="scaricaTradeAperti()">📥 Tutti i trade aperti (Excel)</button>
+    </div>
+    <div class="top3-note">Solo trade <b>aperti</b> con almeno <b>${TOP3_MIN_TRADE} trade chiusi</b>, ingresso entro <b>${TOP3_MAX_GIORNI} giorni</b>, delta medio storico positivo e dato aggiornato. Ordinati per % vincita, a parità per delta medio. La % vincita su pochi trade è rumorosa: guardare sempre il numero di trade chiusi. Storico passato, nessuna garanzia sul futuro.</div>
+    <table id="tblTop3">
+      <thead><tr><th>#</th><th>Nome</th><th>Ticker</th><th>Ingresso</th><th>P&amp;L aperto</th><th>Trade chiusi</th><th>% vincita</th><th>Δ medio</th><th>Rend. cumulato</th><th>Azioni</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table>
+    ${tot? '' : '<div class="empty">Nessun titolo passa oggi i filtri.</div>'}`;
+}
+
+function scaricaTradeAperti(){
+  const rows = AZ_TITOLI.filter(t=>t.in_posizione).map(t=>{
+    const g = giorniTra(t.ultimo_trade_entry_date, AZ_REF);
+    return {
+      Basket:REGIONE_LABEL[t.regione]||t.regione, Nome:t.nome, Ticker:t.ticker,
+      Segnale:t.segnale, 'Data ingresso':t.ultimo_trade_entry_date, 'Giorni dall\'ingresso':g,
+      'Prezzo ingresso':t.ultimo_trade_entry_price, 'Prezzo attuale':t.prezzo,
+      'P&L aperto %':(t.prezzo!=null&&t.ultimo_trade_entry_price)?+((t.prezzo/t.ultimo_trade_entry_price-1)*100).toFixed(2):null,
+      'Trade chiusi':t.trade_chiusi, '% vincita':t.pct_vincenti, 'Delta medio %':t.delta_medio_pct,
+      'Rend. cumulato %':t.rendimento_cumulato, Score:t.score, Regime:t.regime?.label,
+      'Ultimo aggiornamento':t.ultimo_aggiornamento, 'Passa filtri Top 3':top3Ok(t)?'SI':'NO'
+    };
+  }).sort((a,b)=>(BASKET_ORDER.indexOf(Object.keys(REGIONE_LABEL).find(k=>REGIONE_LABEL[k]===a.Basket))-BASKET_ORDER.indexOf(Object.keys(REGIONE_LABEL).find(k=>REGIONE_LABEL[k]===b.Basket))) || ((b['% vincita']??-1)-(a['% vincita']??-1)));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Trade aperti');
+  if(window._top3Export && window._top3Export.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(window._top3Export), 'Top 3 per basket');
+  XLSX.writeFile(wb, `trade_aperti_${(AZ_REF||new Date().toISOString()).slice(0,10)}.xlsx`);
+}
+
+function openRegoleReport(){
+  const w = window.open('', '_blank');
+  if(!w){ alert('Consenti i popup per aprire le regole, poi usa Stampa > Salva come PDF.'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>Regole — Report Mattutino AZIONARIO</title>
+  <style>body{background:#fff;color:#212529;font-family:Arial,sans-serif;font-size:13px;max-width:780px;margin:24px auto;padding:0 16px;line-height:1.55}h1{font-size:20px}h2{font-size:15px;margin-top:20px;border-bottom:1px solid #dee2e6;padding-bottom:3px}li{margin:3px 0}.n{color:#868e96;font-size:11px}</style></head><body>
+  <h1>📄 Regole — Report Mattutino AZIONARIO</h1>
+  <div class="n">Generato dalla pagina il ${new Date().toLocaleDateString('it-IT')} · dati del ${(AZ_REF||'').slice(0,10)}. Per salvare: Stampa → Salva come PDF.</div>
+  <h2>Top 3 per basket</h2>
+  <ul>
+    <li>Universo: titoli con <b>trade aperto</b> (in posizione) in ciascun basket (${BASKET_ORDER.map(b=>REGIONE_LABEL[b]||b).join(', ')}).</li>
+    <li>Storia minima: almeno <b>${TOP3_MIN_TRADE} trade chiusi</b>; senza storia il titolo è escluso.</li>
+    <li>Recenza: ingresso del trade aperto entro <b>${TOP3_MAX_GIORNI} giorni</b>.</li>
+    <li>Qualità: delta medio storico per trade <b>maggiore di zero</b>.</li>
+    <li>Dato fresco: ultimo aggiornamento entro <b>${TOP3_MAX_STALE} giorni</b> dalla data del report.</li>
+    <li>Ordinamento: <b>% vincita</b> decrescente; a parità delta medio, poi numero di trade chiusi.</li>
+    <li>Massimo 3 titoli per basket; se meno di 3 superano i filtri se ne mostrano meno (nessuna forzatura).</li>
+  </ul>
+  <h2>Excel "Tutti i trade aperti"</h2>
+  <ul><li>Elenca tutti i titoli con trade aperto (non solo i top 3) con ingresso, P&amp;L aperto, trade chiusi, % vincita, delta medio, rendimento cumulato e flag "Passa filtri Top 3". Il secondo foglio contiene il Top 3 per basket.</li></ul>
+  <h2>Limiti</h2>
+  <ul>
+    <li>Trade aperto non significa migliore: più della metà dell'universo ha un trade aperto.</li>
+    <li>La % vincita su 8-10 trade è statisticamente rumorosa; leggerla insieme al numero di trade chiusi.</li>
+    <li>P&amp;L aperto = prezzo attuale / prezzo di ingresso dell'ultimo trade − 1, senza costi né slippage.</li>
+    <li>Storico passato: nessuna garanzia sui risultati futuri. Non è consulenza né raccomandazione personalizzata.</li>
+  </ul>
+  <script>setTimeout(function(){window.print()},400)<\/script></body></html>`);
+  w.document.close();
+}
+
 function renderConsigli(titoli, ledger){
   const motoreMap = motorePerformanceMap(ledger);
   const haDatiSufficienti = Object.keys(motoreMap).length > 0;
@@ -403,6 +545,7 @@ function scaricaExcel(){
   const ws = XLSX.utils.json_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Report');
+  if(window._top3Export && window._top3Export.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(window._top3Export), 'Top 3 per basket');
   XLSX.writeFile(wb, `report_mattutino_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
@@ -415,12 +558,14 @@ async function load(){
     return;
   }
   AZ_TITOLI = az.titoli;
+  AZ_REF = (az.generato||'').slice(0,10) || new Date().toISOString().slice(0,10);
   document.getElementById('lastUpdate').textContent = 'Dati aggiornati: ' + (az.generato||'').replace('T',' ').slice(0,16);
   try{ ledger = await fetch(LEDGER_URL+'?t='+Date.now()).then(r=>r.json()); }catch(e){ ledger = []; }
   try{ macro = await fetch(RAPTOR_SIGNAL_URL+'?t='+Date.now()).then(r=>r.json()); }catch(e){ macro = null; }
 
   renderMacro(macro);
   renderRotazione(az.titoli);
+  renderTop3(az.titoli);
   renderConsigli(az.titoli, ledger);
   const tParam = new URL(window.location).searchParams.get('ticker');
   if(tParam) openChart(tParam);
