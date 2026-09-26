@@ -1,0 +1,117 @@
+diff --git a/report/index.html b/report/index.html
+index 9197205..09935da 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -78,6 +78,11 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
+ .top-actions{display:flex;gap:8px;flex-wrap:wrap}
+ .ledger-note{font-size:10.5px;color:var(--text3);margin-top:8px}
+ 
++/* RICERCA TICKER */
++.search-input{flex:1;min-width:220px;padding:7px 10px;border:1px solid var(--border2);border-radius:4px;font-family:var(--font-mono);font-size:12px;background:var(--bg)}
++.search-result-item{display:inline-block;margin:2px 4px 2px 0;cursor:pointer}
++.search-result-item:hover{background:var(--bg3)}
++
+ /* --- Blocchi copiati identici da index.html per il modal grafico --- */
+ .pill{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;font-family:var(--font-cond);letter-spacing:.5px;white-space:nowrap}
+ .pill-lc{background:#d3f9d8;color:var(--lc)}
+@@ -160,6 +165,14 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
+   </div>
+ </div>
+ 
++<div class="section" id="cercaSection" style="padding:12px 20px 14px">
++  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
++    <input type="text" id="tickerSearchInput" class="search-input" placeholder="🔍 Cerca ticker su tutti i basket (es. AAPL, III.L, VWCE)…" onkeydown="if(event.key==='Enter')doTickerSearch()">
++    <button class="btn" onclick="doTickerSearch()">Cerca</button>
++  </div>
++  <div id="tickerSearchResults" style="margin-top:8px"></div>
++</div>
++
+ <div class="section" id="macroSection">
+   <div class="section-h">🌍 Dove va il mercato</div>
+   <div class="empty">Caricamento dati macro...</div>
+@@ -256,6 +269,34 @@ const top3Sort = (a,b) => (b.pct_vincenti-a.pct_vincenti) || (b.delta_medio_pct-
+ 
+ function openRegole(ticker){ window.open(`../regole/${fileFor(ticker)}_Regole.html`, '_blank'); }
+ function openTV(tvSymbol){ window.open(`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(tvSymbol)}`, '_blank'); }
++
++// Ricerca ticker su TUTTI i basket del repository (AZ_TITOLI è già l'unione di tutti i basket).
++// Match esatto sul ticker completo, poi sul codice base senza suffisso borsa (.MI/.DE/.PA/.L...),
++// infine un contains su ticker/nome per chi digita solo un pezzo. Ambiguità -> lista da scegliere.
++function doTickerSearch(){
++  const raw = document.getElementById('tickerSearchInput').value.trim();
++  const resultsEl = document.getElementById('tickerSearchResults');
++  if(!raw){ resultsEl.innerHTML = ''; return; }
++  const q = raw.toUpperCase();
++  const base = q.split('.')[0];
++  let matches = AZ_TITOLI.filter(t => t.ticker.toUpperCase() === q);
++  if(!matches.length) matches = AZ_TITOLI.filter(t => t.ticker.toUpperCase().split('.')[0] === base);
++  if(!matches.length) matches = AZ_TITOLI.filter(t => t.ticker.toUpperCase().includes(q) || (t.nome||'').toUpperCase().includes(q));
++
++  if(!matches.length){
++    resultsEl.innerHTML = `<div class="warn-banner">⚠️ Nessun ticker trovato per "${raw}" in nessuno dei basket (${BASKET_ORDER.map(b=>REGIONE_LABEL[b]||b).join(', ')}).</div>`;
++    return;
++  }
++  if(matches.length===1){
++    resultsEl.innerHTML = '';
++    document.getElementById('tickerSearchInput').value = '';
++    openChart(matches[0].ticker);
++    return;
++  }
++  resultsEl.innerHTML = `<div style="font-size:11px;color:var(--text3);margin-bottom:4px">${matches.length} risultati — scegli quello giusto:</div>` +
++    matches.slice(0,15).map(t=>`<span class="rowbtn search-result-item" onclick="openChart('${t.ticker}');document.getElementById('tickerSearchResults').innerHTML='';document.getElementById('tickerSearchInput').value=''">${t.ticker} — ${t.nome} <span style="color:var(--text3)">(${REGIONE_LABEL[t.regione]||t.regione})</span></span>`).join('');
++}
++
+ async function openChart(ticker){
+   const bg = document.getElementById('modalBg');
+   const content = document.getElementById('modalContent');
+@@ -264,7 +305,11 @@ async function openChart(ticker){
+   const url = new URL(window.location);
+   url.searchParams.set('ticker', ticker);
+   history.pushState({ticker}, '', url);
+-  const row = AZ_TITOLI.find(x=>x.ticker===ticker);
++  const row = AZ_TITOLI.find(x=>x.ticker.toUpperCase()===ticker.toUpperCase());
++  if(!row){
++    content.innerHTML = `<div class="loading">⚠️ Ticker "${ticker}" non trovato in nessun basket del repository.</div>`;
++    return;
++  }
+   try{
+     const chart = await fetch(CHART_BASE + fileFor(ticker) + '.json?t=' + Date.now()).then(r=>r.json());
+     content.innerHTML = buildChartHTML(row, chart);
+@@ -663,6 +708,29 @@ function statStripHTML(row){
+   </div>`;
+ }
+ 
++// Riga del basket di appartenenza — le stesse info della tabella "Top 3 per basket"
++// (ingresso, P&L aperto, storia dei trade), diverse dagli indicatori tecnici del giorno.
++function basketRowHTML(row){
++  const g = giorniTra(row.ultimo_trade_entry_date, AZ_REF);
++  const pl = (row.prezzo!=null && row.ultimo_trade_entry_price) ? (row.prezzo/row.ultimo_trade_entry_price-1)*100 : null;
++  const passaTop3 = top3Ok(row);
++  const item = (label, val, cls='') => `<div class="stat-strip-item"><div class="ss-label">${label}</div><div class="ss-val ${cls}">${val}</div></div>`;
++  return `
++  <div class="regime-block" style="border-color:var(--accent)">
++    <div class="rb-title" style="color:var(--accent)">📋 Riga Basket — ${REGIONE_LABEL[row.regione]||row.regione}</div>
++    <div class="stat-strip" style="margin:0">
++      ${item('In posizione', row.in_posizione?'✅ Sì':'— No')}
++      ${row.in_posizione ? item('Ingresso', (row.ultimo_trade_entry_date||'—') + (g!=null?' ('+g+'g)':'')) : ''}
++      ${row.in_posizione ? item('P&L aperto', pl!=null?(pl>=0?'+':'')+pl.toFixed(2)+'%':'—', pl!=null&&pl>=0?'green':'red') : ''}
++      ${item('Trade chiusi', row.trade_chiusi??'—')}
++      ${item('% vincita', row.pct_vincenti!=null?row.pct_vincenti.toFixed(1)+'%':'—')}
++      ${item('Δ medio', row.delta_medio_pct!=null?(row.delta_medio_pct>=0?'+':'')+row.delta_medio_pct.toFixed(2)+'%':'—', row.delta_medio_pct!=null&&row.delta_medio_pct>=0?'green':'red')}
++      ${item('Rend. cumulato', row.rendimento_cumulato!=null?(row.rendimento_cumulato>=0?'+':'')+row.rendimento_cumulato.toFixed(2)+'%':'—', row.rendimento_cumulato!=null&&row.rendimento_cumulato>=0?'green':'red')}
++      ${item('Passa Top 3 oggi', passaTop3?'✅ Sì':'No')}
++    </div>
++  </div>`;
++}
++
+ function indicatorGridHTML(row){
+   const cell = (label, val, cls='') => `<div class="modal-stat"><div class="ms-label">${label}</div><div class="ms-val ${cls}">${val}</div></div>`;
+   const pctCls = v => v>0?'green':v<0?'red':'';
+@@ -776,6 +844,7 @@ function buildChartHTML(row, chart){
+     </div>
+ 
+     ${statStripHTML(row)}
++    ${basketRowHTML(row)}
+     ${indicatorGridHTML(row)}
+     ${regimeBlockHTML(row)}
+     ${meanReversionBlockHTML(row)}
