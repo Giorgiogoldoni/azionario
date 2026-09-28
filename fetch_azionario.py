@@ -21,6 +21,7 @@ import math
 import time
 import datetime
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -1138,6 +1139,9 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "motori_concordi": motori_concordi,
         "segnale_qualita": segnale_qualita,
         "dato_fresco": dato_fresco,
+        # calo % dall'ultimo massimo ZigZag confermato (stesso riferimento usato da Super Mean Reversion)
+        "smr_drawdown_pct": (round((close_list_full[-1] / ultimo_pivot_h_per_barra[-1] - 1) * 100, 1)
+                             if ultimo_pivot_h_per_barra[-1] else None),
     }, {
         # serie storiche per il grafico (stile scannerv2)
         "date": [str(d.date()) for d in df.index],
@@ -1173,15 +1177,243 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
 REGOLE_TEMPLATE = (ROOT / "regole_template.html").read_text(encoding="utf-8")
 
 
-def build_regole_html(nome: str, ticker: str, ind: dict) -> str:
+# Soglie del Superindice: DEVONO restare uguali a quelle di index.html e report/index.html
+# (sono duplicate perché le pagine sono statiche e non condividono codice).
+SI_UNIVERSO = ("EU", "US", "IT", "ETFLEVA", "ETFGEO", "SUPERTEM")
+SI_MAX_BARS_FLIP = 2
+SI_MIN_KAMA_GAP = 0.3
+SI_MIN_ER = 0.15
+
+
+def _n(v, nd=2, suf=""):
+    """Formatta un numero, '—' se manca."""
+    return "—" if v is None else f"{v:.{nd}f}{suf}"
+
+
+def _ok(cond):
+    """✅/❌ (None = dato non disponibile)."""
+    if cond == "info":
+        return ""
+    return "—" if cond is None else ("✅" if cond else "❌")
+
+
+def _righe(rows):
+    """rows: lista di (condizione, soglia, valore, esito, significato)."""
+    out = []
+    for cond, soglia, valore, esito, signif in rows:
+        cls = "" if esito in (None, "info") else ("si" if esito else "no")
+        out.append(f'<tr><td>{cond}</td><td>{soglia}</td><td class="val">{valore}</td>'
+                   f'<td class="esito {cls}">{_ok(esito)}</td><td class="sig">{signif}</td></tr>')
+    return "".join(out)
+
+
+def _tabella(rows):
+    return ('<table><thead><tr><th>Condizione</th><th>Soglia</th><th>Valore oggi</th><th></th>'
+            '<th>Significato</th></tr></thead><tbody>' + _righe(rows) + '</tbody></table>')
+
+
+def _riepilogo(rows, tutte=True):
+    validi = [r[3] for r in rows if r[3] is not None]
+    n_ok = sum(1 for v in validi if v)
+    return (f'<p class="riep">Condizioni soddisfatte: <strong>{n_ok}/{len(validi)}</strong></p>')
+
+
+def superindice_score(ind: dict):
+    """Punteggio Superindice 0-100 (stessa formula di index.html)."""
+    clamp = lambda x, a, b: max(a, min(b, x))
+    kama = clamp((ind.get("kama_gap_pct") or 0) / 3, 0, 1) * 25
+    er = clamp((ind.get("er") or 0) / 0.60, 0, 1) * 25
+    flip = [20, 13, 7][int(clamp(ind.get("bars_since_flip") or 0, 0, 2))]
+    n = ind.get("trade_chiusi") or 0
+    wins = ((ind.get("pct_vincenti") or 0) / 100) * n
+    adj = (wins + 5 * 0.5) / (n + 5)
+    stor = clamp((adj - 0.30) / 0.50, 0, 1) * 30
+    return round(kama + er + flip + stor, 1), kama, er, flip, stor
+
+
+def build_regole_html(nome: str, ticker: str, ind: dict, extra: dict | None = None) -> str:
+    extra = extra or {}
     now = datetime.datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
-    html = REGOLE_TEMPLATE
+    prezzo = ind["prezzo"]
+    inv = ind.get("inversione") or {}
+    mr = ind.get("mean_reversion") or {}
+    smr = ind.get("super_mean_reversion") or {}
+    regime = ind.get("regime") or {}
+    hurst60 = mr.get("hurst_60_rolling") if mr.get("hurst_60_rolling") is not None else ind.get("hurst_60")
+    kf = ind.get("kama_fast")
+    sez = []
+
+    # ---- BUY3 ----
+    b3 = [
+        ("Regime (Hurst 60)", f"≥ {TREND_HURST_THRESHOLD}", _n(hurst60, 2),
+         None if hurst60 is None else hurst60 >= TREND_HURST_THRESHOLD, "Il titolo sta davvero trendando, non oscillando"),
+        ("Zona", "LONG_CONF", ind["zona"], ind["zona"] == "LONG_CONF", "Prezzo &gt; KAMA Fast &gt; KAMA Slow"),
+        ("AO (EMA3−EMA13)", "&gt; 0", _n(ind.get("ao"), 4), ind.get("ao", 0) > 0, "Momentum positivo"),
+        ("Baff (barre sopra KAMA)", "≥ 3", str(ind.get("baff")), (ind.get("baff") or 0) >= 3, "Momentum continuativo"),
+        ("ER (Efficiency Ratio)", "≥ 0.35", _n(ind.get("er"), 3), (ind.get("er") or 0) >= 0.35, "Mercato direzionale, non laterale"),
+        ("Gap KAMA Fast/Slow", "≥ 0.3%", _n(ind.get("kama_gap_pct"), 2, "%"), (ind.get("kama_gap_pct") or 0) >= 0.3, "Evita falsi crossover marginali"),
+        ("SAR", "Rialzista", "Rialzista" if ind.get("sar_bullish") else "Ribassista", bool(ind.get("sar_bullish")), "Prezzo sopra il Parabolic SAR"),
+    ]
+    in_pos_nota = ""
+    if ind.get("in_posizione"):
+        in_pos_nota = (f" <em>Il motore è già in posizione (ingresso del {ind.get('ultimo_trade_entry_date') or '—'}): "
+                       "un nuovo ingresso scatta solo dopo l'uscita. Le condizioni mostrano se oggi sarebbero ancora valide.</em>")
+    sez.append(("🟢 BUY3 — Entrata confermata", "Serve tutto verde. Attivo oggi: " + ("<strong>SÌ</strong>" if ind.get("buy3") else "no") + in_pos_nota,
+                b3))
+
+    # ---- BUY2 ----
+    b2 = [
+        ("Prezzo &gt; KAMA Fast", f"&gt; {_n(kf, 4)}", _n(prezzo, 4), None if kf is None else prezzo > kf, "Il prezzo ha ripreso sopra la media veloce"),
+        ("SAR", "Rialzista", "Rialzista" if ind.get("sar_bullish") else "Ribassista", bool(ind.get("sar_bullish")), "Prezzo sopra il Parabolic SAR"),
+        ("AO", "In miglioramento (3 barre)", "Sì" if ind.get("ao_improving") else "No", bool(ind.get("ao_improving")), "Momentum in accelerazione"),
+    ]
+    sez.append(("🔵 BUY2 — Entrata anticipata", "Nessun gate di regime: entra anche in mercati laterali. Attivo oggi: " + ("<strong>SÌ</strong>" if ind.get("buy2") else "no") + in_pos_nota, b2))
+
+    # ---- Super Best Buy ----
+    sbb = [
+        ("SAR", "Rialzista", "Rialzista" if ind.get("sar_bullish") else "Ribassista", bool(ind.get("sar_bullish")), "Trend rialzista in corso"),
+        ("Flip SAR", "≤ 2 barre fa", f"{ind.get('bars_since_flip')} barre", (ind.get("bars_since_flip") if ind.get("bars_since_flip") is not None else 99) <= 2, "Cambio di direzione recente"),
+        ("AO", "In miglioramento (3 barre)", "Sì" if ind.get("ao_improving") else "No", bool(ind.get("ao_improving")), "Momentum in accelerazione"),
+    ]
+    dal = ind.get("super_best_buy_dal")
+    sez.append(("🚀 Super Best Buy — Flip SAR", "Attivo oggi: " + (f"<strong>SÌ</strong> (dal {dal})" if ind.get("super_best_buy") else "no"), sbb))
+
+    # ---- Superindice ----
+    regione = extra.get("regione")
+    if regione is None:
+        si_titolo = "Universo non indicato per questa scheda."
+        si_uni = None
+    else:
+        si_uni = regione in SI_UNIVERSO
+    si = [
+        ("Basket nell'universo primario", "EU/US/IT/ETF Leva/ETF Geo/Super Tem.", str(regione or "—"), si_uni, "Esclusi Scanner Sett., Settori GICS, iShares, ETP"),
+        ("Dato fresco", "Sì", "Sì" if ind.get("dato_fresco") else "No", bool(ind.get("dato_fresco")), "Ultimo prezzo recente"),
+        ("SAR", "Rialzista", "Rialzista" if ind.get("sar_bullish") else "Ribassista", bool(ind.get("sar_bullish")), "Trend rialzista"),
+        ("Flip SAR", f"≤ {SI_MAX_BARS_FLIP} barre fa", f"{ind.get('bars_since_flip')} barre", (ind.get("bars_since_flip") if ind.get("bars_since_flip") is not None else 99) <= SI_MAX_BARS_FLIP, "Innesco fresco"),
+        ("Prezzo &gt; KAMA Fast", f"&gt; {_n(kf, 4)}", _n(prezzo, 4), None if kf is None else prezzo > kf, "Prezzo sopra la media veloce"),
+        ("Gap KAMA Fast/Slow", f"≥ {SI_MIN_KAMA_GAP}%", _n(ind.get("kama_gap_pct"), 2, "%"), (ind.get("kama_gap_pct") if ind.get("kama_gap_pct") is not None else -999) >= SI_MIN_KAMA_GAP, "Media veloce sopra la lenta"),
+        ("ER", f"≥ {SI_MIN_ER}", _n(ind.get("er"), 3), (ind.get("er") or 0) >= SI_MIN_ER, "Trend pulito, poco rumore"),
+        ("Non già in posizione", "Sì", "In posizione" if ind.get("in_posizione") else "Libero", not ind.get("in_posizione"), "È un segnale di ingresso"),
+    ]
+    si_pass = all(r[3] for r in si)
+    if si_pass:
+        tot, k, e, f, st = superindice_score(ind)
+        si_nota = (f"Attivo oggi: <strong>SÌ</strong> — punteggio <strong>{tot}/100</strong> "
+                   f"(KAMA {k:.1f}/25 · ER {e:.1f}/25 · Flip {f}/20 · Storico {st:.1f}/30). "
+                   "Pesi arbitrari, non backtestati: servono a ordinare i candidati, non a prevedere il rendimento.")
+    else:
+        si_nota = "Attivo oggi: no (nessun punteggio). Segnale indipendente da BUY2/BUY3 e più aggressivo."
+    sez.append(("🔥 Superindice — Ingresso aggressivo", si_nota, si))
+
+    # ---- RSI cross ----
+    rc = ind.get("rsi_cross")
+    sez.append(("⚡ RSI Cross — Filtro qualità",
+                f"RSI5 {_n(ind.get('rsi5'), 1)} · RSI14 {_n(ind.get('rsi14'), 1)}",
+                [("↑ Bull Cross", "RSI5 supera RSI14 dal basso", "Sì" if rc == 1 else "No", rc == 1, "Ripresa del momentum breve"),
+                 ("↓ Bear Cross", "RSI5 scende sotto RSI14", "Sì" if rc == -1 else "No", "info", "Perdita di momentum breve (informativo)")]))
+
+    # ---- Inversione ----
+    kc_bars = inv.get("kama_cross_bars")
+    inv_rows = [
+        ("KAMA cross recente", "Riattraversamento sopra KAMA negli ultimi 5gg", f"{'Sì, ' + str(kc_bars) + 'gg fa' if inv.get('kama_cross') else 'No'}", bool(inv.get("kama_cross")), "30 punti (+ bonus se 1-2gg fa)"),
+        ("ATR + prezzo in salita", "Volatilità in espansione su un movimento al rialzo", "Sì" if inv.get("atr_rising") else "No", bool(inv.get("atr_rising")), "20 punti"),
+        ("Divergenza OBV", "Minimo di prezzo più basso ma OBV in salita", "Sì" if inv.get("obv_divergence") else "No", bool(inv.get("obv_divergence")), "30 punti — accumulo silenzioso"),
+        ("RSI ipervenduto + AO su", "RSI14 &lt; 35 e AO in miglioramento", "Sì" if inv.get("rsi_oversold_improving") else "No", bool(inv.get("rsi_oversold_improving")), "20 punti"),
+    ]
+    sez.append(("🔄 INVERSIONE — Segnale anticipato (parallelo)",
+                f"Evidenza attiva con almeno 2 prove su 4. Oggi: <strong>{inv.get('trigger_count', 0)}/4</strong> prove, punteggio {inv.get('score', '—')}"
+                + (f" — <strong>{inv.get('label')}</strong>" if inv.get("flag") and inv.get("label") else ""), inv_rows))
+
+    # ---- Mean Reversion ----
+    bl, bu = mr.get("bb_lower"), mr.get("bb_upper")
+    mr_rows = [
+        ("Regime oscillante (Hurst 60)", f"&lt; {MR_HURST_THRESHOLD}", _n(hurst60, 2), None if hurst60 is None else hurst60 < MR_HURST_THRESHOLD, "Filtro bloccante: senza range confermato, nessun segnale"),
+        ("Prezzo ≤ banda Bollinger inferiore", f"≤ {_n(bl, 4)}", _n(prezzo, 4), None if bl is None else prezzo <= bl, "Estremo basso del range"),
+        ("RSI14 ipervenduto", f"&lt; {MR_RSI_OVERSOLD}", _n(ind.get("rsi14"), 1), (ind.get("rsi14") if ind.get("rsi14") is not None else 100) < MR_RSI_OVERSOLD, "Ipervenduto"),
+    ]
+    mr_nota = f"Segnale oggi: <strong>{mr.get('segnale', '—')}</strong>. Uscita (MR_SELL): prezzo ≥ banda superiore ({_n(bu, 4)}), nessuna uscita anticipata."
+    sez.append(("🎯 Mean-Reversion — Compra i minimi, vendi i massimi", mr_nota, mr_rows))
+
+    # ---- Super Mean Reversion ----
+    dd = ind.get("smr_drawdown_pct")
+    smr_rows = [
+        ("Variazione dall'ultimo massimo ZigZag", f"≤ {SMR_DRAWDOWN_THRESHOLD * 100:.0f}%", _n(dd, 1, "%"), None if dd is None else dd <= SMR_DRAWDOWN_THRESHOLD * 100, "Forte calo: accende l'osservazione"),
+        ("RSI14 ipervenduto profondo", f"&lt; {SMR_RSI14_MAX}", _n(ind.get("rsi14"), 1), (ind.get("rsi14") if ind.get("rsi14") is not None else 100) < SMR_RSI14_MAX, "Ipervenduto profondo"),
+    ]
+    smr_stato = smr.get("segnale", "—")
+    sez.append(("🧲 Super Mean Reversion — Compra dopo un forte calo",
+                f"Due fasi: osservazione (le due condizioni sopra) → ingresso solo con conferma (RSI5 in salita e chiusura in rialzo, entro {SMR_WATCH_EXPIRY} barre). "
+                f"Stop {SMR_STOP_PCT * 100:.0f}% dall'ingresso, uscita alla banda superiore. Stato oggi: <strong>{smr_stato}</strong>"
+                + (" (in osservazione)" if smr.get("in_osservazione") else ""), smr_rows))
+
+    sezioni_html = "".join(
+        f'<h2>{tit}</h2><p class="nota">{nota}</p>{_tabella(rows)}{"" if tit.startswith("⚡") else _riepilogo(rows)}'
+        for tit, nota, rows in sez)
+
+    # ---- Livelli di uscita ----
+    entry = ind.get("ultimo_trade_entry_price") if ind.get("in_posizione") else None
+    chand = ind.get("chandelier_stop")
+    if entry:
+        hard = entry * (1 - HARD_STOP_PCT)
+        liv = [("Prezzo di ingresso", _n(entry, 4), f"dal {ind.get('ultimo_trade_entry_date') or '—'}"),
+               (f"Stop fisso −{HARD_STOP_PCT * 100:.0f}%", _n(hard, 4), f"distanza dal prezzo: {_n((hard / prezzo - 1) * 100, 1, '%')} — priorità sul Chandelier"),
+               (f"Chandelier (max − {CHANDELIER_ATR_MULT:.0f}×ATR14)", _n(chand, 4), (f"distanza dal prezzo: {_n((chand / prezzo - 1) * 100, 1, '%')}" if chand else "non disponibile"))]
+        uscita_nota = "Posizione aperta: livelli reali calcolati sul prezzo di ingresso."
+    else:
+        hard = prezzo * (1 - HARD_STOP_PCT)
+        liv = [("Stop fisso −8% (ipotetico)", _n(hard, 4), "se si entrasse al prezzo attuale"),
+               (f"Chandelier (max − {CHANDELIER_ATR_MULT:.0f}×ATR14)", "—", "dipende dal massimo raggiunto dopo l'ingresso: non calcolabile senza posizione")]
+        uscita_nota = "Nessuna posizione aperta: livelli indicativi."
+    uscita_html = (f'<h2>🔴 Uscita — Chandelier Exit + Stop di sicurezza</h2><p class="nota">{uscita_nota} '
+                   'SELL: prezzo &lt; massimo da ingresso − 3×ATR14 (trailing). STOP: prezzo &lt; ingresso − 8% (fisso, controllato prima).</p>'
+                   '<table><thead><tr><th>Livello</th><th>Valore</th><th>Note</th></tr></thead><tbody>'
+                   + "".join(f'<tr><td>{a}</td><td class="val">{b}</td><td class="sig">{c}</td></tr>' for a, b, c in liv)
+                   + '</tbody></table>')
+
+    # ---- Storico ----
+    ult = ind.get("ultimo_trade_delta")
+    storico_html = (
+        '<h2>📈 Storico dei trade su questo titolo</h2>'
+        '<p class="nota">Track record del motore standard (BUY2/BUY3/SBB/Inversione, uscita Chandelier/Stop) su questo titolo. '
+        'È un backtest sullo stesso storico, senza correzione per survivorship: indicativo, non una previsione.</p>'
+        '<table><tbody>'
+        f'<tr><td>Trade chiusi</td><td class="val">{ind.get("trade_chiusi", 0)}</td></tr>'
+        f'<tr><td>% vincenti</td><td class="val">{_n(ind.get("pct_vincenti"), 1, "%")}</td></tr>'
+        f'<tr><td>Δ% medio per trade</td><td class="val">{_n(ind.get("delta_medio_pct"), 2, "%")}</td></tr>'
+        f'<tr><td>Rendimento cumulato</td><td class="val">{_n(ind.get("rendimento_cumulato"), 2, "%")}</td></tr>'
+        f'<tr><td>Ultimo trade</td><td class="val">{_n(ult, 2, "%")}'
+        f'{" (ancora aperto)" if ind.get("ultimo_trade_aperto") else ""} — {ind.get("ultimo_trade_data") or "—"}</td></tr>'
+        f'<tr><td>Super Mean Reversion (storico proprio)</td><td class="val">{smr.get("trade_chiusi", 0)} trade · '
+        f'{_n(smr.get("pct_vincenti"), 1, "%")} vincenti · rend. {_n(smr.get("rendimento_cumulato"), 2, "%")}</td></tr>'
+        '</tbody></table>')
+
+    # ---- Regime ----
+    regime_html = (
+        '<h2>🌊 Regime di mercato</h2>'
+        '<p class="nota">Hurst &gt; 0.55: il titolo tende a proseguire (serve a BUY2/BUY3). Hurst &lt; 0.45: tende a tornare indietro (serve a Mean-Reversion). In mezzo: nessun regime chiaro.</p>'
+        '<table><tbody>'
+        f'<tr><td>Regime</td><td class="val">{regime.get("label") or regime.get("code") or "—"}</td></tr>'
+        f'<tr><td>Hurst 60 giorni</td><td class="val">{_n(hurst60, 2)}</td></tr>'
+        f'<tr><td>Hurst 1 anno</td><td class="val">{_n(ind.get("hurst_1y"), 2)}</td></tr>'
+        f'<tr><td>Trend KAMA</td><td class="val">{ind.get("kama_trend") or "—"}</td></tr>'
+        f'<tr><td>ADX</td><td class="val">{_n(ind.get("adx"), 1)}</td></tr>'
+        '</tbody></table>')
+
+    # ---- Link rapidi ----
+    tvs = extra.get("tv_symbol")
+    links = []
+    if tvs:
+        links.append(f'<a href="https://www.tradingview.com/chart/?symbol={urllib.parse.quote(tvs, safe="")}" target="_blank">📈 TradingView</a>')
+    links.append(f'<a href="https://finance.yahoo.com/quote/{urllib.parse.quote(ticker, safe="")}" target="_blank">🟣 Yahoo Finance</a>')
+    links.append(f'<a href="../index.html" target="_blank">🏠 Dashboard</a>')
+
     repl = {
         "{{NOME}}": nome,
         "{{TICKER}}": ticker,
         "{{GENERATO}}": now,
         "{{AGGIORNATO}}": ind["ultimo_aggiornamento"],
-        "{{PREZZO}}": f"{ind['prezzo']:.4f}",
+        "{{LINKS}}": " ".join(links),
+        "{{PREZZO}}": f"{prezzo:.4f}",
         "{{KAMA_FAST}}": f"{ind['kama_fast']:.4f}",
         "{{KAMA_SLOW}}": f"{ind['kama_slow']:.4f}",
         "{{RSI14}}": f"{ind['rsi14']:.1f}",
@@ -1191,7 +1423,12 @@ def build_regole_html(nome: str, ticker: str, ind: dict) -> str:
         "{{SEGNALE}}": ind["segnale"],
         "{{RATING}}": ind["rating"],
         "{{SCORE}}": f"{ind['score']:.0f}",
+        "{{SEZIONI}}": sezioni_html,
+        "{{USCITA}}": uscita_html,
+        "{{STORICO}}": storico_html,
+        "{{REGIME}}": regime_html,
     }
+    html = REGOLE_TEMPLATE
     for k, v in repl.items():
         html = html.replace(k, str(v))
     return html
@@ -1569,7 +1806,7 @@ def main():
             chart_index[t] = chart_file
             regole_file = f"{t.replace('.', '_').replace('-', '_')}_Regole.html"
             (REGOLE_DIR / regole_file).write_text(
-                build_regole_html(nome, t, summary), encoding="utf-8")
+                build_regole_html(nome, t, summary, {"regione": row.get("regione"), "tv_symbol": row.get("tv_symbol")}), encoding="utf-8")
 
     for batch in chunked(universe, BATCH_SIZE):
         rows_ok, failed = process_batch(batch)
