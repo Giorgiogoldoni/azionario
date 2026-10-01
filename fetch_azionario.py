@@ -976,6 +976,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
     ultimo_trade_delta, ultimo_trade_data, ultimo_trade_aperto = None, None, False
     ultimo_trade_entry_price, ultimo_trade_exit_price = None, None
     ultimo_trade_entry_date = None
+    ultimo_trade_entry_signal = None
     last_open_entry = None
     closed_deltas = []  # Δ% di ogni trade CHIUSO, in ordine cronologico (per riepilogo storico sotto)
     for ev in signals_history:
@@ -990,6 +991,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
             ultimo_trade_entry_price = last_open_entry["price"]
             ultimo_trade_exit_price = ev["price"]
             ultimo_trade_entry_date = last_open_entry["date"]
+            ultimo_trade_entry_signal = last_open_entry["signal"]
             last_open_entry = None
     if last_open_entry is not None:
         ultimo_trade_delta = round((closes_list[-1] / last_open_entry["price"] - 1) * 100, 2)
@@ -998,6 +1000,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         ultimo_trade_entry_price = last_open_entry["price"]
         ultimo_trade_exit_price = None  # ancora aperto: nessun prezzo di uscita
         ultimo_trade_entry_date = last_open_entry["date"]
+        ultimo_trade_entry_signal = last_open_entry["signal"]
 
     # Riepilogo storico trade CHIUSI — per le colonne "Trade chiusi / % Vincenti / Δ% medio / Rendimento
     # cumulato" in home page. Rendimento cumulato = composto (non sommato), stesso metodo già usato nel
@@ -1120,6 +1123,7 @@ def compute_indicators(df: pd.DataFrame) -> dict | None:
         "ultimo_trade_entry_price": ultimo_trade_entry_price,
         "ultimo_trade_exit_price": ultimo_trade_exit_price,
         "ultimo_trade_entry_date": ultimo_trade_entry_date,
+        "ultimo_trade_entry_signal": ultimo_trade_entry_signal,  # "BUY2" o "BUY3": motivo apertura
         "trade_chiusi": trade_chiusi,
         "pct_vincenti": pct_vincenti,
         "delta_medio_pct": delta_medio_pct,
