@@ -149,6 +149,27 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
   .modal{padding:14px}
   td,thead th{padding:5px}
 }
+
+/* BOLLETTINO OPERATIVO */
+.bulletin{padding:16px 20px 18px;background:var(--bg);border-bottom:1px solid var(--border)}
+.bulletin-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bulletin-title{font-family:var(--font-cond);font-size:16px;font-weight:800;letter-spacing:1.2px;color:var(--text)}
+.bulletin-note{font-size:10px;color:var(--text3)}
+.bulletin-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.bulletin-card{min-width:0;border:1px solid var(--border);border-top:3px solid var(--border2);border-radius:5px;padding:10px;background:var(--bg2)}
+.bulletin-card.buy{border-top-color:var(--lc)}.bulletin-card.hold{border-top-color:var(--le)}.bulletin-card.sell{border-top-color:var(--ex)}.bulletin-card.mr{border-top-color:#0969da}.bulletin-card.watch{border-top-color:#e67700}
+.bulletin-card h3{font-family:var(--font-cond);font-size:11px;letter-spacing:1px;margin-bottom:7px;color:var(--text2)}
+.bulletin-count{font-family:var(--font-mono);font-size:20px;font-weight:700;margin-left:5px}
+.bulletin-list{display:flex;flex-direction:column;gap:5px;max-height:190px;overflow:auto}
+.bulletin-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding-top:5px;border-top:1px solid var(--border);font-size:10px}
+.bulletin-row:first-child{border-top:0;padding-top:0}
+.bulletin-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent);font-weight:700;cursor:pointer}
+.bulletin-meta{white-space:nowrap;color:var(--text3);font-family:var(--font-mono);font-size:9px}
+.bulletin-empty{font-size:10px;color:var(--text3);padding:4px 0}
+.bulletin-foot{font-size:9px;color:var(--text3);margin-top:9px}
+@media(max-width:1000px){.bulletin-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.bulletin{padding:12px}.bulletin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bulletin-card{padding:8px}.bulletin-count{font-size:17px}}
+
 </style>
 </head>
 <body>
@@ -177,6 +198,15 @@ td.score{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:
   <a class="qualita-link" href="ledger/">📒 Ledger di Verifica</a>
   <a class="qualita-link" href="report/">🌅 Report Mattutino</a>
 </div>
+
+<section class="bulletin" id="bulletin">
+  <div class="bulletin-head">
+    <div class="bulletin-title">BOLLETTINO OPERATIVO</div>
+    <div class="bulletin-note" id="bulletinStamp">Lettura automatica dei segnali presenti nei dati aggiornati</div>
+  </div>
+  <div class="bulletin-grid" id="bulletinGrid"></div>
+  <div class="bulletin-foot">Segnali informativi, non ordini automatici. Trend, Mean Reversion e Super Mean Reversion restano motori distinti. Verificare sempre freschezza, liquidità, spread e grafico prima di operare.</div>
+</section>
 
 <div class="top-sections" id="topSections"></div>
 
@@ -400,6 +430,7 @@ async function load(){
   document.getElementById('cntBUY').textContent = ALL.filter(x=>x.in_posizione).length;
   document.getElementById('cntSUPERINDICE').textContent = ALL.filter(superindiceOk).length;
   populateSettori();
+  renderBollettino(json);
   renderTopSections();
   render();
   const tParam = new URL(window.location).searchParams.get('ticker');
@@ -407,6 +438,33 @@ async function load(){
 }
 
 const REGIONE_LABEL = { EU:'🇪🇺 Europa', US:'🇺🇸 USA', IT:'🇮🇹 Italia', ETFLEVA:'⚡ ETF Leva', ETFGEO:'🌍 ETF Geografia', SUPERTEM:'🚀 Super Tematici', SCANNERSETT:'🧭 Scanner Settoriale', SETTGICS:'🔄 Settori GICS', ISHARES:'🎯 iShares', ETP:'📊 ETP' };
+
+
+// --- BOLLETTINO OPERATIVO: riepilogo leggibile, senza fondere motori diversi ---
+function renderBollettino(json){
+  const fresh = r => r.dato_fresco === true;
+  const open = r => r.in_posizione === true;
+  const trendBuy = ALL.filter(r=>fresh(r) && !open(r) && ['BUY2','BUY3'].includes(r.segnale));
+  const holds = ALL.filter(r=>open(r) && !['SELL','STOP'].includes(r.segnale) && !['STOP','USCITA'].includes(r.zona));
+  const exits = ALL.filter(r=>(open(r) && (['SELL','STOP'].includes(r.segnale) || ['STOP','USCITA'].includes(r.zona))) || (fresh(r) && !open(r) && ['SELL','STOP'].includes(r.segnale)));
+  const mr = ALL.filter(r=>r.mean_reversion && ['MR_BUY','MR_HOLD','MR_SELL'].includes(r.mean_reversion.segnale));
+  const watch = ALL.filter(r=>r.inversione?.flag || r.super_best_buy || (r.super_mean_reversion && r.super_mean_reversion.in_osservazione));
+  const superIndex = ALL.filter(r=>superindiceOk(r)).sort((a,b)=>(b.si_score||0)-(a.si_score||0));
+  const rank = (a,b)=>(b.score||0)-(a.score||0);
+  trendBuy.sort(rank); holds.sort(rank); exits.sort(rank); mr.sort(rank); watch.sort(rank);
+  const esc = v => String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const region = r => ({EU:'EU',US:'USA',IT:'ITA',ETFLEVA:'LEVA',ETFGEO:'GEO',SUPERTEM:'TEM',SCANNERSETT:'SETT',SETTGICS:'GICS',ISHARES:'iSH',ETP:'ETP'}[r.regione]||r.regione||'');
+  const row = (r, detail) => '<div class="bulletin-row"><span class="bulletin-name" onclick="openChart(\''+esc(r.ticker)+'\')" title="'+esc(r.nome)+'">'+esc(r.ticker)+' · '+esc(r.nome)+'</span><span class="bulletin-meta">'+esc(detail)+' · '+region(r)+'</span></div>';
+  const card = (cls,title,arr,detailFn,limit=7) => '<article class="bulletin-card '+cls+'"><h3>'+title+' <span class="bulletin-count">'+arr.length+'</span></h3><div class="bulletin-list">'+(arr.length?arr.slice(0,limit).map(r=>row(r,detailFn(r))).join(''):'<div class="bulletin-empty">Nessun segnale attivo</div>')+'</div></article>';
+  document.getElementById('bulletinGrid').innerHTML =
+    card('buy','ACQUISTARE · TREND',trendBuy,r=>r.segnale+' · '+(r.segnale_dal||'—'))+
+    card('hold','MANTENERE',holds,r=>r.segnale+' · '+(r.ultimo_trade_delta!=null?(r.ultimo_trade_delta>=0?'+':'')+r.ultimo_trade_delta.toFixed(1)+'%':'aperta'))+
+    card('sell','USCIRE / RIDURRE',exits,r=>(r.segnale||r.zona)+' · '+(r.ultimo_trade_data||'oggi'))+
+    card('mr','MEAN REVERSION',mr,r=>r.mean_reversion.segnale.replace('MR_','')+' · '+(r.mean_reversion.entry_date||'oggi'))+
+    card('watch','OSSERVAZIONE',watch,r=>r.super_best_buy?'SBB':r.inversione?.flag?'INVERSIONE':'SMR WATCH');
+  const stamp = json && json.generato ? 'Dati generati: '+String(json.generato).replace('T',' ').slice(0,16)+' · '+ALL.length+' strumenti' : ALL.length+' strumenti';
+  document.getElementById('bulletinStamp').textContent=stamp+' · Superindice indipendente: '+superIndex.length+' candidati (consulta la scheda dedicata).';
+}
 
 function renderTopSections(){
   const box = document.getElementById('topSections');
