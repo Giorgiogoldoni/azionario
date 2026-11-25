@@ -161,7 +161,7 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
 
 <div class="topbar">
   <div>
-    <h1>🌅 Report Mattutino</h1>
+    <h1>📌 Bollettino Operativo</h1>
     <div class="sub"><span id="lastUpdate">—</span> · <a href="../">← Home AZIONARIO</a> · <a href="../qualita/">🏆 Segnali di Qualità</a> · <a href="../ledger/">📒 Ledger di Verifica</a></div>
   </div>
   <div class="top-actions">
@@ -212,8 +212,17 @@ td.motivo{white-space:normal;max-width:260px;font-size:10.5px;color:var(--text3)
   <div class="empty">Caricamento...</div>
 </div>
 
+<div class="section" id="bollettinoSection">
+  <div class="section-h">📌 Bollettino operativo — cosa acquistare e cosa vendere</div>
+  <div id="bollettinoMeta" class="ledger-note">Audit in caricamento…</div>
+  <div id="bollettinoBuy"></div>
+  <div id="bollettinoSell"></div>
+  <div id="bollettinoEtp"></div>
+  <div id="bollettinoAudit" class="top3-note"></div>
+</div>
+
 <div class="section">
-  <div class="section-h">🎯 Consigli di oggi</div>
+  <div class="section-h">📡 Radar qualità — segnali attivi da verificare, non ordini automatici</div>
   <div id="ledgerNote" class="ledger-note"></div>
   <table id="tblConsigli">
     <thead>
@@ -687,6 +696,40 @@ function renderConsigli(titoli, ledger){
   window._consigliExport = scelti;
 }
 
+function renderBollettino(titoli){
+  const priority={IT:0,EU:1,US:2}, map=new Map();
+  titoli.filter(t=>['EU','US','IT'].includes(t.regione)).forEach(t=>{
+    const old=map.get(t.ticker);
+    if(!old||(priority[t.regione]??9)<(priority[old.regione]??9))map.set(t.ticker,t);
+  });
+  const stocks=[...map.values()], fresh=t=>t.dato_fresco===true;
+  const trendOK=t=>!['RIBASSO','LATERALE'].includes(t.regime?.code);
+  const buys=stocks.filter(t=>fresh(t)&&['BUY2','BUY3'].includes(t.segnale)&&trendOK(t)
+    &&t.segnale_qualita===true&&(t.trade_chiusi||0)>=3&&(t.pct_vincenti??0)>=50&&(t.rendimento_cumulato??0)>0)
+    .sort((a,b)=>((b.zona==='LONG_CONF')-(a.zona==='LONG_CONF'))||(b.score-a.score));
+  const sells=stocks.filter(t=>fresh(t)&&['SELL','STOP'].includes(t.segnale))
+    .sort((a,b)=>(a.segnale==='STOP'?-1:0)-(b.segnale==='STOP'?-1:0)||(a.score-b.score));
+  const etpMap=new Map();
+  titoli.filter(t=>!['EU','US','IT'].includes(t.regione)&&fresh(t)&&['SELL','STOP'].includes(t.segnale))
+    .forEach(t=>{if(!etpMap.has(t.ticker))etpMap.set(t.ticker,t);});
+  const etp=[...etpMap.values()];
+  const fmt=(v,d=2)=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const date=t=>t.ultimo_aggiornamento||'—';
+  const history=t=>(t.trade_chiusi||0)+' trade · '+fmt(t.pct_vincenti,1)+'% vincenti · '+fmt(t.rendimento_cumulato,1)+'% cumulato';
+  const ticker=t=>'<span class="ticker" onclick="openChart(\''+t.ticker+'\')">'+t.ticker+'</span>';
+  document.getElementById('bollettinoMeta').innerHTML='Aggiornamento '+(AZ_REF||'—')+' · <b>'+buys.length+'</b> acquisti promossi · <b>'+sells.length+'</b> uscite azionarie · <b>'+etp.length+'</b> uscite ETF/ETP.';
+  const buyRows=buys.map(t=>'<tr><td class="nome" onclick="openChart(\''+t.ticker+'\')">'+t.nome+'</td><td>'+ticker(t)+'</td><td class="num">'+fmt(t.prezzo,3)+'</td><td><span class="pill pill-le">'+t.segnale+'</span></td><td>'+(t.regime?.label||'—')+'</td><td class="num">'+fmt(t.prezzo*.92,3)+'</td><td>'+history(t)+'</td><td>'+date(t)+'</td></tr>').join('');
+  document.getElementById('bollettinoBuy').innerHTML='<h3 style="color:var(--lc)">🟢 ACQUISTARE — ingressi che superano i filtri</h3>'+(buys.length?'<div style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Ticker</th><th>Prezzo</th><th>Segnale</th><th>Regime</th><th>Stop iniziale*</th><th>Storico motore</th><th>Dato</th></tr></thead><tbody>'+buyRows+'</tbody></table></div>':'<div class="empty">Nessun nuovo acquisto promosso oggi. Non forzare ingressi.</div>')+'<div class="top3-note">* Stop prudenziale indicativo a -8% dal prezzo di riferimento; il Chandelier si aggiorna con le barre successive. Filtri: almeno 3 trade chiusi, ≥50% vincenti, rendimento cumulato positivo e regime non laterale/non ribassista.</div>';
+  const sellRows=sells.map(t=>'<tr><td class="nome" onclick="openChart(\''+t.ticker+'\')">'+t.nome+'</td><td>'+ticker(t)+'</td><td class="num">'+fmt(t.prezzo,3)+'</td><td><span class="pill '+(t.segnale==='STOP'?'pill-ex':'pill-gr')+'">'+t.segnale+'</span></td><td>'+t.zona+'</td><td>'+(t.regime?.label||'—')+'</td><td class="num">'+fmt(t.ultimo_trade_delta,1)+'%</td><td>'+date(t)+'</td></tr>').join('');
+  document.getElementById('bollettinoSell').innerHTML='<h3 style="color:var(--ex)">🔴 VENDERE / RIDURRE — uscite azionarie</h3>'+(sells.length?'<div style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Ticker</th><th>Prezzo</th><th>Azione</th><th>Zona</th><th>Regime</th><th>Ultimo trade</th><th>Dato</th></tr></thead><tbody>'+sellRows+'</tbody></table></div>':'<div class="empty">Nessun SELL/STOP azionario oggi.</div>');
+  const etpRows=etp.map(t=>'<tr><td>'+t.nome+'</td><td>'+ticker(t)+'</td><td class="num">'+fmt(t.prezzo,3)+'</td><td><span class="pill '+(t.segnale==='STOP'?'pill-ex':'pill-gr')+'">'+t.segnale+'</span></td><td>'+t.regione+'</td></tr>').join('');
+  document.getElementById('bollettinoEtp').innerHTML=etp.length?'<details style="margin-top:12px"><summary style="cursor:pointer;font-weight:700;color:var(--ex)">Uscite ETF / ETP ('+etp.length+' strumenti, duplicati eliminati)</summary><div style="overflow-x:auto"><table><thead><tr><th>Nome</th><th>Ticker</th><th>Prezzo</th><th>Azione</th><th>Basket</th></tr></thead><tbody>'+etpRows+'</tbody></table></div></details>':'';
+  const mr=titoli.filter(t=>fresh(t)&&t.mean_reversion?.segnale==='MR_BUY').length;
+  const smr=titoli.filter(t=>fresh(t)&&t.super_mean_reversion?.segnale==='LONG').length;
+  const stale=titoli.filter(t=>!fresh(t)).length;
+  document.getElementById('bollettinoAudit').innerHTML='Audit dati: '+titoli.length+' strumenti elaborati · '+(window._azErrorCount??'—')+' ticker non scaricati · '+stale+' dati non freschi. MR attivi: '+mr+'; posizioni SMR già aperte: '+smr+'. MR e SMR non sono promossi a nuovi acquisti finché non completano una validazione autonoma. Duplicati rimossi dal bollettino; ETF/ETP a leva separati dalle azioni.';
+}
+
 function scaricaExcel(){
   const rows = (window._consigliExport||[]).map(r=>({
     Nome:r.nome, Ticker:r.ticker, Regione:REGIONE_LABEL[r.regione]||r.regione,
@@ -709,6 +752,7 @@ async function load(){
     return;
   }
   AZ_TITOLI = az.titoli;
+  window._azErrorCount = (az.errori||[]).length;
   AZ_REF = (az.generato||'').slice(0,10) || new Date().toISOString().slice(0,10);
   document.getElementById('lastUpdate').textContent = 'Dati aggiornati: ' + (az.generato||'').replace('T',' ').slice(0,16);
   try{ ledger = await fetch(LEDGER_URL+'?t='+Date.now()).then(r=>r.json()); }catch(e){ ledger = []; }
@@ -718,6 +762,7 @@ async function load(){
   renderRotazione(az.titoli);
   renderSuperindice(az.titoli);
   renderTop3(az.titoli);
+  renderBollettino(az.titoli);
   renderConsigli(az.titoli, ledger);
   const tParam = new URL(window.location).searchParams.get('ticker');
   if(tParam) openChart(tParam);
