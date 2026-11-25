@@ -445,10 +445,10 @@ function renderBollettino(json){
   const fresh = r => r.dato_fresco === true;
   const open = r => r.in_posizione === true;
   const trendBuy = ALL.filter(r=>fresh(r) && !open(r) && ['BUY2','BUY3'].includes(r.segnale));
-  const holds = ALL.filter(r=>open(r) && !['SELL','STOP'].includes(r.segnale) && !['STOP','USCITA'].includes(r.zona));
-  const exits = ALL.filter(r=>(open(r) && (['SELL','STOP'].includes(r.segnale) || ['STOP','USCITA'].includes(r.zona))) || (fresh(r) && !open(r) && ['SELL','STOP'].includes(r.segnale)));
-  const mr = ALL.filter(r=>r.mean_reversion && ['MR_BUY','MR_HOLD','MR_SELL'].includes(r.mean_reversion.segnale));
-  const watch = ALL.filter(r=>r.inversione?.flag || r.super_best_buy || (r.super_mean_reversion && r.super_mean_reversion.in_osservazione));
+  const holds = ALL.filter(r=>fresh(r) && open(r) && !['SELL','STOP'].includes(r.segnale) && !['STOP','USCITA'].includes(r.zona));
+  const exits = ALL.filter(r=>fresh(r) && ((open(r) && (['SELL','STOP'].includes(r.segnale) || ['STOP','USCITA'].includes(r.zona))) || (!open(r) && ['SELL','STOP'].includes(r.segnale))));
+  const mr = ALL.filter(r=>fresh(r) && r.mean_reversion && ['MR_BUY','MR_HOLD','MR_SELL'].includes(r.mean_reversion.segnale));
+  const watch = ALL.filter(r=>fresh(r) && (r.inversione?.flag || r.super_best_buy || (r.super_mean_reversion && r.super_mean_reversion.in_osservazione)));
   const superIndex = ALL.filter(r=>superindiceOk(r)).sort((a,b)=>(b.si_score||0)-(a.si_score||0));
   const rank = (a,b)=>(b.score||0)-(a.score||0);
   trendBuy.sort(rank); holds.sort(rank); exits.sort(rank); mr.sort(rank); watch.sort(rank);
